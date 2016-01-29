@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="60dp"
+    android:background="#FFC11E"
+    android:orientation="horizontal">
+
+    <Button
+        android:id="@+id/menu_bottom_tag"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:background="@drawable/ic_tab_follow" />
+
+    <Button
+        android:id="@+id/menu_bottom_chat"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:background="@drawable/ic_tab_mail" />
+
+
+    <Button
+        android:id="@+id/menu_bottom_list_shop"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:background="@drawable/ic_tab_shop" />
+
+
+    <Button
+        android:id="@+id/menu_bottom_profile"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:background="@drawable/ic_tab_profile" />
+
+
+    <Button
+        android:id="@+id/menu_bottom_feedback"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:background="@drawable/ic_tab_sug" />
+
+</LinearLayout>

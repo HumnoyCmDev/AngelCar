@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">AngelCar</string>
+    <string name="hello_world">Hello world!</string>
+    <!--Tab Layout String-->
+    <string name="tab_home"></string>
+    <string name="tab_finance"></string>
+    <string name="tab_help"></string>
+    <string name="tab_notice"></string>
+    <string name="tab_filter"></string>
+    <string name="sample_test_text_chat">Mr Sukphisit\'s passion is authentic Thai food, the way it has been prepared for generations, preferably without modern . Below is an excerpt from his latest column which appeared in Sunday\'s.......</string>
+
+    <string name="BASE_URL">http://api.paiyannoi.me/ga_chatcar.php?operation=%s&amp;message=</string>
+</resources>

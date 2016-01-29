@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:padding="@dimen/list_view_item_chat_padding_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
+
+        <com.github.siyamed.shapeimageview.CircularImageView
+            android:id="@+id/list_view_item_chat_left_image"
+            android:layout_width="@dimen/list_view_item_chat_image_profile_size"
+            android:layout_height="@dimen/list_view_item_chat_image_profile_size"
+            android:src="@drawable/me"
+            android:layout_margin="3dp"
+            app:siBorderWidth="1dp"/>
+            <!--app:siBorderColor="@android:color/black"/>-->
+
+        <TextView
+            android:id="@+id/list_view_item_chat_left_text"
+            android:background="@drawable/bg_message_grey"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@android:color/black"
+            android:gravity="center"
+            android:text="@string/sample_test_text_chat" />
+
+</LinearLayout>
