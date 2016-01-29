@@ -14,19 +14,5 @@ public enum TypeChat {
         public String toString() {
             return "view";
         }
-    };
-
-    public enum FROM {
-        USER {
-            @Override
-            public String toString() {
-                return "user";
-            }
-        }, SHOP {
-            @Override
-            public String toString() {
-                return "shop";
-            }
-        }
     }
 }
