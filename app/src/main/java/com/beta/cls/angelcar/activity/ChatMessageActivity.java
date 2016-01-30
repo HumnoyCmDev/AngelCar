@@ -1,8 +1,5 @@
 package com.beta.cls.angelcar.activity;
 
-import android.app.AlarmManager;
-import android.app.PendingIntent;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -22,8 +19,7 @@ import com.beta.cls.angelcar.api.model.PostBlogMessage;
 import com.beta.cls.angelcar.api.model.SendMessageAsync;
 import com.beta.cls.angelcar.api.model.TypeChat;
 import com.beta.cls.angelcar.manager.AsyncResultChat;
-import com.beta.cls.angelcar.manager.AsyncSucceed;
-import com.beta.cls.angelcar.service.AlarmChatList;
+import com.beta.cls.angelcar.manager.CallBackResult;
 import com.beta.cls.angelcar.service.BusProvider;
 import com.squareup.otto.Subscribe;
 
@@ -71,7 +67,6 @@ public class ChatMessageActivity extends AppCompatActivity{
     }
 
     private void loadMessage() {
-
         MessageAPI messageAPI = new MessageAPI();
         messageAPI.message(TypeChat.VIEW,
                 blogMessage.getMessagecarid(),
@@ -79,30 +74,30 @@ public class ChatMessageActivity extends AppCompatActivity{
                 "1");//blogMessage.getMessageid());
 
         Log.i(TAG, "loadMessage: url "+messageAPI.getURL());
-//
-//        new LoadMessageAsync(new AsyncResultChat() {
-//            @Override
-//            public void onSucceed(PostBlogMessage messages) {
-//                listData = messages.getMessage();
-//                chatAdapter = new MultipleListViewChatAdapter(ChatMessageActivity.this,
-//                        listData,messageBy);
-//                listView.setAdapter(chatAdapter);
-//            }
-//
-//            @Override
-//            public void onFail() {
-//
-//            }
-//        }).execute(messageAPI);
+
+        new LoadMessageAsync(new AsyncResultChat() {
+            @Override
+            public void onSucceed(PostBlogMessage messages) {
+                listData = messages.getMessage();
+                chatAdapter = new MultipleListViewChatAdapter(ChatMessageActivity.this,
+                        listData,messageBy);
+                listView.setAdapter(chatAdapter);
+            }
+
+            @Override
+            public void onFail() {
+
+            }
+        }).execute(messageAPI);
 
 
-        /// test
-        Intent new_intent = new Intent(ChatMessageActivity.this, AlarmChatList.class);
-        new_intent.putExtra("BlogMessage",Parcels.wrap(blogMessage));
-        long scTime = 1000;
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(ChatMessageActivity.this, 0, new_intent, 0);
-        AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
-        alarmManager.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + scTime, pendingIntent);
+//        /// test
+//        Intent new_intent = new Intent(ChatMessageActivity.this, AlarmChatList.class);
+//        new_intent.putExtra("BlogMessage",Parcels.wrap(blogMessage));
+//        long scTime = 1000;
+//        PendingIntent pendingIntent = PendingIntent.getBroadcast(ChatMessageActivity.this, 0, new_intent, 0);
+//        AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+//        alarmManager.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + scTime, pendingIntent);
     }
 
     @OnClick(R.id.list_view_chat_layout_button_send)
@@ -126,7 +121,7 @@ public class ChatMessageActivity extends AppCompatActivity{
                 messageText.getText().toString(),
                 messageBy);
 
-        new SendMessageAsync(new AsyncSucceed() {
+        new SendMessageAsync(new CallBackResult() {
             @Override
             public void onSucceed() {
                 Toast.makeText(ChatMessageActivity.this,"Send Succed",Toast.LENGTH_SHORT).show();
@@ -153,14 +148,19 @@ public class ChatMessageActivity extends AppCompatActivity{
     }
 
     @Subscribe
-    public void onEvent(PostBlogMessage blogMessage){
-
-        listData = blogMessage.getMessage();
-        chatAdapter = new MultipleListViewChatAdapter(
-                ChatMessageActivity.this,
-                listData,
-                messageBy);
-        listView.setAdapter(chatAdapter);
+    public void onUpdateChatList(BlogMessage message){
+//        BlogMessage b = new BlogMessage();
+//        b.setMessageid(message.getMessagecarid());
+//        b.setMessagecarid(message.getMessagecarid());
+//        b.setMessagefromuser(message.getMessagefromuser());
+//        b.setMessagetext(message.getMessagetext()); // edit text
+//        b.setDisplayname(message.getDisplayname());
+//        b.setMessageby(message.getMessageby());
+//        b.setUserprofileimage(message.getUserprofileimage());
+////      b.setMessagestamp(blogMessage.getMessagestamp()); // date time set**
+//        listData.add(b);
+//        chatAdapter.notifyDataSetChanged();
+        Toast.makeText(ChatMessageActivity.this,"onUpdateChatList",Toast.LENGTH_SHORT).show();
     }
 
 }

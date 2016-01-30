@@ -24,6 +24,8 @@ import com.beta.cls.angelcar.manager.AsyncResultChat;
 
 import org.parceler.Parcels;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import butterknife.Bind;
@@ -89,7 +91,6 @@ public class ChatSellFragment extends Fragment {
                         messages.getMessage());
                 listView.setAdapter(messageItemAdapter);
             }
-
             @Override
             public void onFail() {
 
@@ -100,13 +101,11 @@ public class ChatSellFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        Log.i(TAG, "onResume: ");
         initMessage();
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        Log.i(TAG, "onPause: ");
     }
 }

@@ -12,7 +12,7 @@ import com.beta.cls.angelcar.fragment.ChatSellFragment;
 /**
  * Created by humnoy on 20/1/59.
  */
-public class MessageBlogViewPagerAdapter extends FragmentPagerAdapter {
+public class MessageBlogViewPagerAdapter extends FragmentStatePagerAdapter {
 
     public MessageBlogViewPagerAdapter(FragmentManager fm) {
         super(fm);

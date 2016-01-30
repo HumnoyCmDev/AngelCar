@@ -28,6 +28,8 @@ import com.squareup.otto.Subscribe;
 
 import org.parceler.Parcels;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import butterknife.Bind;
@@ -84,7 +86,6 @@ public class ChatBuyFragment extends Fragment {
                 intent.putExtra("messageBy",ARGS_MESSAGE_BY);
                 intent.putExtra("BlogMessage", Parcels.wrap(blogMessage));
                 startActivity(intent);
-//                BusProvider.getInstance().post(postEvent());
             }
         });
     }
@@ -99,6 +100,12 @@ public class ChatBuyFragment extends Fragment {
                 Gson gson = new Gson();
                 PostBlogArrayMessage blogArrayMessage = gson.fromJson(s, PostBlogArrayMessage.class);
                 message = blogArrayMessage.getMessageViewByAdmin().get(0).getMessage();
+                Collections.sort(message, new Comparator<BlogMessage>() {
+                    @Override
+                    public int compare(BlogMessage lhs, BlogMessage rhs) {
+                        return rhs.getMessagestamp().compareToIgnoreCase(lhs.getMessagestamp());
+                    }
+                });
                 itemAdapter =
                         new MessageItemAdapter(getActivity(), message);
                 listView.setAdapter(itemAdapter);
@@ -117,14 +124,14 @@ public class ChatBuyFragment extends Fragment {
     public void onStart() {
         super.onStart();
         BusProvider.getInstance().register(this);
-        Toast.makeText(getActivity(), "onStart", Toast.LENGTH_SHORT).show();
+//        Toast.makeText(getActivity(), "onStart", Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void onStop() {
         super.onStop();
         BusProvider.getInstance().unregister(this);
-        Toast.makeText(getActivity(), "onStop", Toast.LENGTH_SHORT).show();
+//        Toast.makeText(getActivity(), "onStop", Toast.LENGTH_SHORT).show();
     }
 
 

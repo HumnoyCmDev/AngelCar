@@ -8,7 +8,18 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 
+import com.beta.cls.angelcar.Adapter.MessageItemAdapter;
 import com.beta.cls.angelcar.R;
+import com.beta.cls.angelcar.activity.ChatMessageActivity;
+import com.beta.cls.angelcar.api.model.AllMessageAsync;
+import com.beta.cls.angelcar.api.model.BlogMessage;
+import com.beta.cls.angelcar.api.model.PostBlogArrayMessage;
+import com.beta.cls.angelcar.api.model.PostBlogMessage;
+import com.beta.cls.angelcar.util.LoggerFactory;
+
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -19,6 +30,10 @@ import butterknife.ButterKnife;
 public class ChatAllFragment extends Fragment{
     @Bind(R.id.list_view)
     ListView listView;
+    private static final String TAG = "ChatAllFragment";
+
+    private List<BlogMessage> message;
+    private MessageItemAdapter itemAdapter;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -31,6 +46,28 @@ public class ChatAllFragment extends Fragment{
         View v = inflater.inflate(R.layout.list_view_layout,container,false);
         ButterKnife.bind(this,v);
         return v;
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        initPutMessage();
+    }
+
+    private void initPutMessage() {
+        new AllMessageAsync(new AllMessageAsync.CallBackResult() {
+            @Override
+            public void onPostResult(PostBlogArrayMessage blogArrayMessage,
+                                     PostBlogMessage postBlogMessage) {
+                message = blogArrayMessage.getMessageViewByAdmin().get(0).getMessage();
+                message.addAll(postBlogMessage.getMessage());
+                itemAdapter = new MessageItemAdapter(getActivity(),
+                        message);
+                listView.setAdapter(itemAdapter);
+
+
+            }
+        }).execute();
     }
 
 }

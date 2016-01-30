@@ -2,7 +2,7 @@ package com.beta.cls.angelcar.api.model;
 
 import android.os.AsyncTask;
 
-import com.beta.cls.angelcar.manager.AsyncSucceed;
+import com.beta.cls.angelcar.manager.CallBackResult;
 import com.beta.cls.angelcar.api.SendMessageAPI;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
@@ -15,12 +15,12 @@ import java.io.IOException;
  */
 public class SendMessageAsync extends AsyncTask<SendMessageAPI,Void,String>{
     private boolean isSucceed = false;
-    private AsyncSucceed asyncSucceed;
+    private CallBackResult callBackResult;
 
     public SendMessageAsync() {
     }
-    public SendMessageAsync(AsyncSucceed asyncSucceed) {
-        this.asyncSucceed = asyncSucceed;
+    public SendMessageAsync(CallBackResult callBackResult) {
+        this.callBackResult = callBackResult;
     }
 
     @Override
@@ -44,11 +44,11 @@ public class SendMessageAsync extends AsyncTask<SendMessageAPI,Void,String>{
     @Override
     protected void onPostExecute(String s) {
         super.onPostExecute(s);
-        if (asyncSucceed != null) {
+        if (callBackResult != null) {
             if (isSucceed)
-                asyncSucceed.onSucceed();
+                callBackResult.onSucceed();
             else
-                asyncSucceed.onFail();
+                callBackResult.onFail();
 
         }
     }

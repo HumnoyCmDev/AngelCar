@@ -12,6 +12,8 @@ import com.beta.cls.angelcar.api.model.BlogMessage;
 import com.github.siyamed.shapeimageview.CircularImageView;
 import com.squareup.picasso.Picasso;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import butterknife.Bind;
@@ -26,9 +28,15 @@ public class MessageItemAdapter extends BaseAdapter{
     private Context mContext;
     private List<BlogMessage> messages;
 
-    public MessageItemAdapter(Context mContext,List<BlogMessage> messages) {
+    public MessageItemAdapter(Context mContext,List<BlogMessage> message) {
         this.mContext = mContext;
-        this.messages = messages;
+        this.messages = message;
+        Collections.sort(messages, new Comparator<BlogMessage>() {
+            @Override
+            public int compare(BlogMessage lhs, BlogMessage rhs) {
+                return rhs.getMessagestamp().compareToIgnoreCase(lhs.getMessagestamp());
+            }
+        });
         mInflater = LayoutInflater.from(mContext);
     }
 
