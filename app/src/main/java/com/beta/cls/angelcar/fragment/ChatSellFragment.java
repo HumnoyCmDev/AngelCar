@@ -4,13 +4,11 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.beta.cls.angelcar.Adapter.MessageItemAdapter;
 import com.beta.cls.angelcar.R;
@@ -18,14 +16,15 @@ import com.beta.cls.angelcar.activity.ChatMessageActivity;
 import com.beta.cls.angelcar.api.MessageAPI;
 import com.beta.cls.angelcar.api.model.BlogMessage;
 import com.beta.cls.angelcar.api.model.LoadMessageAsync;
-import com.beta.cls.angelcar.api.model.PostBlogArrayMessage;
 import com.beta.cls.angelcar.api.model.PostBlogMessage;
-import com.beta.cls.angelcar.manager.AsyncResultChat;
+import com.beta.cls.angelcar.interfaces.AsyncResultChat;
+import com.beta.cls.angelcar.interfaces.Callback;
+import com.beta.cls.angelcar.util.ConnectAPi;
+import com.beta.cls.angelcar.util.MessageAPi;
+import com.google.gson.Gson;
 
 import org.parceler.Parcels;
 
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import butterknife.Bind;
@@ -80,22 +79,21 @@ public class ChatSellFragment extends Fragment {
         });
     }
     private void initMessage() {
-        MessageAPI api = new MessageAPI();
-        api.outMessage("2015062900001");
-//        Log.i(TAG, "initMessage: "+api.getURL());
-        new LoadMessageAsync(new AsyncResultChat() {
+        MessageAPi messageAPi = new MessageAPi.ViewMessageOutBuilder()
+                .setMessage("2015062900001")
+                .build();
+        new ConnectAPi(messageAPi, new Callback() {
             @Override
-            public void onSucceed(PostBlogMessage messages) {
-                message = messages.getMessage();
+            public void onSucceed(String s, boolean isSucceed) {
+                Gson gson = new Gson();
+                PostBlogMessage postBlogMessage = gson.fromJson(s, PostBlogMessage.class);
+                message = postBlogMessage.getMessage();
                 MessageItemAdapter messageItemAdapter = new MessageItemAdapter(getActivity(),
-                        messages.getMessage());
+                        postBlogMessage.getMessage());
                 listView.setAdapter(messageItemAdapter);
             }
-            @Override
-            public void onFail() {
+        });
 
-            }
-        }).execute(api);
     }
 
     @Override

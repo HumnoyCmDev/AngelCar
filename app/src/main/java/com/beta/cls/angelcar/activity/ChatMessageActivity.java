@@ -18,9 +18,13 @@ import com.beta.cls.angelcar.api.model.LoadMessageAsync;
 import com.beta.cls.angelcar.api.model.PostBlogMessage;
 import com.beta.cls.angelcar.api.model.SendMessageAsync;
 import com.beta.cls.angelcar.api.model.TypeChat;
-import com.beta.cls.angelcar.manager.AsyncResultChat;
-import com.beta.cls.angelcar.manager.CallBackResult;
-import com.beta.cls.angelcar.service.BusProvider;
+import com.beta.cls.angelcar.interfaces.AsyncResultChat;
+import com.beta.cls.angelcar.interfaces.CallBackResult;
+import com.beta.cls.angelcar.interfaces.Callback;
+import com.beta.cls.angelcar.manager.BusProvider;
+import com.beta.cls.angelcar.util.ConnectAPi;
+import com.beta.cls.angelcar.util.MessageAPi;
+import com.google.gson.Gson;
 import com.squareup.otto.Subscribe;
 
 import org.parceler.Parcels;
@@ -62,33 +66,56 @@ public class ChatMessageActivity extends AppCompatActivity{
         if (getIntent != null){
             messageBy = getIntent.getStringExtra("messageBy");
             blogMessage = Parcels.unwrap(getIntent.getParcelableExtra("BlogMessage"));
+            Toast.makeText(ChatMessageActivity.this,"-"+messageBy,Toast.LENGTH_SHORT).show();
         }
         loadMessage();
+
+        // test up mac
     }
 
     private void loadMessage() {
-        MessageAPI messageAPI = new MessageAPI();
-        messageAPI.message(TypeChat.VIEW,
-                blogMessage.getMessagecarid(),
-                blogMessage.getMessagefromuser(),
-                "1");//blogMessage.getMessageid());
+//        MessageAPI messageAPI = new MessageAPI();
+//        messageAPI.message(TypeChat.VIEW,
+//                blogMessage.getMessagecarid(),
+//                blogMessage.getMessagefromuser(),
+//                "1");//blogMessage.getMessageid());
+//
+//        Log.i(TAG, "loadMessage: url "+messageAPI.getURL());
+//
+//        new LoadMessageAsync(new AsyncResultChat() {
+//            @Override
+//            public void onSucceed(PostBlogMessage messages) {
+//                listData = messages.getMessage();
+//                chatAdapter = new MultipleListViewChatAdapter(ChatMessageActivity.this,
+//                        listData,messageBy);
+//                listView.setAdapter(chatAdapter);
+//            }
+//
+//            @Override
+//            public void onFail() {
+//
+//            }
+//        }).execute(messageAPI);
+        MessageAPi aPi = new MessageAPi.ViewMessageBuilder()
+                .setId(blogMessage.getMessagecarid())
+                .setIdUser(blogMessage.getMessagefromuser())
+                .setIdMessage("1")
+                .build();
+        Log.i(TAG, "loadMessage: url "+aPi.getUrl());
 
-        Log.i(TAG, "loadMessage: url "+messageAPI.getURL());
-
-        new LoadMessageAsync(new AsyncResultChat() {
+        new ConnectAPi(aPi, new Callback() {
             @Override
-            public void onSucceed(PostBlogMessage messages) {
-                listData = messages.getMessage();
-                chatAdapter = new MultipleListViewChatAdapter(ChatMessageActivity.this,
-                        listData,messageBy);
+            public void onSucceed(String s, boolean isSucceed) {
+                Gson gson = new Gson();
+                PostBlogMessage postBlogMessage = gson.fromJson(
+                        s, PostBlogMessage.class);
+                listData = postBlogMessage.getMessage();
+                chatAdapter = new MultipleListViewChatAdapter(
+                        ChatMessageActivity.this,
+                        listData, messageBy);
                 listView.setAdapter(chatAdapter);
             }
-
-            @Override
-            public void onFail() {
-
-            }
-        }).execute(messageAPI);
+        });
 
 
 //        /// test
@@ -101,7 +128,7 @@ public class ChatMessageActivity extends AppCompatActivity{
     }
 
     @OnClick(R.id.list_view_chat_layout_button_send)
-    public void sendMessage(){
+    public void buttonSendMessage(){
         BlogMessage b = new BlogMessage();
         b.setMessageid(blogMessage.getMessagecarid());
         b.setMessagecarid(blogMessage.getMessagecarid());
@@ -115,24 +142,43 @@ public class ChatMessageActivity extends AppCompatActivity{
         chatAdapter.notifyDataSetChanged();
 
         // send Message to server
-        SendMessageAPI api = new SendMessageAPI();
-        api.message("26",
-                blogMessage.getMessagefromuser(),
-                messageText.getText().toString(),
-                messageBy);
+//        SendMessageAPI api = new SendMessageAPI();
+//        api.message("26",
+//                blogMessage.getMessagefromuser(),
+//                messageText.getText().toString(),
+//                messageBy);
+//
+//        new SendMessageAsync(new CallBackResult() {
+//            @Override
+//            public void onSucceed() {
+//                Toast.makeText(ChatMessageActivity.this,"Send Succed",Toast.LENGTH_SHORT).show();
+//            }
+//
+//            @Override
+//            public void onFail() {
+//
+//            }
+//        }).execute(api);
+        sendMessage(messageText.getText().toString().trim());
 
-        new SendMessageAsync(new CallBackResult() {
-            @Override
-            public void onSucceed() {
-                Toast.makeText(ChatMessageActivity.this,"Send Succed",Toast.LENGTH_SHORT).show();
-            }
+    }
 
-            @Override
-            public void onFail() {
+    private void sendMessage(String message){
+        if (!message.equals("")) {
+            MessageAPi aPi = new MessageAPi.SendMessageBuilder()
+                    .setId("26")
+                    .setIdUser(blogMessage.getMessagefromuser())
+                    .setMessage(message)
+                    .setTypeFrom(messageBy)
+                    .build();
+            new ConnectAPi(aPi, new Callback() {
+                @Override
+                public void onSucceed(String s, boolean isSucceed) {
 
-            }
-        }).execute(api);
-        messageText.setText("");
+                }
+            });
+            messageText.setText("");
+        }
     }
 
 

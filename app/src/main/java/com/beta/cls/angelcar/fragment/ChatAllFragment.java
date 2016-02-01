@@ -1,11 +1,13 @@
 package com.beta.cls.angelcar.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.beta.cls.angelcar.Adapter.MessageItemAdapter;
@@ -16,6 +18,8 @@ import com.beta.cls.angelcar.api.model.BlogMessage;
 import com.beta.cls.angelcar.api.model.PostBlogArrayMessage;
 import com.beta.cls.angelcar.api.model.PostBlogMessage;
 import com.beta.cls.angelcar.util.LoggerFactory;
+
+import org.parceler.Parcels;
 
 import java.util.Collections;
 import java.util.Comparator;
@@ -52,6 +56,20 @@ public class ChatAllFragment extends Fragment{
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         initPutMessage();
+        initListener();
+    }
+
+    private void initListener() {
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                BlogMessage blogMessage = message.get(position);
+                Intent intent = new Intent(getActivity(), ChatMessageActivity.class);
+                intent.putExtra("messageBy",blogMessage.getMessageby());
+                intent.putExtra("BlogMessage", Parcels.wrap(blogMessage));
+                startActivity(intent);
+            }
+        });
     }
 
     private void initPutMessage() {
@@ -64,7 +82,6 @@ public class ChatAllFragment extends Fragment{
                 itemAdapter = new MessageItemAdapter(getActivity(),
                         message);
                 listView.setAdapter(itemAdapter);
-
 
             }
         }).execute();

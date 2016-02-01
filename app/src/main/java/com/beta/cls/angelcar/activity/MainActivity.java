@@ -11,18 +11,19 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.beta.cls.angelcar.R;
 import com.beta.cls.angelcar.Adapter.MainViewPagerAdapter;
-import com.beta.cls.angelcar.api.model.BlogMessage;
-import com.beta.cls.angelcar.service.BusProvider;
-import com.beta.cls.angelcar.service.RealTimeBroadCast;
-import com.beta.cls.angelcar.service.RealTimeService;
-import com.beta.cls.angelcar.util.ModelTest;
+import com.beta.cls.angelcar.interfaces.AsyncResult;
+import com.beta.cls.angelcar.interfaces.Callback;
+import com.beta.cls.angelcar.util.ConnectAPi;
+import com.beta.cls.angelcar.util.MessageAPi;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -49,8 +50,6 @@ public class MainActivity extends AppCompatActivity {
         initToolbars();
         initViewPager();
         initTabIcons(); //ตั้งค่า tab
-
-        // test
 
     }
 

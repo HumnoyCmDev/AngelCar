@@ -1,4 +1,4 @@
-package com.beta.cls.angelcar.service;
+package com.beta.cls.angelcar.manager;
 
 
 import com.squareup.otto.Bus;

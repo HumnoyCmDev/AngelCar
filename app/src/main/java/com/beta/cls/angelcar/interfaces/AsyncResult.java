@@ -1,4 +1,4 @@
-package com.beta.cls.angelcar.manager;
+package com.beta.cls.angelcar.interfaces;
 
 import com.google.gson.Gson;
 

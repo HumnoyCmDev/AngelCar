@@ -11,13 +11,11 @@ import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.Toast;
 
 
 import com.beta.cls.angelcar.Adapter.ListViewPostAdapter;
@@ -25,11 +23,8 @@ import com.beta.cls.angelcar.activity.DetailCarActivity;
 import com.beta.cls.angelcar.R;
 import com.beta.cls.angelcar.manager.FeedBlogJson;
 import com.beta.cls.angelcar.manager.GetResultJson;
-import com.beta.cls.angelcar.manager.AsyncResult;
-import com.beta.cls.angelcar.service.BusProvider;
-import com.beta.cls.angelcar.util.ModelTest;
+import com.beta.cls.angelcar.interfaces.AsyncResult;
 import com.google.gson.Gson;
-import com.squareup.otto.Subscribe;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;

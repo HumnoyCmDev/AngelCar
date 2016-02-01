@@ -2,6 +2,7 @@ package com.beta.cls.angelcar.manager;
 
 import android.os.AsyncTask;
 
+import com.beta.cls.angelcar.interfaces.AsyncResult;
 import com.google.gson.Gson;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;

@@ -4,6 +4,7 @@ import android.os.AsyncTask;
 
 import com.beta.cls.angelcar.api.MessageAPI;
 import com.beta.cls.angelcar.util.LoggerFactory;
+import com.beta.cls.angelcar.util.MessageAPi;
 import com.google.gson.Gson;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
@@ -27,18 +28,15 @@ public class AllMessageAsync extends AsyncTask<Void, Void, Void> {
     @Override
     protected Void doInBackground(Void... params) {
 
-        MessageAPI putApi,outApi;
-        putApi = new MessageAPI();
-        outApi = new MessageAPI();
 
-        putApi.putMessage("26");
-        outApi.outMessage("2015062900001");
+        MessageAPi putApi = new MessageAPi.ViewMessageInBuilder().setMessage("26").build();
+        MessageAPi outApi = new MessageAPi.ViewMessageOutBuilder().setMessage("2015062900001").build();
 
         OkHttpClient okHttpClient = new OkHttpClient();
         Request.Builder builder = new Request.Builder();
 
-        Request request = builder.url(putApi.getURL()).build();
-        Request request2 = builder.url(outApi.getURL()).build();
+        Request request = builder.url(putApi.getUrl()).build();
+        Request request2 = builder.url(outApi.getUrl()).build();
 
         Gson gson = new Gson();
         try {

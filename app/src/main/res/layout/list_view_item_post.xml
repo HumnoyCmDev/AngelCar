@@ -1,46 +1,55 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+      <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:padding="10dp"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="horizontal">
-
+    android:orientation="horizontal"
+    android:padding="10dp">
 
     <RelativeLayout
-        android:paddingRight="5dp"
         android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:gravity="bottom">
+        android:layout_height="wrap_content"
+        android:gravity="bottom"
+        android:paddingRight="5dp">
 
         <com.github.siyamed.shapeimageview.CircularImageView
-            android:layout_width="64dp"
-            android:layout_height="64dp"
+            android:layout_width="51dp"
+            android:layout_height="51dp"
             android:src="@drawable/me"
             app:siBorderColor="@android:color/black"
             app:siBorderWidth="1dp" />
     </RelativeLayout>
 
-
-    <TextView
-        android:id="@+id/list_view_item_post"
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:text="dklsdjflsdfksdghkjsdjgklsdgjlksdgmdgndfng,dfnglkdfklgdmfgnjdfgndfkgndlfkglkdfgkldmf,gn,mdfng,mdnfgnd,mfgn,dfngm,dfng,dfmg,mdfgm,dnf,gnd,fgn,mdfng,mndf,gndfm,dfng,mdfng,nd,fgn,mdfng,dnf,gkdfklgdnfgldfnnd,mfng,mdfn,gn,dfng,dfng,df,mdfng,mdfnm,gnmd,fng,mdfng,mdfng,mdfnm,gndfm,gnmdfm,g," />
-
     <RelativeLayout
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:gravity="top">
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
-        <com.github.siyamed.shapeimageview.CircularImageView
-            android:layout_width="64dp"
-            android:layout_height="64dp"
-            android:src="@drawable/pic_a"
-            app:siBorderColor="@android:color/black"
-            app:siBorderWidth="1dp" />
+        <TextView
+            android:background="@drawable/bg_psot_item"
+            android:id="@+id/list_view_item_post"
+            android:layout_width="234dp"
+            android:layout_height="65dp"
+            android:text="@string/sample_test_text_chat" />
+
+        <LinearLayout
+            android:gravity="right|center"
+            android:orientation="vertical"
+            android:layout_width="260dp"
+            android:layout_height="65dp">
+
+            <com.github.siyamed.shapeimageview.CircularImageView
+                android:layout_width="@dimen/list_view_item_post_Image_size"
+                android:layout_height="@dimen/list_view_item_post_Image_size"
+                android:src="@drawable/pic_a"
+                app:siBorderColor="@android:color/black"
+                app:siBorderWidth="1dp" />
+
+        </LinearLayout>
+
+
     </RelativeLayout>
+
+
 
 
 </LinearLayout>

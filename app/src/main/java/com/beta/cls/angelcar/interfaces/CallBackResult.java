@@ -1,4 +1,4 @@
-package com.beta.cls.angelcar.manager;
+package com.beta.cls.angelcar.interfaces;
 
 /**
  * Created by humnoy on 22/1/59.

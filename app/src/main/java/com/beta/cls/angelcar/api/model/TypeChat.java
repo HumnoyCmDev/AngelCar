@@ -3,6 +3,8 @@ package com.beta.cls.angelcar.api.model;
 /**
  * Created by humnoy on 25/1/59.
  */
+
+@Deprecated
 public enum TypeChat {
     WAIT {
         @Override

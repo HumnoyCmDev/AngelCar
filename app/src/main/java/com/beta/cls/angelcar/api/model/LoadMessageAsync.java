@@ -2,8 +2,8 @@ package com.beta.cls.angelcar.api.model;
 
 import android.os.AsyncTask;
 
-import com.beta.cls.angelcar.manager.AsyncResult;
-import com.beta.cls.angelcar.manager.AsyncResultChat;
+import com.beta.cls.angelcar.interfaces.AsyncResult;
+import com.beta.cls.angelcar.interfaces.AsyncResultChat;
 import com.beta.cls.angelcar.api.MessageAPI;
 import com.google.gson.Gson;
 import com.squareup.okhttp.OkHttpClient;
@@ -15,6 +15,7 @@ import java.io.IOException;
 /**
  * Created by humnoy on 25/1/59.
  */
+@Deprecated
 public class LoadMessageAsync extends AsyncTask<MessageAPI, Void, String> {
     private boolean isSucceed = false;
     private AsyncResultChat resultChat = null;

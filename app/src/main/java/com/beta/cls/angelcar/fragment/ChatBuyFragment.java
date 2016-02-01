@@ -10,19 +10,17 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.beta.cls.angelcar.Adapter.MessageItemAdapter;
 import com.beta.cls.angelcar.R;
 import com.beta.cls.angelcar.activity.ChatMessageActivity;
 import com.beta.cls.angelcar.api.model.BlogMessage;
-import com.beta.cls.angelcar.manager.AsyncResult;
+import com.beta.cls.angelcar.interfaces.AsyncResult;
 import com.beta.cls.angelcar.api.model.LoadMessageAsync;
 import com.beta.cls.angelcar.api.MessageAPI;
 import com.beta.cls.angelcar.api.model.PostBlogArrayMessage;
-import com.beta.cls.angelcar.service.BusProvider;
+import com.beta.cls.angelcar.manager.BusProvider;
 import com.google.gson.Gson;
-import com.squareup.otto.Produce;
 import com.squareup.otto.Subscribe;
 
 
@@ -134,8 +132,7 @@ public class ChatBuyFragment extends Fragment {
 //        Toast.makeText(getActivity(), "onStop", Toast.LENGTH_SHORT).show();
     }
 
-
-    @Subscribe
+    @Subscribe // broadcast
     public void onEvent(PostBlogArrayMessage blogArrayMessage){
         message = blogArrayMessage.getMessageViewByAdmin().get(0).getMessage();
             itemAdapter =
