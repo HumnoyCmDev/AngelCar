@@ -50,6 +50,8 @@ public class MainActivity extends AppCompatActivity {
         initViewPager();
         initTabIcons(); //ตั้งค่า tab
 
+        // test
+
     }
 
     private void initViewPager() {
