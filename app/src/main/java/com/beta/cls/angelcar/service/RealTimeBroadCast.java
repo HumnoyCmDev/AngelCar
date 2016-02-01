@@ -9,6 +9,9 @@ import android.content.Intent;
 import com.beta.cls.angelcar.api.model.PostBlogArrayMessage;
 import com.beta.cls.angelcar.manager.BusProvider;
 import com.google.gson.Gson;
+import com.hndev.library.api.ConnectAPi;
+import com.hndev.library.api.MessageAPi;
+import com.hndev.library.manager.Callback;
 import com.squareup.otto.Produce;
 
 /**

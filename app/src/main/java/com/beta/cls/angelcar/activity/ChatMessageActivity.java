@@ -15,6 +15,9 @@ import com.beta.cls.angelcar.api.model.BlogMessage;
 import com.beta.cls.angelcar.api.model.PostBlogMessage;
 import com.beta.cls.angelcar.manager.BusProvider;
 import com.google.gson.Gson;
+import com.hndev.library.api.ConnectAPi;
+import com.hndev.library.api.MessageAPi;
+import com.hndev.library.manager.Callback;
 import com.squareup.otto.Subscribe;
 
 import org.parceler.Parcels;

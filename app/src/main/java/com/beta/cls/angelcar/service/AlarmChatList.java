@@ -12,6 +12,8 @@ import com.beta.cls.angelcar.api.model.LoadMessageAsync;
 import com.beta.cls.angelcar.api.model.PostBlogMessage;
 import com.beta.cls.angelcar.interfaces.AsyncResultChat;
 import com.beta.cls.angelcar.manager.BusProvider;
+import com.hndev.library.util.MessageAPI;
+import com.hndev.library.util.TypeChat;
 import com.squareup.otto.Produce;
 
 import org.parceler.Parcels;
