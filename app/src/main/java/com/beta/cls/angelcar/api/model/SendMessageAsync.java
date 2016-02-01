@@ -3,7 +3,7 @@ package com.beta.cls.angelcar.api.model;
 import android.os.AsyncTask;
 
 import com.beta.cls.angelcar.interfaces.CallBackResult;
-import com.beta.cls.angelcar.api.SendMessageAPI;
+import com.hndev.library.util.SendMessageAPI;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;

@@ -7,11 +7,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
-import com.beta.cls.angelcar.api.MessageAPI;
 import com.beta.cls.angelcar.api.model.BlogMessage;
 import com.beta.cls.angelcar.api.model.LoadMessageAsync;
 import com.beta.cls.angelcar.api.model.PostBlogMessage;
-import com.beta.cls.angelcar.api.model.TypeChat;
 import com.beta.cls.angelcar.interfaces.AsyncResultChat;
 import com.beta.cls.angelcar.manager.BusProvider;
 import com.squareup.otto.Produce;

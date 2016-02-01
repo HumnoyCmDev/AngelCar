@@ -13,15 +13,12 @@ import android.widget.ListView;
 import com.beta.cls.angelcar.Adapter.MessageItemAdapter;
 import com.beta.cls.angelcar.R;
 import com.beta.cls.angelcar.activity.ChatMessageActivity;
-import com.beta.cls.angelcar.api.MessageAPI;
 import com.beta.cls.angelcar.api.model.BlogMessage;
-import com.beta.cls.angelcar.api.model.LoadMessageAsync;
 import com.beta.cls.angelcar.api.model.PostBlogMessage;
-import com.beta.cls.angelcar.interfaces.AsyncResultChat;
-import com.beta.cls.angelcar.interfaces.Callback;
-import com.beta.cls.angelcar.util.ConnectAPi;
-import com.beta.cls.angelcar.util.MessageAPi;
 import com.google.gson.Gson;
+import com.hndev.library.api.ConnectAPi;
+import com.hndev.library.api.MessageAPi;
+import com.hndev.library.manager.Callback;
 
 import org.parceler.Parcels;
 

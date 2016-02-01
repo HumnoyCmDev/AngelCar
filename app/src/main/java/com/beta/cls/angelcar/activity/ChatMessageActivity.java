@@ -11,19 +11,9 @@ import android.widget.Toast;
 
 import com.beta.cls.angelcar.Adapter.MultipleListViewChatAdapter;
 import com.beta.cls.angelcar.R;
-import com.beta.cls.angelcar.api.MessageAPI;
-import com.beta.cls.angelcar.api.SendMessageAPI;
 import com.beta.cls.angelcar.api.model.BlogMessage;
-import com.beta.cls.angelcar.api.model.LoadMessageAsync;
 import com.beta.cls.angelcar.api.model.PostBlogMessage;
-import com.beta.cls.angelcar.api.model.SendMessageAsync;
-import com.beta.cls.angelcar.api.model.TypeChat;
-import com.beta.cls.angelcar.interfaces.AsyncResultChat;
-import com.beta.cls.angelcar.interfaces.CallBackResult;
-import com.beta.cls.angelcar.interfaces.Callback;
 import com.beta.cls.angelcar.manager.BusProvider;
-import com.beta.cls.angelcar.util.ConnectAPi;
-import com.beta.cls.angelcar.util.MessageAPi;
 import com.google.gson.Gson;
 import com.squareup.otto.Subscribe;
 

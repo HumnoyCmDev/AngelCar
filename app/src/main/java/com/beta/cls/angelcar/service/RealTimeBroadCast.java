@@ -5,13 +5,9 @@ import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 
 import com.beta.cls.angelcar.api.model.PostBlogArrayMessage;
-import com.beta.cls.angelcar.interfaces.Callback;
 import com.beta.cls.angelcar.manager.BusProvider;
-import com.beta.cls.angelcar.util.ConnectAPi;
-import com.beta.cls.angelcar.util.MessageAPi;
 import com.google.gson.Gson;
 import com.squareup.otto.Produce;
 

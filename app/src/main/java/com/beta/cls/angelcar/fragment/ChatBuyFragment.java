@@ -17,10 +17,10 @@ import com.beta.cls.angelcar.activity.ChatMessageActivity;
 import com.beta.cls.angelcar.api.model.BlogMessage;
 import com.beta.cls.angelcar.interfaces.AsyncResult;
 import com.beta.cls.angelcar.api.model.LoadMessageAsync;
-import com.beta.cls.angelcar.api.MessageAPI;
 import com.beta.cls.angelcar.api.model.PostBlogArrayMessage;
 import com.beta.cls.angelcar.manager.BusProvider;
 import com.google.gson.Gson;
+import com.hndev.library.util.MessageAPI;
 import com.squareup.otto.Subscribe;
 
 
