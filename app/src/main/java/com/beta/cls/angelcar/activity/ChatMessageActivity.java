@@ -63,7 +63,7 @@ public class ChatMessageActivity extends AppCompatActivity{
         }
         loadMessage();
 
-        // test up mac 2
+        // test up mac 02/02/2016
     }
 
     private void loadMessage() {
