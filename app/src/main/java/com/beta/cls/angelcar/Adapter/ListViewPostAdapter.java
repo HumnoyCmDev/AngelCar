@@ -47,17 +47,16 @@ public class ListViewPostAdapter extends BaseAdapter {
         if(view != null) {
             holder = (ViewHolder) view.getTag();
         }else {
-            view = mInflater.inflate(R.layout.list_view_item_post, parent, false);
+            view = mInflater.inflate(R.layout.list_view_item_post_left, parent, false);
             holder = new ViewHolder(view);
             view.setTag(holder);
         }
         //coding
         holder.textView.setText(Html.fromHtml(
-                        "<b>Id :</b><i> "+getItem(position).getId()+"</i><br>"+
-                        "<b>Detail :</b> "+getItem(position).getCardetail()+"<br>"+
-                        "<b>Type :</b> "+getItem(position).getCartype()+"<br>"+
-                        "<b>Sub :</b> "+getItem(position).getCarDetailSub()+"<br>"+
-                        "<b>TypeSub :</b> "+getItem(position).getCarTypeSub()+"<br>"
+                        ""+getItem(position).getCartype()+" "+
+                        ""+getItem(position).getCarTypeSub()+" "+
+                        ""+getItem(position).getCarDetailSub()+" "+
+                        ""+getItem(position).getCardetail()+" "
         ));
 
         return view;

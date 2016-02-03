@@ -16,6 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 
 import com.beta.cls.angelcar.Adapter.ListViewPostAdapter;
@@ -96,8 +97,10 @@ public class HomeFragment extends Fragment {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent intent = new Intent(getActivity(), DetailCarActivity.class);
                 startActivity(intent);
+
             }
         });
+
 
     }
 
