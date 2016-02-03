@@ -52,12 +52,12 @@ public class ListViewPostAdapter extends BaseAdapter {
             view.setTag(holder);
         }
         //coding
-        holder.textView.setText(Html.fromHtml(
-                        ""+getItem(position).getCartype()+" "+
-                        ""+getItem(position).getCarTypeSub()+" "+
-                        ""+getItem(position).getCarDetailSub()+" "+
-                        ""+getItem(position).getCardetail()+" "
-        ));
+//        holder.textView.setText(Html.fromHtml(
+//                        ""+getItem(position).getCartype()+" "+
+//                         ""+getItem(position).getCarTypeSub()+" "+
+//                        ""+getItem(position).getCarDetailSub()+" "+
+//                        ""+getItem(position).getCardetail()+" "
+//        ));
 
         return view;
     }
