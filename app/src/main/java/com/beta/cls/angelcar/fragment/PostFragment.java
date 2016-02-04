@@ -65,7 +65,6 @@ public class PostFragment extends Fragment {
                 transaction.commit();
                 Log.i("test", "onClick: ");
 
-
             }
         });
 

@@ -16,7 +16,6 @@ import com.beta.cls.angelcar.R;
 
 public class NoticeFragment extends Fragment {
     private FragmentActivity myContext;
-//    private ViewPager viewPager;
 
     public NoticeFragment() {
 
@@ -30,7 +29,7 @@ public class NoticeFragment extends Fragment {
 
     @Override
 
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_notice, container, false);
         return rootView;
 
@@ -52,6 +51,6 @@ public class NoticeFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        myContext=(FragmentActivity) context;
+        myContext = (FragmentActivity) context;
     }
 }

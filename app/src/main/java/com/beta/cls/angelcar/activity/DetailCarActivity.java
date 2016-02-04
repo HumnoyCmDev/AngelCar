@@ -1,239 +1,109 @@
 package com.beta.cls.angelcar.activity;
 
-/**
- * Created by ABaD on 12/16/2015.
- */
-import android.content.Context;
-import android.content.res.Configuration;
-import android.net.wifi.WifiInfo;
-import android.net.wifi.WifiManager;
-import android.os.Handler;
-import android.os.Looper;
+import android.content.Intent;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.view.ViewPager;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.telephony.TelephonyManager;
-import android.util.Log;
-import android.view.Gravity;
-import android.view.MenuItem;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.beta.cls.angelcar.Adapter.ImageAdapter;
+import com.beta.cls.angelcar.Adapter.MultipleChatAdapter;
 import com.beta.cls.angelcar.R;
-import com.beta.cls.angelcar.Adapter.CustomListViewBlack;
-import com.beta.cls.angelcar.util.InService;
+import com.beta.cls.angelcar.api.model.BlogMessage;
+import com.beta.cls.angelcar.manager.FeedPostItem;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.net.Socket;
-import java.net.UnknownHostException;
+import org.parceler.Parcels;
+
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
+
 public class DetailCarActivity extends AppCompatActivity {
 
-    DrawerLayout drawerLayout;
-    ActionBarDrawerToggle drawerToggle;
+    @Bind(R.id.collapsingToolbarLayout)
     CollapsingToolbarLayout collapsingToolbarLayout;
+    @Bind(R.id.toolbar_top)
     Toolbar toolbar;
 
-    //Variable of Chat
-    TextView txtIP, txtStatus;
-    ListView listChat;
-    Button btnSend;
-    EditText etxtIP, etxtMessage;
-    ArrayList<String> arr_list;
-    List<Integer> arr_gravity;
-    InService inTask;
-    public static final int TCP_SERVER_PORT = 21111;
+    @Bind(R.id.recycler_view)
+    RecyclerView recyclerView;
+
+    @Bind(R.id.activity_detail_tvCarType)
+    TextView tvCarType;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.detail_car);
+        setContentView(R.layout.activity_detail_car);
+        ButterKnife.bind(this);
 
         ViewPager viewPager = (ViewPager) findViewById(R.id.viewpager);
         ImageAdapter adapter = new ImageAdapter(this);
         viewPager.setAdapter(adapter);
-        TelephonyManager tMgr =(TelephonyManager)getSystemService(Context.TELEPHONY_SERVICE);
+        TelephonyManager tMgr = (TelephonyManager) getSystemService(TELEPHONY_SERVICE);
         String mPhoneNumber = tMgr.getLine1Number();
-
-        collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collapsingToolbarLayout);
         collapsingToolbarLayout.setTitle(mPhoneNumber);
 
         initInstances();
-
-        //Code for Chat
-//        arr_list = new ArrayList<String>();
-//        arr_gravity = new ArrayList<Integer>();
-//        listChat = (ListView)findViewById(R.id.listChat);
-//        etxtIP = (EditText)findViewById(R.id.etxtIP);
-//        etxtMessage = (EditText)findViewById(R.id.etxtMessage);
-//        txtIP = (TextView)findViewById(R.id.txtIP);
-//        txtIP.setText("Your IP : " + getIP());
-//
-//
-//        SharedPreferences settings = getSharedPreferences("Pref", 0);
-//        String ip = settings.getString("IP", "192.168.1.1");
-//        etxtIP.setText(ip);
-//
-//        inTask = new InService(getApplicationContext()
-//                , TCP_SERVER_PORT, listChat, arr_list
-//                , arr_gravity);
-//        inTask.execute();
-//
-//        btnSend = (Button) findViewById(R.id.btnSend);
-//        btnSend.setOnClickListener(new View.OnClickListener() {
-//            public void onClick(View v) {
-//                if(etxtMessage.getText().toString().length() > 0) {
-//
-//                    //txtStatus.setText("Sending...");
-//                    sendMessage(etxtIP.getText().toString()
-//                            , etxtMessage.getText().toString());
-//                    etxtMessage.setText("");
-//                }
-//            }
-//        });
-
+        initData();
 
     }
 
-    //Start Function For Chat
-    public void sendMessage(String ip, String message) {
-        final String IP_ADDRESS = ip;
-        final String MESSAGE = message;
+    private void initData() {
 
-        Runnable runSend = new Runnable() {
-            public void run() {
-                try {
-                    Socket s = new Socket(IP_ADDRESS, TCP_SERVER_PORT);
-                    s.setSoTimeout(5000);
-                    BufferedReader in = new BufferedReader
-                            (new InputStreamReader(s.getInputStream()));
-                    BufferedWriter out = new BufferedWriter
-                            (new OutputStreamWriter(s.getOutputStream()));
-                    String outgoingMsg = MESSAGE
-                            + System.getProperty("line.separator");
-                    out.write(outgoingMsg);
-                    out.flush();
-                    Log.i("TcpClient", "sent: " + outgoingMsg);
-                    String inMsg = in.readLine()
-                            + System.getProperty("line.separator");
+        List<BlogMessage> blogMessages = new ArrayList<>();
+        BlogMessage b = new BlogMessage();
+        b.setMessageid("111");
+        b.setMessagecarid("111");
+        b.setMessagefromuser("111");
+        b.setMessagetext("1111111");
+        b.setDisplayname("11111");
+        b.setMessageby("user");
+        b.setUserprofileimage("11111");
+        blogMessages.add(b);
 
-                    Handler refresh = new Handler(Looper.getMainLooper());
-                    refresh.post(new Runnable() {
-                        public void run() {
-                            arr_gravity.add(Gravity.LEFT);
-                            arr_list.add("Me : " + MESSAGE);
-                            listChat.setAdapter(new CustomListViewBlack
-                                    (getApplicationContext()
-                                            , android.R.layout.simple_list_item_1
-                                            , arr_list, arr_gravity));
-                            listChat.setSelection(listChat.getCount());
-                            //txtStatus.setText("Message has been sent.");
-                            etxtMessage.setText("");
-                        }
-                    });
+        for (int i = 0; i<10;i++){
+            BlogMessage bb = new BlogMessage();
+            bb.setMessageid("22");
+            bb.setMessagecarid("22");
+            bb.setMessagefromuser("22");
+            bb.setMessagetext("22 :"+i);
+            bb.setDisplayname("22");
+            bb.setMessageby("shop");
+            bb.setUserprofileimage("22");
+            blogMessages.add(bb);
+        }
 
-                    s.close();
-                } catch (UnknownHostException e) {
-                    e.printStackTrace();
-                    setText("No device on this IP address.");
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    setText("Connection failed. Please try again.");
-                }
-            }
-
-            public void setText(String str) {
-                final String string = str;
-                Handler refresh = new Handler(Looper.getMainLooper());
-                refresh.post(new Runnable() {
-                    public void run() {
-                        txtStatus.setText(string);
-                    }
-                });
-            }
-        };
-        new Thread(runSend).start();
+        LinearLayoutManager manager = new LinearLayoutManager(this);
+        recyclerView.setLayoutManager(manager);
+        MultipleChatAdapter adapter = new MultipleChatAdapter(
+                DetailCarActivity.this,
+                blogMessages,"shop");
+        recyclerView.setAdapter(adapter);
     }
-
-    public String getIP() {
-        WifiManager wifiManager =
-                (WifiManager) getSystemService(WIFI_SERVICE);
-        WifiInfo wifiInfo = wifiManager.getConnectionInfo();
-        int ipAddress = wifiInfo.getIpAddress();
-        String ip = (ipAddress & 0xFF) + "." +
-                ((ipAddress >> 8 ) & 0xFF) + "." +
-                ((ipAddress >> 16 ) & 0xFF) + "." +
-                ((ipAddress >> 24 ) & 0xFF );
-        if(ip.equals("0.0.0.0"))
-            ip = "Please connect WIFI";
-        return ip;
-    }
-
-//    public void onPause() {
-//        super.onPause();
-//        SharedPreferences settings = getSharedPreferences("Pref", 0);
-//        SharedPreferences.Editor editor = settings.edit();
-//        editor.putString("IP", etxtIP.getText().toString());
-//        editor.commit();
-//        inTask.killTask();
-//    }//End Function for chat
-
 
     private void initInstances() {
-
-        toolbar = (Toolbar) findViewById(R.id.toolbar_top); // ย้าย Action Bar ไปไว้ใน Toolbar
         setSupportActionBar(toolbar);
-
-        //fabBtn = (FloatingActionButton) findViewById(R.id.fabBtn);
-        //fabBtn.setOnClickListener(new View.OnClickListener() {
-        //    @Override
-        //    public void onClick(View v) {
-
-        //    }
-        //});
-
-        drawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);     /////// ตัว fix ปุ่มกลับก่อน Hamburger
-        drawerToggle = new ActionBarDrawerToggle(DetailCarActivity.this, drawerLayout, R.string.hello_world, R.string.hello_world);
-        drawerLayout.setDrawerListener(drawerToggle);
-
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-    }
-    public void onPostCreate(Bundle savedInstanceState) { //ตัว fix Hamburger
-        super.onPostCreate(savedInstanceState);
-        drawerToggle.syncState();
-    }
-    public boolean onOptionsItemSelected(MenuItem item) { //ตัว select เรียก slide จาก Hamburger
-        if (drawerToggle.onOptionsItemSelected(item))
-            return true;
-
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        // getIntent
+        Intent getIntent = getIntent();
+        if (getIntent != null){
+            FeedPostItem postItem = Parcels.unwrap(getIntent.getParcelableExtra("FeedPostItem"));
+            tvCarType.setText(postItem.getCartype());
         }
 
-        return super.onOptionsItemSelected(item);
     }
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-        drawerToggle.onConfigurationChanged(newConfig);
-    }
+
+
 }

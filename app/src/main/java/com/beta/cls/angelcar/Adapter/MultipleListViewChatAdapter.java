@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import com.beta.cls.angelcar.R;
 import com.beta.cls.angelcar.api.model.BlogMessage;
+import com.github.siyamed.shapeimageview.CircularImageView;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -115,7 +116,7 @@ public class MultipleListViewChatAdapter extends BaseAdapter {
         TextView textViewChat;
 
         @Bind(R.id.list_view_item_chat_left_image)
-        ImageView ic;
+        CircularImageView ic;
 
         public TextLeftViewHolder(View v) {
             ButterKnife.bind(this, v);
@@ -127,21 +128,21 @@ public class MultipleListViewChatAdapter extends BaseAdapter {
         TextView textViewChat;
 
         @Bind(R.id.list_view_item_chat_right_image)
-        ImageView ic;
+        CircularImageView ic;
 
         public TextRightViewHolder(View v) {
             ButterKnife.bind(this, v);
         }
     }
 
-    private int byUser(String messageBy,String by){
+    private int byUser(String messageBy, String by) {
         if (messageBy.equals("shop")) {
             if (by.equals("shop")) {
                 return 0;
             } else {
                 return 1;
             }
-        }else {
+        } else {
             if (by.equals("user")) {
                 return 0;
             } else {
@@ -149,5 +150,13 @@ public class MultipleListViewChatAdapter extends BaseAdapter {
             }
         }
     }
+
+//    private int byUser(String messageBy, String by) {
+//        if (messageBy.equals("shop")) {
+//            return by.equals("shop") ? 0 : 1;
+//        } else {
+//            return by.equals("shop") ? 0 : 1;
+//        }
+//    }
 
 }

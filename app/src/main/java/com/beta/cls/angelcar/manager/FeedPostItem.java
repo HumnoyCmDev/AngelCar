@@ -2,9 +2,13 @@ package com.beta.cls.angelcar.manager;
 
 import com.google.gson.annotations.SerializedName;
 
+import org.parceler.Parcel;
+
 /**
  * Created by humnoy on 22/1/59.
  */
+
+@Parcel
 public class FeedPostItem {
 
     String id;
