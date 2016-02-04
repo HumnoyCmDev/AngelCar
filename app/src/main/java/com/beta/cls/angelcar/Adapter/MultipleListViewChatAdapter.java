@@ -110,7 +110,7 @@ public class MultipleListViewChatAdapter extends BaseAdapter {
     }
 
     // View Holder
-    public static class TextLeftViewHolder {
+    public class TextLeftViewHolder {
         @Bind(R.id.list_view_item_chat_left_text)
         TextView textViewChat;
 
@@ -122,7 +122,7 @@ public class MultipleListViewChatAdapter extends BaseAdapter {
         }
     }
 
-    public static class TextRightViewHolder {
+    public class TextRightViewHolder {
         @Bind(R.id.list_view_item_chat_right_text)
         TextView textViewChat;
 
