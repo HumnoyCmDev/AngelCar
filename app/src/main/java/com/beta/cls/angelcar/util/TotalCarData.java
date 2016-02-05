@@ -4,10 +4,8 @@ package com.beta.cls.angelcar.util;
  * Created by ABaD on 12/29/2015.
  */
 
-import com.beta.cls.angelcar.manager.CarDataType;
-
 import java.util.List;
-
+@Deprecated
 public class TotalCarData {
 
     String cartype_sub;

@@ -1,4 +1,4 @@
-package com.beta.cls.angelcar.manager;
+package com.beta.cls.angelcar.manager.bus;
 
 
 import com.squareup.otto.Bus;
@@ -8,8 +8,7 @@ import com.squareup.otto.Bus;
  */
 public class BusProvider {
     private static Bus bus;
-    private BusProvider() {
-    }
+    private BusProvider() {}
     public static Bus getInstance() {
         if (bus == null)
             bus = new Bus();

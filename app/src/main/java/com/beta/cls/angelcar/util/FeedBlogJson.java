@@ -1,6 +1,4 @@
-package com.beta.cls.angelcar.manager;
-
-import com.google.gson.annotations.Expose;
+package com.beta.cls.angelcar.util;
 
 import java.util.List;
 

@@ -7,7 +7,7 @@
     android:layout_height="wrap_content"
     android:singleLine="true"
 
-    android:textColor="#FF2C2B"
+    android:textColor="#003EE6"
     android:textSize="12dp" />
 
 

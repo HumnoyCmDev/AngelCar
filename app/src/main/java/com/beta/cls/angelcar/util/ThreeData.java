@@ -3,6 +3,7 @@ package com.beta.cls.angelcar.util;
 /**
  * Created by ABaD on 12/29/2015.
  */
+@Deprecated
 public class ThreeData {
 
     String cardetail_sub;

@@ -14,14 +14,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.Toast;
 
 
 import com.beta.cls.angelcar.Adapter.ListViewPostAdapter;
 import com.beta.cls.angelcar.activity.DetailCarActivity;
 import com.beta.cls.angelcar.R;
-import com.beta.cls.angelcar.manager.FeedBlogJson;
-import com.beta.cls.angelcar.manager.FeedPostItem;
+import com.beta.cls.angelcar.util.FeedBlogJson;
+import com.beta.cls.angelcar.util.FeedPostItem;
 import com.beta.cls.angelcar.manager.GetResultJson;
 import com.beta.cls.angelcar.interfaces.AsyncResult;
 import com.google.gson.Gson;

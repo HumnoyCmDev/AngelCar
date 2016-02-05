@@ -11,9 +11,9 @@ import android.widget.Toast;
 
 import com.beta.cls.angelcar.Adapter.MultipleListViewChatAdapter;
 import com.beta.cls.angelcar.R;
-import com.beta.cls.angelcar.api.model.BlogMessage;
-import com.beta.cls.angelcar.api.model.PostBlogMessage;
-import com.beta.cls.angelcar.manager.BusProvider;
+import com.beta.cls.angelcar.util.BlogMessage;
+import com.beta.cls.angelcar.util.PostBlogMessage;
+import com.beta.cls.angelcar.manager.bus.BusProvider;
 import com.google.gson.Gson;
 import com.hndev.library.api.ConnectAPi;
 import com.hndev.library.api.MessageAPi;

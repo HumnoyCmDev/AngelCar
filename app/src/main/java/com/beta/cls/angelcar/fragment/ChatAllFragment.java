@@ -13,16 +13,13 @@ import android.widget.ListView;
 import com.beta.cls.angelcar.Adapter.MessageItemAdapter;
 import com.beta.cls.angelcar.R;
 import com.beta.cls.angelcar.activity.ChatMessageActivity;
-import com.beta.cls.angelcar.api.model.AllMessageAsync;
-import com.beta.cls.angelcar.api.model.BlogMessage;
-import com.beta.cls.angelcar.api.model.PostBlogArrayMessage;
-import com.beta.cls.angelcar.api.model.PostBlogMessage;
-import com.beta.cls.angelcar.util.LoggerFactory;
+import com.beta.cls.angelcar.manager.AllMessageAsync;
+import com.beta.cls.angelcar.util.BlogMessage;
+import com.beta.cls.angelcar.util.PostBlogArrayMessage;
+import com.beta.cls.angelcar.util.PostBlogMessage;
 
 import org.parceler.Parcels;
 
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import butterknife.Bind;

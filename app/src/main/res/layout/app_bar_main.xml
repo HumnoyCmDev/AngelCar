@@ -12,11 +12,12 @@
         android:layout_height="wrap_content"
         android:theme="@style/AppTheme.AppBarOverlay">
 
+            <!--android:background="?attr/colorPrimary"-->
         <android.support.v7.widget.Toolbar
             android:id="@+id/toolbar_top"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
+            android:background="#001938"
             app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
             app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar" />
 
@@ -26,7 +27,7 @@
             android:layout_height="@dimen/tablayout_height"
             app:tabGravity="fill"
             app:tabMode="scrollable"
-            android:background="#FFC11E" />
+            android:background="#FDF1C0" />
 
     </android.support.design.widget.AppBarLayout>
 

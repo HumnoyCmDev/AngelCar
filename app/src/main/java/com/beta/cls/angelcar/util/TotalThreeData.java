@@ -9,7 +9,7 @@ package com.beta.cls.angelcar.util;
 
 
 import java.util.List;
-
+@Deprecated
 public class TotalThreeData {
 
     String cardetail_sub;

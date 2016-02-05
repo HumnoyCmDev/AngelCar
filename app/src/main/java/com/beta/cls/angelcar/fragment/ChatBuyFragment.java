@@ -14,11 +14,11 @@ import android.widget.ListView;
 import com.beta.cls.angelcar.Adapter.MessageItemAdapter;
 import com.beta.cls.angelcar.R;
 import com.beta.cls.angelcar.activity.ChatMessageActivity;
-import com.beta.cls.angelcar.api.model.BlogMessage;
+import com.beta.cls.angelcar.util.BlogMessage;
 import com.beta.cls.angelcar.interfaces.AsyncResult;
-import com.beta.cls.angelcar.api.model.LoadMessageAsync;
-import com.beta.cls.angelcar.api.model.PostBlogArrayMessage;
-import com.beta.cls.angelcar.manager.BusProvider;
+import com.beta.cls.angelcar.manager.LoadMessageAsync;
+import com.beta.cls.angelcar.util.PostBlogArrayMessage;
+import com.beta.cls.angelcar.manager.bus.BusProvider;
 import com.google.gson.Gson;
 import com.hndev.library.util.MessageAPI;
 import com.squareup.otto.Subscribe;
@@ -142,10 +142,6 @@ public class ChatBuyFragment extends Fragment {
 
     }
 
-//    @Produce
-//    public BlogMessage postEvent(){
-//        return blogMessage;
-//    }
 
     @Override
     public void onResume() {

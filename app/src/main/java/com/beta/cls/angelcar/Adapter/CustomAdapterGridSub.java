@@ -10,7 +10,7 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.beta.cls.angelcar.R;
-import com.beta.cls.angelcar.manager.CarDataType;
+import com.beta.cls.angelcar.util.CarDataType;
 
 import java.util.List;
 

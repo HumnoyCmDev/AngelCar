@@ -1,4 +1,4 @@
-package com.beta.cls.angelcar.manager;
+package com.beta.cls.angelcar.util;
 
 import com.google.gson.annotations.SerializedName;
 

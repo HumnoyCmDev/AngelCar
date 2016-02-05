@@ -23,7 +23,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
-import com.beta.cls.angelcar.manager.CarDataType;
+import com.beta.cls.angelcar.util.CarDataType;
 import com.beta.cls.angelcar.Adapter.CustomAdapterGridSub;
 import com.beta.cls.angelcar.R;
 import com.beta.cls.angelcar.util.TotalCarData;

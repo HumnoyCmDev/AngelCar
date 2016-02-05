@@ -9,14 +9,15 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.telephony.TelephonyManager;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.beta.cls.angelcar.Adapter.ImageAdapter;
 import com.beta.cls.angelcar.Adapter.MultipleChatAdapter;
 import com.beta.cls.angelcar.R;
-import com.beta.cls.angelcar.api.model.BlogMessage;
-import com.beta.cls.angelcar.manager.FeedPostItem;
+import com.beta.cls.angelcar.util.BlogMessage;
+import com.beta.cls.angelcar.util.FeedPostItem;
 
 import org.parceler.Parcels;
 
@@ -25,6 +26,7 @@ import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 public class DetailCarActivity extends AppCompatActivity {
 
@@ -38,6 +40,10 @@ public class DetailCarActivity extends AppCompatActivity {
 
     @Bind(R.id.activity_detail_tvCarType)
     TextView tvCarType;
+
+    @Bind(R.id.recycler_view_chat_layout_input_chat)
+    EditText input_chat;
+
 
 
     @Override
@@ -57,10 +63,11 @@ public class DetailCarActivity extends AppCompatActivity {
         initData();
 
     }
-
+    List<BlogMessage> blogMessages;
+    MultipleChatAdapter adapter;
     private void initData() {
 
-        List<BlogMessage> blogMessages = new ArrayList<>();
+        blogMessages = new ArrayList<>();
         BlogMessage b = new BlogMessage();
         b.setMessageid("111");
         b.setMessagecarid("111");
@@ -84,8 +91,10 @@ public class DetailCarActivity extends AppCompatActivity {
         }
 
         LinearLayoutManager manager = new LinearLayoutManager(this);
+//        manager.setReverseLayout(true);
+        manager.setStackFromEnd(true);
         recyclerView.setLayoutManager(manager);
-        MultipleChatAdapter adapter = new MultipleChatAdapter(
+        adapter = new MultipleChatAdapter(
                 DetailCarActivity.this,
                 blogMessages,"shop");
         recyclerView.setAdapter(adapter);
@@ -104,6 +113,22 @@ public class DetailCarActivity extends AppCompatActivity {
         }
 
     }
+
+    @OnClick(R.id.recycler_view_chat_layout_button_send)
+    public void onClickButtonSend(){
+        BlogMessage b = new BlogMessage();
+        b.setMessageid("111");
+        b.setMessagecarid("111");
+        b.setMessagefromuser("111");
+        b.setMessagetext(input_chat.getText().toString());
+        b.setDisplayname("11111");
+        b.setMessageby("user");
+        b.setUserprofileimage("11111");
+        blogMessages.add(b);
+        adapter.notifyDataSetChanged();
+    }
+
+
 
 
 }

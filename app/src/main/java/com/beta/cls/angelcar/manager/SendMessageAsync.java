@@ -1,4 +1,4 @@
-package com.beta.cls.angelcar.api.model;
+package com.beta.cls.angelcar.manager;
 
 import android.os.AsyncTask;
 

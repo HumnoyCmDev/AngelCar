@@ -1,4 +1,4 @@
-package com.beta.cls.angelcar.api.model;
+package com.beta.cls.angelcar.util;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;

@@ -1,7 +1,9 @@
-package com.beta.cls.angelcar.api.model;
+package com.beta.cls.angelcar.manager;
 
 import android.os.AsyncTask;
 
+import com.beta.cls.angelcar.util.PostBlogArrayMessage;
+import com.beta.cls.angelcar.util.PostBlogMessage;
 import com.google.gson.Gson;
 import com.hndev.library.api.MessageAPi;
 import com.squareup.okhttp.OkHttpClient;
