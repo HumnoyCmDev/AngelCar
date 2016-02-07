@@ -10,6 +10,7 @@ import android.widget.TextView;
 import com.beta.cls.angelcar.R;
 import com.beta.cls.angelcar.util.BlogMessage;
 import com.github.siyamed.shapeimageview.CircularImageView;
+import com.hndev.library.view.UIMessage;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -112,7 +113,7 @@ public class MultipleListViewChatAdapter extends BaseAdapter {
     // View Holder
     public class TextLeftViewHolder {
         @Bind(R.id.list_view_item_chat_left_text)
-        TextView textViewChat;
+        UIMessage textViewChat;
 
         @Bind(R.id.list_view_item_chat_left_image)
         CircularImageView ic;
@@ -124,7 +125,7 @@ public class MultipleListViewChatAdapter extends BaseAdapter {
 
     public class TextRightViewHolder {
         @Bind(R.id.list_view_item_chat_right_text)
-        TextView textViewChat;
+        UIMessage textViewChat;
 
         @Bind(R.id.list_view_item_chat_right_image)
         CircularImageView ic;

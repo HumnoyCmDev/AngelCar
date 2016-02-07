@@ -3,6 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
         android:padding="@dimen/list_view_item_chat_padding_layout"
+        android:gravity="bottom"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="horizontal">
@@ -16,12 +17,26 @@
             app:siBorderWidth="1dp"/>
             <!--app:siBorderColor="@android:color/black"/>-->
 
-        <TextView
+        <!--<TextView-->
+            <!--android:id="@+id/list_view_item_chat_left_text"-->
+            <!--android:background="@drawable/bg_message_grey"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:textColor="@android:color/black"-->
+            <!--android:text="@string/sample_test_text_chat" />-->
+
+        <com.hndev.library.view.UIMessage
             android:id="@+id/list_view_item_chat_left_text"
-            android:background="@drawable/bg_message_grey"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@android:color/black"
-            android:text="@string/sample_test_text_chat" />
+            app:text="@string/sample_test_text_chat"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"/>
+
+        <Button
+            android:visibility="invisible"
+            android:layout_weight="0.3"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"/>
+
 
 </LinearLayout>
