@@ -87,7 +87,7 @@ public class MultipleListViewChatAdapter extends BaseAdapter {
         holder.textViewChat.setText(message.getMessagetext());
         Picasso.with(context)
                 .load(message.getUserprofileimage())
-                .error(R.drawable.me)
+                .error(R.drawable.ic_hndeveloper)
                 .into(holder.ic);
         return view;
     }
@@ -105,7 +105,7 @@ public class MultipleListViewChatAdapter extends BaseAdapter {
         holder.textViewChat.setText(message.getMessagetext());
         Picasso.with(context)
                 .load(message.getUserprofileimage())
-                .error(R.drawable.me)
+                .error(R.drawable.ic_hndeveloper)
                 .into(holder.ic);
         return view;
     }

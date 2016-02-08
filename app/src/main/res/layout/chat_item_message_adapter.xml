@@ -11,7 +11,7 @@
         android:id="@+id/chat_item_message_image"
         android:layout_width="@dimen/image_profile_size"
         android:layout_height="@dimen/image_profile_size"
-        android:src="@drawable/me"
+        android:src="@drawable/ic_hndeveloper"
         app:siBorderWidth="1dp" />
 
     <LinearLayout

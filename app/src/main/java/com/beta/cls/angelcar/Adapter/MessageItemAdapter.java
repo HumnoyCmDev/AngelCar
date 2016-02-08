@@ -69,7 +69,7 @@ public class MessageItemAdapter extends BaseAdapter{
 
         Picasso.with(mContext)
                 .load(message.getUserprofileimage())
-                .error(R.drawable.me)
+                .error(R.drawable.ic_hndeveloper)
                 .into(holder.icon);
 
         holder.txtDisPlayName.setText(message.getDisplayname());

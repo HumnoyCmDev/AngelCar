@@ -44,7 +44,7 @@
             android:layout_width="@dimen/list_view_item_chat_image_profile_size"
             android:layout_height="@dimen/list_view_item_chat_image_profile_size"
             android:layout_margin="3dp"
-            android:src="@drawable/me"
+            android:src="@drawable/ic_hndeveloper"
             app:siBorderWidth="1dp" />
     </LinearLayout>
 

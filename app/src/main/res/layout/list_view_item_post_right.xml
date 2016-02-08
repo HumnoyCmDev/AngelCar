@@ -68,7 +68,7 @@
         <com.github.siyamed.shapeimageview.CircularImageView
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:src="@drawable/me"
+            android:src="@drawable/ic_hndeveloper"
             app:siBorderColor="@android:color/black"
             app:siBorderWidth="1dp" />
     </RelativeLayout>

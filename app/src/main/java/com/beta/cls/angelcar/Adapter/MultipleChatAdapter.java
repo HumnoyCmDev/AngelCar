@@ -62,7 +62,7 @@ public class MultipleChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 ViewHolderLeft holderLeft = (ViewHolderLeft) holder;
                 Picasso.with(context)
                         .load(blogMessage.getUserprofileimage())
-                        .error(R.drawable.me)
+                        .error(R.drawable.ic_hndeveloper)
                         .into(holderLeft.ic);
                 holderLeft.textViewChat.setText(blogMessage.getMessagetext());
                 break;
@@ -70,7 +70,7 @@ public class MultipleChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 ViewHolderRight holderRight = (ViewHolderRight) holder;
                 Picasso.with(context)
                         .load(blogMessage.getUserprofileimage())
-                        .error(R.drawable.me)
+                        .error(R.drawable.ic_hndeveloper)
                         .into(holderRight.ic);
                 holderRight.textViewChat.setText(blogMessage.getMessagetext());
                 break;
