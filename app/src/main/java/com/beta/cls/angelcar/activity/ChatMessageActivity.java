@@ -155,7 +155,7 @@ public class ChatMessageActivity extends AppCompatActivity{
     }
 
     private void sendMessage(String message){
-        if (!message.equals("")) {
+        if (message.equals("")) {
             MessageAPi aPi = new MessageAPi.SendMessageBuilder()
                     .setId("26")
                     .setIdUser(blogMessage.getMessagefromuser())
