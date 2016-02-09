@@ -34,6 +34,7 @@
             android:id="@+id/list_view_item_chat_right_text"
             app:text="@string/sample_test_text_chat"
             app:colorCardMessage="@color/colorAccent"
+            app:textSize="14sp"
             android:layout_weight="1"
             android:layout_width="0dp"
             android:layout_height="wrap_content"/>
