@@ -5,6 +5,7 @@ import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.widget.Toast;
 
 import com.beta.cls.angelcar.util.PostBlogArrayMessage;
 import com.beta.cls.angelcar.manager.bus.BusProvider;
@@ -31,18 +32,32 @@ public class RealTimeBroadCast extends BroadcastReceiver {
 
     private void loadData() {
 
-        MessageAPi aPi = new MessageAPi.ViewMessageInBuilder()
-                .setMessage("26").build();
-        new ConnectAPi(aPi, new Callback() {
-            @Override
-            public void onSucceed(String s, boolean isSucceed) {
-                Gson gson = new Gson();
-                blogArrayMessage = gson.fromJson(s, PostBlogArrayMessage.class);
-                BusProvider.getInstance().post(getMessageFromBroadCast());
-                startAlarm(3000);
+        Boolean isInternetPresent = false;
+        ConnectionDetector cd;
+        cd = new ConnectionDetector(context);
+        isInternetPresent = cd.isConnectingToInternet();
 
-            }
-        });
+        // check for Internet status
+        if (isInternetPresent) {
+            MessageAPi aPi = new MessageAPi.ViewMessageInBuilder()
+                    .setMessage("26").build();
+            new ConnectAPi(aPi, new Callback() {
+                @Override
+                public void onSucceed(String s, boolean isSucceed) {
+                    Gson gson = new Gson();
+                    blogArrayMessage = gson.fromJson(s, PostBlogArrayMessage.class);
+                    BusProvider.getInstance().post(getMessageFromBroadCast());
+                    startAlarm(3000);
+                    /*Toast.makeText(context, "Active BroadCast",
+                            Toast.LENGTH_LONG).show();*/
+
+                }
+            });
+        } else {
+            /*Toast.makeText(context, "ไม่มีการเชื่อมต่ออินเทอร์เน็ต",
+            Toast.LENGTH_LONG).show();*/
+        }
+
 
     }
 
