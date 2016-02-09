@@ -116,4 +116,5 @@ public class ListViewPostAdapter extends BaseAdapter {
             ButterKnife.bind(this,v);
         }
     }
+//    ...
 }
