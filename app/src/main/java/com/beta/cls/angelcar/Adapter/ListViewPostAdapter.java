@@ -14,6 +14,7 @@ import android.widget.TextView;
 
 import com.beta.cls.angelcar.R;
 import com.beta.cls.angelcar.util.FeedPostItem;
+import com.hndev.library.view.UIPost;
 
 import java.util.List;
 
@@ -62,7 +63,7 @@ public class ListViewPostAdapter extends BaseAdapter {
             case 1: view = inFlaterLayoutLeft(view,parent,postItem);
                 break;
         }
-        return view;//inFlaterLayoutLeft(view,parent,postItem);
+        return view;
     }
 
     private View inFlaterLayoutLeft(View view, ViewGroup parent,FeedPostItem postItem){
@@ -70,17 +71,16 @@ public class ListViewPostAdapter extends BaseAdapter {
         if(view != null) {
             holder = (ViewHolderItemLeft) view.getTag();
         }else {
-            view = mInflater.inflate(R.layout.list_view_item_post_left, parent, false);
+            view = mInflater.inflate(R.layout.item_post_left, parent, false);
             holder = new ViewHolderItemLeft(view);
             view.setTag(holder);
         }
-        //coding
-        holder.textView.setText(Html.fromHtml(
+        holder.uiPost.setDetails(
                 "" + postItem.getCartype() + " " +
                         "" + postItem.getCarTypeSub() + " " +
                         "" + postItem.getCarDetailSub() + " " +
-                        "" + postItem.getCardetail() + " "
-        ));
+                        "" + postItem.getCardetail());
+
         return view;
     }
 
@@ -89,29 +89,29 @@ public class ListViewPostAdapter extends BaseAdapter {
         if(view != null) {
             holder = (ViewHolderItemRight) view.getTag();
         }else {
-            view = mInflater.inflate(R.layout.list_view_item_post_right, parent, false);
+            view = mInflater.inflate(R.layout.item_post_right, parent, false);
             holder = new ViewHolderItemRight(view);
             view.setTag(holder);
         }
-        //coding
-        holder.textView.setText(Html.fromHtml(
+        holder.uiPost.setDetails(
                 "" + postItem.getCartype() + " " +
                         "" + postItem.getCarTypeSub() + " " +
                         "" + postItem.getCarDetailSub() + " " +
-                        "" + postItem.getCardetail() + " "
-        ));
+                        "" + postItem.getCardetail());
         return view;
     }
 
     public class ViewHolderItemLeft {
-        @Bind(R.id.list_view_item_post) TextView textView;
+        @Bind(R.id.item_post)
+        UIPost uiPost;
         public ViewHolderItemLeft(View v) {
             ButterKnife.bind(this,v);
         }
     }
 
     public class ViewHolderItemRight {
-        @Bind(R.id.list_view_item_post) TextView textView;
+        @Bind(R.id.item_post)
+        UIPost uiPost;
         public ViewHolderItemRight(View v) {
             ButterKnife.bind(this,v);
         }
