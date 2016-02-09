@@ -16,7 +16,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="6dp"
-            android:textSize="13dp"
+            android:textSize="@dimen/text_all_page"
             android:textColor="#ffffff"
             android:text="ทั้งหมด 10,000 คัน"
             android:textAlignment="center"
@@ -24,7 +24,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="13dp"
+            android:textSize="@dimen/text_all_page"
             android:fontFamily=""
             android:textColor="#ffffff"
             android:textAlignment="center"
@@ -34,7 +34,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="13dp"
+            android:textSize="@dimen/text_all_page"
             android:textColor="#ffffff"
             android:textAlignment="center"
             android:paddingLeft="5dp"
