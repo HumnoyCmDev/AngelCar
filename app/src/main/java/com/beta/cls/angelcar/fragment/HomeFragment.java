@@ -12,8 +12,12 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 
 
 import com.beta.cls.angelcar.Adapter.ListViewPostAdapter;
@@ -37,6 +41,9 @@ public class HomeFragment extends Fragment {
 
     @Bind(R.id.list_view) ListView listView;
     @Bind(R.id.swipe_container) SwipeRefreshLayout mSwipeRefresh;
+    @Bind(R.id.ctFilter) RelativeLayout ctFilter;
+    @Bind(R.id.btFilter) ImageView btFilter;
+    Animation animDown,animUp;
 
     private static final String TAG = "HomeFragment";
 
@@ -104,7 +111,49 @@ public class HomeFragment extends Fragment {
 
             }
         });
+        animDown = AnimationUtils.loadAnimation(getActivity(), R.anim.animation_slide_down);
+        animUp = AnimationUtils.loadAnimation(getActivity(), R.anim.animation_slide_up);
+        animDown.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+            }
 
+            @Override
+            public void onAnimationEnd(Animation animation) {
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+            }
+        });
+        animUp.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+        btFilter.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (ctFilter.getVisibility() == View.GONE) {
+                    ctFilter.setVisibility(View.VISIBLE);
+                    ctFilter.startAnimation(animDown);
+                } else {
+                    ctFilter.setVisibility(View.GONE);
+                    ctFilter.startAnimation(animUp);
+                }
+            }
+        });
     }
 
     void loadData(){
