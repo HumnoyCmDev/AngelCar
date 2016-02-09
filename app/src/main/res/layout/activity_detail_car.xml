@@ -258,8 +258,8 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="90dp"
                                 android:background="@android:color/darker_gray">
+
                             </FrameLayout>
-                            
                         </LinearLayout>
 
                     </LinearLayout>
@@ -271,6 +271,7 @@
 
         <!--Recycle-->
         <include layout="@layout/recycler_chat_layout" />
+
 
     </LinearLayout>
 
