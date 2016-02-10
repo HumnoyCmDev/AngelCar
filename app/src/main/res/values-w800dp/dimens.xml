@@ -12,6 +12,6 @@
     <dimen name="list_view_item_chat_image_profile_size">48dp</dimen>
     <dimen name="list_view_item_chat_padding_layout">10dp</dimen>
     <dimen name="list_view_item_post_Image_size">64dp</dimen>
-    <dimen name="text_all_page">19sp</dimen>
+    <dimen name="text_all_page">16sp</dimen>
 
 </resources>

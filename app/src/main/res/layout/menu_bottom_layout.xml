@@ -10,14 +10,14 @@
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
-        android:background="@drawable/ic_tab_follow" />
+        android:src="@drawable/ic_tab_follow" />
 
     <ImageView
         android:id="@+id/menu_bottom_chat"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
-        android:background="@drawable/ic_tab_mail" />
+        android:src="@drawable/ic_tab_mail" />
 
 
     <ImageView
@@ -25,7 +25,7 @@
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
-        android:background="@drawable/ic_tab_shop" />
+        android:src="@drawable/ic_tab_shop" />
 
 
     <ImageView
@@ -33,7 +33,7 @@
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
-        android:background="@drawable/ic_tab_profile" />
+        android:src="@drawable/ic_tab_profile" />
 
 
     <ImageView
@@ -41,6 +41,6 @@
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
-        android:background="@drawable/ic_tab_sug" />
+        android:src="@drawable/ic_tab_sug" />
 
 </LinearLayout>
