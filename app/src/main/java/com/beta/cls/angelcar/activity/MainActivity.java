@@ -24,7 +24,6 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 public class MainActivity extends AppCompatActivity {
-    public static FloatingActionButton fabBtn;
 
     @Bind(R.id.toolbar_top) Toolbar toolbar;
     @Bind(R.id.tabLayout) TabLayout tabLayout;
@@ -40,7 +39,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
-        initFabButton(); //control Fab button by Q
         initToolbars();
         initViewPager();
         initTabIcons(); //ตั้งค่า tab
@@ -50,16 +48,6 @@ public class MainActivity extends AppCompatActivity {
     private void initViewPager() {
         viewPager.setAdapter(new MainViewPagerAdapter(getSupportFragmentManager()));
         tabLayout.setupWithViewPager(viewPager);
-    }
-
-    private void initFabButton() {
-        fabBtn = (FloatingActionButton) findViewById(R.id.fabBtn);
-        fabBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                viewPager.setCurrentItem(viewPager.getCurrentItem() + 1);
-            }
-        });
     }
 
     private void initTabIcons() {

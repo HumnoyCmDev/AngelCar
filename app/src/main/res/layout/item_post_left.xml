@@ -10,7 +10,7 @@
         app:position="Left"
         app:textTitle="รถเหมือนใหม่ สภาพสวย ใช้งานน้อย"
         app:textDetails="Detailssssssssssss"
-        app:colorCardBackground="#7300ff"
+        app:colorCardBackground="#009fa7"
         app:colorTitle="@android:color/white"
         app:colorDetail="@android:color/white"
         android:layout_width="wrap_content"

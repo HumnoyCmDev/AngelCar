@@ -28,6 +28,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 android:minHeight="?attr/actionBarSize"
+                android:visibility="gone"
                 app:layout_collapseMode="pin"
                 app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
                 app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar" />
@@ -257,9 +258,8 @@
                             <FrameLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="90dp"
-                                android:background="@android:color/darker_gray">
-                            </FrameLayout>
-                            
+                                android:background="@android:color/darker_gray"></FrameLayout>
++
                         </LinearLayout>
 
                     </LinearLayout>
