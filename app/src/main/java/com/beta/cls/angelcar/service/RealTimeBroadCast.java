@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.widget.Toast;
 
+import com.beta.cls.angelcar.manager.*;
 import com.beta.cls.angelcar.util.PostBlogArrayMessage;
 import com.beta.cls.angelcar.manager.bus.BusProvider;
 import com.google.gson.Gson;
@@ -33,9 +34,7 @@ public class RealTimeBroadCast extends BroadcastReceiver {
     private void loadData() {
 
         Boolean isInternetPresent = false;
-        ConnectionDetector cd;
-        cd = new ConnectionDetector(context);
-        isInternetPresent = cd.isConnectingToInternet();
+        isInternetPresent = ConnectionDetector.getInstance().isConnectingToInternet();
 
         // check for Internet status
         if (isInternetPresent) {

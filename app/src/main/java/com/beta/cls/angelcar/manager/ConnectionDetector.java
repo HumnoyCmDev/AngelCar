@@ -1,22 +1,28 @@
-package com.beta.cls.angelcar.service;
+package com.beta.cls.angelcar.manager;
 
-/**
- * Created by AbadThiinG on 9/2/2559.
- */
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
+/**
+ * Created by humnoy on 5/2/59.
+ */
 public class ConnectionDetector {
 
-    private Context _context;
+    private static ConnectionDetector instance;
 
-    public ConnectionDetector(Context context){
-        this._context = context;
+    public static ConnectionDetector getInstance() {
+        if (instance == null)
+            instance = new ConnectionDetector();
+        return instance;
+    }
+    private Context mContext;
+    private ConnectionDetector() {
+        mContext = Contextor.getInstance().getContext();
     }
 
     public boolean isConnectingToInternet(){
-        ConnectivityManager connectivity = (ConnectivityManager) _context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        ConnectivityManager connectivity = (ConnectivityManager) mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
         if (connectivity != null)
         {
             NetworkInfo[] info = connectivity.getAllNetworkInfo();
