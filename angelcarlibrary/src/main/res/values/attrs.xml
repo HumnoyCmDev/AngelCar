@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="UIMessage">
+        <attr name="colorCardMessage" format="color"/>
+        <!--<attr name="cardElevation" format="dimension"/>-->
+        <!--<attr name="contentPadding" format="dimension"/>-->
+        <!--<attr name="cardCornerRadius" format="dimension"/>-->
+        <attr name="textColor" format="color"/>
+        <attr name="textSize" format="dimension"/>
+        <attr name="text" format="string"/>
+    </declare-styleable>
+
+    <declare-styleable name="UIPost">
+        <attr name="position" format="enum">
+            <enum name="Left" value="0"/>
+            <enum name="Right" value="1"/>
+        </attr>
+        <attr name="colorBackground" format="color"/>
+        <attr name="colorTitle" format="color"/>
+        <attr name="colorDetail" format="color"/>
+        <attr name="textTitle" format="string"/>
+        <attr name="textDetails" format="string"/>
+        <attr name="radius" format="dimension"/>
+    </declare-styleable>
+</resources>

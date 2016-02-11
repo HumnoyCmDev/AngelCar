@@ -4,17 +4,14 @@ package com.beta.cls.angelcar.Adapter;
  * Created by ABaD on 12/15/2015.
  */
 import android.content.Context;
-import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
-import android.widget.TextView;
-
 import com.beta.cls.angelcar.R;
 import com.beta.cls.angelcar.util.FeedPostItem;
-import com.hndev.library.view.UIPost;
+import com.hndev.library.view.AngelCarPost;
 
 import java.util.List;
 
@@ -75,7 +72,7 @@ public class ListViewPostAdapter extends BaseAdapter {
             holder = new ViewHolderItemLeft(view);
             view.setTag(holder);
         }
-        holder.uiPost.setDetails(
+        holder.angelCarPost.setDetails(
                 "" + postItem.getCartype() + " " +
                         "" + postItem.getCarTypeSub() + " " +
                         "" + postItem.getCarDetailSub() + " " +
@@ -93,7 +90,7 @@ public class ListViewPostAdapter extends BaseAdapter {
             holder = new ViewHolderItemRight(view);
             view.setTag(holder);
         }
-        holder.uiPost.setDetails(
+        holder.angelCarPost.setDetails(
                 "" + postItem.getCartype() + " " +
                         "" + postItem.getCarTypeSub() + " " +
                         "" + postItem.getCarDetailSub() + " " +
@@ -103,7 +100,7 @@ public class ListViewPostAdapter extends BaseAdapter {
 
     public class ViewHolderItemLeft {
         @Bind(R.id.item_post)
-        UIPost uiPost;
+        AngelCarPost angelCarPost;
         public ViewHolderItemLeft(View v) {
             ButterKnife.bind(this,v);
         }
@@ -111,7 +108,7 @@ public class ListViewPostAdapter extends BaseAdapter {
 
     public class ViewHolderItemRight {
         @Bind(R.id.item_post)
-        UIPost uiPost;
+        AngelCarPost angelCarPost;
         public ViewHolderItemRight(View v) {
             ButterKnife.bind(this,v);
         }

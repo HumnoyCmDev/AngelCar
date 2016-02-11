@@ -4,15 +4,16 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <com.hndev.library.view.UIPost
+    <com.hndev.library.view.AngelCarPost
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/item_post"
         app:position="Left"
-        app:textTitle="รถเหมือนใหม่ สภาพสวย ใช้งานน้อย"
-        app:textDetails="Detailssssssssssss"
-        app:colorCardBackground="#009fa7"
+        app:textTitle="Title Title Title Title Title Title Title Title Title Title"
+        app:textDetails="DetailssssssssssssDetailssssssssssssDetailssssssssssssDetailssssssssssssDetailssssssssssssDetailss"
+        app:colorBackground="#f8cc14"
         app:colorTitle="@android:color/white"
         app:colorDetail="@android:color/white"
+        app:radius="30dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
