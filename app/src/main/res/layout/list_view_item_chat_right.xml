@@ -15,15 +15,6 @@
         android:gravity="bottom|right"
         android:padding="@dimen/list_view_item_chat_padding_layout">
 
-        <!--<TextView-->
-            <!--android:id="@+id/list_view_item_chat_right_text"-->
-            <!--android:layout_width="0dp"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_weight="1"-->
-            <!--android:background="@drawable/bg_message_blue"-->
-            <!--android:text="@string/sample_test_text_chat"-->
-            <!--android:textColor="@android:color/white" />-->
-
         <Button
             android:visibility="invisible"
             android:layout_weight="0.3"

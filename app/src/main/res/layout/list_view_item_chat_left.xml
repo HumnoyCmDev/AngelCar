@@ -15,16 +15,7 @@
             android:src="@drawable/ic_hndeveloper"
             android:layout_margin="3dp"
             app:siBorderWidth="1dp"/>
-            <!--app:siBorderColor="@android:color/black"/>-->
-
-        <!--<TextView-->
-            <!--android:id="@+id/list_view_item_chat_left_text"-->
-            <!--android:background="@drawable/bg_message_grey"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:textColor="@android:color/black"-->
-            <!--android:text="@string/sample_test_text_chat" />-->
-
++
         <com.hndev.library.view.UIMessage
             android:id="@+id/list_view_item_chat_left_text"
             app:text="@string/sample_test_text_chat"
