@@ -163,7 +163,7 @@ public class HomeFragment extends Fragment {
                 Gson gson = new Gson();
                 FeedBlogJson blogJson = gson.fromJson(s,FeedBlogJson.class);
                 postItems = blogJson.getRows();
-                ListViewPostAdapter adapter = new ListViewPostAdapter(getActivity(),blogJson.getRows());
+                ListViewPostAdapter adapter = new ListViewPostAdapter(blogJson.getRows());
                 listView.setAdapter(adapter);
             }
             @Override

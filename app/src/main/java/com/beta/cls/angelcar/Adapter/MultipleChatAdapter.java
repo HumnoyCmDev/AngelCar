@@ -5,13 +5,10 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import com.beta.cls.angelcar.R;
 import com.beta.cls.angelcar.util.BlogMessage;
-import com.github.siyamed.shapeimageview.CircularImageView;
-import com.hndev.library.view.UIMessage;
-import com.squareup.picasso.Picasso;
+import com.hndev.library.view.AngelCarMessage;
 
 import java.util.List;
 
@@ -44,10 +41,10 @@ public class MultipleChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         switch (viewType){
             case 0:
-                View viewLeft = inflater.inflate(R.layout.list_view_item_chat_left,parent,false);
+                View viewLeft = inflater.inflate(R.layout.item_chat_left,parent,false);
                 return new ViewHolderLeft(viewLeft);
             default:
-                View viewRight = inflater.inflate(R.layout.list_view_item_chat_right,parent,false);
+                View viewRight = inflater.inflate(R.layout.item_chat_right,parent,false);
                 return new ViewHolderRight(viewRight);
         }
     }
@@ -60,30 +57,21 @@ public class MultipleChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         switch (holder.getItemViewType()){
             case 0 :
                 ViewHolderLeft holderLeft = (ViewHolderLeft) holder;
-                Picasso.with(context)
-                        .load(blogMessage.getUserprofileimage())
-                        .error(R.drawable.ic_hndeveloper)
-                        .into(holderLeft.ic);
-                holderLeft.textViewChat.setText(blogMessage.getMessagetext());
+                holderLeft.angelCarMessage.setMessage(blogMessage.getMessagetext());
+                holderLeft.angelCarMessage.setIconProfile(blogMessage.getUserprofileimage());
                 break;
             case 1:
                 ViewHolderRight holderRight = (ViewHolderRight) holder;
-                Picasso.with(context)
-                        .load(blogMessage.getUserprofileimage())
-                        .error(R.drawable.ic_hndeveloper)
-                        .into(holderRight.ic);
-                holderRight.textViewChat.setText(blogMessage.getMessagetext());
+                holderRight.angelCarMessage.setMessage(blogMessage.getMessagetext());
+                holderRight.angelCarMessage.setIconProfile(blogMessage.getUserprofileimage());
                 break;
         }
 
     }
 
     public class ViewHolderLeft extends RecyclerView.ViewHolder {
-        @Bind(R.id.list_view_item_chat_left_text)
-        UIMessage textViewChat;
-        @Bind(R.id.list_view_item_chat_left_image)
-        CircularImageView ic;
-
+        @Bind(R.id.item_chat_left)
+        AngelCarMessage angelCarMessage;
         public ViewHolderLeft(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
@@ -91,11 +79,8 @@ public class MultipleChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     }
 
     public class ViewHolderRight extends RecyclerView.ViewHolder {
-        @Bind(R.id.list_view_item_chat_right_text)
-        UIMessage textViewChat;
-        @Bind(R.id.list_view_item_chat_right_image)
-        CircularImageView ic;
-
+        @Bind(R.id.item_chat_right)
+        AngelCarMessage angelCarMessage;
         public ViewHolderRight(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);

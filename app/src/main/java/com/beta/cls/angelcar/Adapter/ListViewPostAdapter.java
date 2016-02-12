@@ -20,13 +20,9 @@ import butterknife.ButterKnife;
 
 public class ListViewPostAdapter extends BaseAdapter {
 
-    private LayoutInflater mInflater;
     private List<FeedPostItem> postItem;
 
-    private static final String TAG = "ListViewPostAdapter";
-
-    public ListViewPostAdapter(Context context,List<FeedPostItem> postItem) {
-        mInflater = LayoutInflater.from(context);
+    public ListViewPostAdapter(List<FeedPostItem> postItem) {
         this.postItem = postItem;
     }
 
@@ -68,7 +64,7 @@ public class ListViewPostAdapter extends BaseAdapter {
         if(view != null) {
             holder = (ViewHolderItemLeft) view.getTag();
         }else {
-            view = mInflater.inflate(R.layout.item_post_left, parent, false);
+            view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_post_left, parent, false);
             holder = new ViewHolderItemLeft(view);
             view.setTag(holder);
         }
@@ -86,7 +82,7 @@ public class ListViewPostAdapter extends BaseAdapter {
         if(view != null) {
             holder = (ViewHolderItemRight) view.getTag();
         }else {
-            view = mInflater.inflate(R.layout.item_post_right, parent, false);
+            view =LayoutInflater.from(parent.getContext()).inflate(R.layout.item_post_right, parent, false);
             holder = new ViewHolderItemRight(view);
             view.setTag(holder);
         }

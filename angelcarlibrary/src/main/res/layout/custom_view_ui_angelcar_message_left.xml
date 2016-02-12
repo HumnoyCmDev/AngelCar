@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="bottom"
+    android:padding="5dp">
+
+    <com.github.siyamed.shapeimageview.CircularImageView
+        android:id="@+id/custom_view_iu_angelcar_icon_profile"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:src="@drawable/ic_hndeveloper" />
+
+    <LinearLayout
+        android:id="@+id/custom_view_iu_angelcar_background"
+        android:layout_marginLeft="5dp"
+        android:padding="2dp"
+        android:orientation="horizontal"
+        android:background="@drawable/background_chat"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/custom_view_iu_angelcar_message"
+            android:padding="5dp"
+            android:textSize="14sp"
+            android:textColor="@android:color/white"
+            android:text="HiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHi"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
+
+
+</LinearLayout>

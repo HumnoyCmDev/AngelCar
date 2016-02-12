@@ -25,7 +25,7 @@ import com.squareup.picasso.Picasso;
 /**
  * Created by humnoy on 6/2/59.
  */
-public class AngelCarPost extends BaseCustomViewGroup{
+public class AngelCarPost extends BaseCustomViewGroup {
 
     private RelativeLayout background;
 
@@ -52,14 +52,14 @@ public class AngelCarPost extends BaseCustomViewGroup{
 
     public AngelCarPost(Context context, AttributeSet attrs) {
         super(context, attrs);
-        initialize(attrs,0,0);
+        initialize(attrs, 0, 0);
         initInflater();
         initInstance();
     }
 
     public AngelCarPost(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        initialize(attrs,defStyleAttr,0);
+        initialize(attrs, defStyleAttr, 0);
         initInflater();
         initInstance();
     }
@@ -67,16 +67,16 @@ public class AngelCarPost extends BaseCustomViewGroup{
     @TargetApi(21)
     public AngelCarPost(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
-        initialize(attrs,defStyleAttr,defStyleRes);
+        initialize(attrs, defStyleAttr, defStyleRes);
         initInflater();
         initInstance();
     }
 
     private void initInflater() {
         if (position == 0) {
-            inflate(getContext(), R.layout.custom_view_ui_post_left, this);
-        }else {
-            inflate(getContext(), R.layout.custom_view_ui_post_right, this);
+            inflate(getContext(), R.layout.custom_view_ui_angelcar_post_left, this);
+        } else {
+            inflate(getContext(), R.layout.custom_view_ui_angelcar_post_right, this);
         }
     }
 
@@ -97,82 +97,87 @@ public class AngelCarPost extends BaseCustomViewGroup{
         setTextColorTitle(colorTextTiele);
         setTextColorDetail(colorTextDetail);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN){
-            background.setBackground(createBackground(colorBackground,radius));
-        }else {
-            background.setBackgroundDrawable(createBackground(colorBackground,radius));
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            background.setBackground(createBackground(colorBackground, radius));
+        } else {
+            background.setBackgroundDrawable(createBackground(colorBackground, radius));
         }
 
     }
-    private void initialize(AttributeSet attrs, int defStyleAttr, int defStyleRes) {
-        TypedArray a = getContext().getTheme().obtainStyledAttributes(attrs, R.styleable.UIPost,defStyleAttr,defStyleRes);
 
+    private void initialize(AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+        TypedArray a = getContext().getTheme().obtainStyledAttributes(
+                attrs,
+                R.styleable.AngelCarPost,
+                defStyleAttr,
+                defStyleRes);
 
         try {
-            colorBackground = a.getColor(R.styleable.UIPost_colorBackground, Color.rgb(248,204,20));
-            position = a.getInt(R.styleable.UIPost_position,0);
-            colorTextTiele = a.getColor(R.styleable.UIPost_colorTitle,Color.BLACK);
-            colorTextDetail = a.getColor(R.styleable.UIPost_colorDetail,Color.BLACK);
-            strTitle = a.getString(R.styleable.UIPost_textTitle);
-            strDetails = a.getString(R.styleable.UIPost_textDetails);
+            colorBackground = a.getColor(R.styleable.AngelCarPost_colorBackground, Color.rgb(248, 204, 20));
+            position = a.getInt(R.styleable.AngelCarPost_position, 0);
+            colorTextTiele = a.getColor(R.styleable.AngelCarPost_colorTitle, Color.BLACK);
+            colorTextDetail = a.getColor(R.styleable.AngelCarPost_colorDetail, Color.BLACK);
+            strTitle = a.getString(R.styleable.AngelCarPost_textTitle);
+            strDetails = a.getString(R.styleable.AngelCarPost_textDetails);
 
-            radius = a.getDimensionPixelSize(R.styleable.UIPost_radius,0);
+            radius = a.getDimensionPixelSize(R.styleable.AngelCarPost_radius, 0);
 
-        }finally {
+        } finally {
             a.recycle();
         }
     }
 
-    public void setIc_Profile(String urlImage){
+    public void setIc_Profile(String urlImage) {
         Picasso.with(getContext())
                 .load(urlImage)
                 .into(ic_Profile);
     }
-    public void setIc_Profile(int resourceId){
+
+    public void setIc_Profile(int resourceId) {
         Picasso.with(getContext())
                 .load(resourceId)
                 .into(ic_Profile);
     }
 
-    public void setIc_Product(String urlImage){
+    public void setIc_Product(String urlImage) {
         Picasso.with(getContext())
                 .load(urlImage)
                 .into(ic_Product);
     }
 
-    public void setIc_Product(int resourceId){
+    public void setIc_Product(int resourceId) {
         Picasso.with(getContext())
                 .load(resourceId)
                 .into(ic_Product);
     }
 
-    public void setTextColorTitle(int color){
+    public void setTextColorTitle(int color) {
         title.setTextColor(color);
     }
 
-    public void setTextColorDetail(int color){
+    public void setTextColorDetail(int color) {
         details.setTextColor(color);
     }
 
-    public void setTitle(String title){
-        if(title != null)
-        this.title.setText(title);
+    public void setTitle(String title) {
+        if (title != null)
+            this.title.setText(title);
     }
 
-    public void setDetails(String details){
-        if(title != null)
-        this.details.setText(details);
+    public void setDetails(String details) {
+        if (title != null)
+            this.details.setText(details);
     }
 
 
-    private float convertTodp(float size){
+    private float convertTodp(float size) {
         Resources resources = getResources();
         DisplayMetrics metrics = resources.getDisplayMetrics();
         float dp = size / (metrics.densityDpi / 160f);
         return dp;
     }
 
-    private GradientDrawable createBackground(int color,float radius){
+    private GradientDrawable createBackground(int color, float radius) {
         GradientDrawable gradientDrawable = new GradientDrawable();
         gradientDrawable.setColor(color);
         gradientDrawable.setCornerRadius(radius);

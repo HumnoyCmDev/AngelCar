@@ -5,13 +5,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.TextView;
 
 import com.beta.cls.angelcar.R;
 import com.beta.cls.angelcar.util.BlogMessage;
-import com.github.siyamed.shapeimageview.CircularImageView;
-import com.hndev.library.view.UIMessage;
-import com.squareup.picasso.Picasso;
+import com.hndev.library.view.AngelCarMessage;
 
 import java.util.List;
 
@@ -25,6 +22,8 @@ public class MultipleListViewChatAdapter extends BaseAdapter {
     private Context context;
     private List<BlogMessage> messages;
     private String messageBy ;
+
+    private static final String TAG = "MultipleListViewChatAdapter";
 
     public MultipleListViewChatAdapter(Context context, List<BlogMessage> messages,String messageBy) {
         this.context = context;
@@ -69,7 +68,6 @@ public class MultipleListViewChatAdapter extends BaseAdapter {
             case 1 : convertView = inflatelayoutTalk(convertView,parent,message);
                 break;
         }
-
         return convertView;
     }
 
@@ -79,16 +77,15 @@ public class MultipleListViewChatAdapter extends BaseAdapter {
         if (view != null) {
             holder = (TextLeftViewHolder) view.getTag();
         } else {
-            view = LayoutInflater.from(context).inflate(R.layout.list_view_item_chat_left, parent, false);
+            view = LayoutInflater.from(context).inflate(R.layout.item_chat_left, parent, false);
             holder = new TextLeftViewHolder(view);
             view.setTag(holder);
         }
         //coding
-        holder.textViewChat.setText(message.getMessagetext());
-        Picasso.with(context)
-                .load(message.getUserprofileimage())
-                .error(R.drawable.ic_hndeveloper)
-                .into(holder.ic);
+        holder.angelCarMessage.setMessage(message.getMessagetext());
+        holder.angelCarMessage.setIconProfile(message.getUserprofileimage());
+
+
         return view;
     }
 
@@ -97,39 +94,28 @@ public class MultipleListViewChatAdapter extends BaseAdapter {
         if (view != null) {
             holder = (TextRightViewHolder) view.getTag();
         } else {
-            view = LayoutInflater.from(context).inflate(R.layout.list_view_item_chat_right, parent, false);
+            view = LayoutInflater.from(context).inflate(R.layout.item_chat_right, parent, false);
             holder = new TextRightViewHolder(view);
             view.setTag(holder);
         }
         //coding
-        holder.textViewChat.setText(message.getMessagetext());
-        Picasso.with(context)
-                .load(message.getUserprofileimage())
-                .error(R.drawable.ic_hndeveloper)
-                .into(holder.ic);
+        holder.angelCarMessage.setMessage(message.getMessagetext());
+        holder.angelCarMessage.setIconProfile(message.getUserprofileimage());
         return view;
     }
 
     // View Holder
     public class TextLeftViewHolder {
-        @Bind(R.id.list_view_item_chat_left_text)
-        UIMessage textViewChat;
-
-        @Bind(R.id.list_view_item_chat_left_image)
-        CircularImageView ic;
-
-        public TextLeftViewHolder(View v) {
-            ButterKnife.bind(this, v);
+        @Bind(R.id.item_chat_left)
+        AngelCarMessage angelCarMessage;
+        public TextLeftViewHolder(View itemView) {
+            ButterKnife.bind(this, itemView);
         }
     }
 
     public class TextRightViewHolder {
-        @Bind(R.id.list_view_item_chat_right_text)
-        UIMessage textViewChat;
-
-        @Bind(R.id.list_view_item_chat_right_image)
-        CircularImageView ic;
-
+        @Bind(R.id.item_chat_right)
+        AngelCarMessage angelCarMessage;
         public TextRightViewHolder(View v) {
             ButterKnife.bind(this, v);
         }
