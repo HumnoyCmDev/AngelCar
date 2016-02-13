@@ -85,8 +85,7 @@ public class ChatSellFragment extends Fragment {
                 Gson gson = new Gson();
                 PostBlogMessage postBlogMessage = gson.fromJson(s, PostBlogMessage.class);
                 message = postBlogMessage.getMessage();
-                MessageItemAdapter messageItemAdapter = new MessageItemAdapter(getActivity(),
-                        postBlogMessage.getMessage());
+                MessageItemAdapter messageItemAdapter = new MessageItemAdapter(postBlogMessage.getMessage());
                 listView.setAdapter(messageItemAdapter);
             }
         });

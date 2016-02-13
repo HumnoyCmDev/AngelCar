@@ -76,8 +76,7 @@ public class ChatAllFragment extends Fragment{
                                      PostBlogMessage postBlogMessage) {
                 message = blogArrayMessage.getMessageViewByAdmin().get(0).getMessage();
                 message.addAll(postBlogMessage.getMessage());
-                itemAdapter = new MessageItemAdapter(getActivity(),
-                        message);
+                itemAdapter = new MessageItemAdapter(message);
                 listView.setAdapter(itemAdapter);
 
             }

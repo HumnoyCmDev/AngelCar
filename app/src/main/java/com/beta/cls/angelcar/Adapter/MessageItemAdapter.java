@@ -24,12 +24,9 @@ import butterknife.ButterKnife;
  */
 public class MessageItemAdapter extends BaseAdapter{
 
-    private LayoutInflater mInflater;
-    private Context mContext;
     private List<BlogMessage> messages;
 
-    public MessageItemAdapter(Context mContext,List<BlogMessage> message) {
-        this.mContext = mContext;
+    public MessageItemAdapter(List<BlogMessage> message) {
         this.messages = message;
         Collections.sort(messages, new Comparator<BlogMessage>() {
             @Override
@@ -37,7 +34,6 @@ public class MessageItemAdapter extends BaseAdapter{
                 return rhs.getMessagestamp().compareToIgnoreCase(lhs.getMessagestamp());
             }
         });
-        mInflater = LayoutInflater.from(mContext);
     }
 
     @Override
@@ -61,13 +57,13 @@ public class MessageItemAdapter extends BaseAdapter{
         if(convertView != null) {
             holder = (ViewHolder) convertView.getTag();
         }else {
-            convertView = mInflater.inflate(R.layout.chat_item_message_adapter, parent, false);
+            convertView = LayoutInflater.from(parent.getContext()).inflate(R.layout.chat_item_message_adapter, parent, false);
             holder = new ViewHolder(convertView);
             convertView.setTag(holder);
         }
         BlogMessage message = getItem(position);
 
-        Picasso.with(mContext)
+        Picasso.with(parent.getContext())
                 .load(message.getUserprofileimage())
                 .error(R.drawable.ic_hndeveloper)
                 .into(holder.icon);

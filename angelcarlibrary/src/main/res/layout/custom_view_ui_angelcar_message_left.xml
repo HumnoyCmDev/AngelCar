@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -31,6 +32,15 @@
             android:layout_height="wrap_content" />
 
     </LinearLayout>
+
+    <com.github.siyamed.shapeimageview.RoundedImageView
+        android:visibility="gone"
+        android:layout_marginLeft="5dp"
+        android:id="@+id/custom_view_iu_angelcar_image"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/simple_product"
+        app:siRadius="4dp"/>
 
 
 </LinearLayout>

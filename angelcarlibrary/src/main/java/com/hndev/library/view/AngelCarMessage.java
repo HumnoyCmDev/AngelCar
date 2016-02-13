@@ -8,12 +8,16 @@ import android.graphics.drawable.GradientDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.text.Html;
+import android.text.Spanned;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.Gravity;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.github.siyamed.shapeimageview.CircularImageView;
+import com.github.siyamed.shapeimageview.RoundedImageView;
 import com.hndev.library.R;
 import com.hndev.library.view.sate.BundleSavedState;
 import com.squareup.picasso.Picasso;
@@ -21,6 +25,7 @@ import com.squareup.picasso.Picasso;
 public class AngelCarMessage extends BaseCustomViewGroup {
 
     private CircularImageView iconProfile;
+    private RoundedImageView image;
     private TextView message;
     private LinearLayout background;
 
@@ -78,6 +83,7 @@ public class AngelCarMessage extends BaseCustomViewGroup {
         iconProfile = (CircularImageView) findViewById(R.id.custom_view_iu_angelcar_icon_profile);
         message = (TextView) findViewById(R.id.custom_view_iu_angelcar_message);
         background = (LinearLayout) findViewById(R.id.custom_view_iu_angelcar_background);
+        image = (RoundedImageView) findViewById(R.id.custom_view_iu_angelcar_image);
 
         message.setText(msg);
         message.setTextColor(colorMessage);
@@ -127,10 +133,27 @@ public class AngelCarMessage extends BaseCustomViewGroup {
         // Restore State from bundle here
     }
 
-    public void setMessage(String message) {
-        this.msg = message;
-        this.message.setText(msg);
+    public void setMessage(String msg) {
+        if (!msg.contains("<img>") && !msg.contains("</img>")) {
+            this.msg = msg;
+            background.setVisibility(VISIBLE);
+            image.setVisibility(GONE);
+            this.message.setText(msg);
+        }else{
+            this.msg = msg;
+            background.setVisibility(GONE);
+            image.setVisibility(VISIBLE);
+            String strStart = "<img>";
+            String strEnd = "</img>";
+//        String rulImage = url.substring(strStart.length(),url.length()-strEnd.length());
+            String rulImage = msg.substring(strStart.length(),msg.lastIndexOf("</img>"));
+            Picasso.with(getContext())
+                    .load(rulImage)
+                    .error(R.drawable.simple_product)
+                    .into(image);
+        }
     }
+
 
     public void setIconProfile(String url) {
         Picasso.with(getContext())
@@ -163,6 +186,13 @@ public class AngelCarMessage extends BaseCustomViewGroup {
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        /*int width = MeasureSpec.getSize(widthMeasureSpec);
+        int height = width * 2 / 3;
+        int newHeightMeasureSpec = MeasureSpec.makeMeasureSpec(height,MeasureSpec.EXACTLY);
+        super.onMeasure(widthMeasureSpec, newHeightMeasureSpec);
+        setMeasuredDimension(width,height);*/
+
+
         int width = MeasureSpec.getSize(widthMeasureSpec);
         int height = MeasureSpec.getSize(heightMeasureSpec);
 
@@ -171,7 +201,7 @@ public class AngelCarMessage extends BaseCustomViewGroup {
         // หลอกขนาดของลูก
         super.onMeasure(newWidthMeasureSpec,heightMeasureSpec);
         // หลอกขนาดของแม่
-//        setMeasuredDimension(width,height);
+//        setMeasuredDimension(width,heightMeasureSpec);
     }
 
 

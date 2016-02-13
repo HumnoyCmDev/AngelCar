@@ -105,7 +105,7 @@ public class ChatBuyFragment extends Fragment {
                     }
                 });
                 itemAdapter =
-                        new MessageItemAdapter(getActivity(), message);
+                        new MessageItemAdapter(message);
                 listView.setAdapter(itemAdapter);
 
             }
@@ -136,7 +136,7 @@ public class ChatBuyFragment extends Fragment {
     public void onEvent(PostBlogArrayMessage blogArrayMessage){
         message = blogArrayMessage.getMessageViewByAdmin().get(0).getMessage();
             itemAdapter =
-                    new MessageItemAdapter(getActivity(), message);
+                    new MessageItemAdapter(message);
             listView.setAdapter(itemAdapter);
 
 
