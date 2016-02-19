@@ -1,14 +1,12 @@
 package com.beta.cls.angelcar.fragment;
 
 
-import android.animation.ValueAnimator;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -16,7 +14,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.BounceInterpolator;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -25,13 +22,10 @@ import android.widget.Toast;
 import com.beta.cls.angelcar.R;
 import com.beta.cls.angelcar.gao.SuccessGao;
 import com.beta.cls.angelcar.manager.http.ApiService;
-import com.beta.cls.angelcar.manager.http.HttpPostManager;
+import com.beta.cls.angelcar.manager.http.HttpManager;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
@@ -78,7 +72,7 @@ public class HelpFragment extends Fragment {
             @Override
             public void onClick(View v) {
 
-//                ApiService service = HttpPostManager.getInstance().getService();
+//                ApiService service = HttpManager.getInstance().getService();
 //
 //                RequestBody.create(MediaType.parse("text/plain"),"");
 //
@@ -178,12 +172,11 @@ public class HelpFragment extends Fragment {
             Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
             ivPhoto.setImageBitmap(myBitmap);
 
-            ApiService service = HttpPostManager.getInstance().getService();
+            ApiService service = HttpManager.getInstance().getService();
 
             RequestBody request = RequestBody.create(MediaType.parse("multipart/form-data"),imgFile);
-            RequestBody naem = RequestBody.create(MediaType.parse("multipart/form-data"),"name,jpg");
 
-            Call<SuccessGao> call = service.uploadImage(request,naem);
+            Call<SuccessGao> call = service.uploadImage(request);
             call.enqueue(new Callback<SuccessGao>() {
 
                 @Override

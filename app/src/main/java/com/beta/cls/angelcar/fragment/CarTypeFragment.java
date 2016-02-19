@@ -27,7 +27,7 @@ import com.beta.cls.angelcar.gao.CarDataTypeGao;
 import com.beta.cls.angelcar.Adapter.CustomAdapterGridSub;
 import com.beta.cls.angelcar.R;
 import com.beta.cls.angelcar.manager.http.ApiService;
-import com.beta.cls.angelcar.manager.http.HttpPostManager;
+import com.beta.cls.angelcar.manager.http.HttpManager;
 
 import java.io.IOException;
 import java.util.Calendar;
@@ -94,7 +94,7 @@ public class CarTypeFragment extends Fragment {
             }
         });
         
-        ApiService server = HttpPostManager.getInstance().getService();
+        ApiService server = HttpManager.getInstance().getService();
         Call<CarDataTypeCollectionGao> call = server.loadCarType(dataCarType);
         call.enqueue(new Callback<CarDataTypeCollectionGao>() {
             @Override

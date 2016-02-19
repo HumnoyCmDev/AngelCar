@@ -29,7 +29,7 @@ import com.beta.cls.angelcar.anim.ResizeHeight;
 import com.beta.cls.angelcar.gao.FeedPostCollectionGao;
 import com.beta.cls.angelcar.gao.FeedPostGao;
 import com.beta.cls.angelcar.manager.http.ApiService;
-import com.beta.cls.angelcar.manager.http.HttpPostManager;
+import com.beta.cls.angelcar.manager.http.HttpManager;
 
 import org.parceler.Parcels;
 
@@ -152,7 +152,7 @@ public class HomeFragment extends Fragment {
 
     void loadData(){
 
-        ApiService call = HttpPostManager.getInstance().getService();
+        ApiService call = HttpManager.getInstance().getService();
         call.loadPost().enqueue(new Callback<FeedPostCollectionGao>() {
             @Override
             public void onResponse(Call<FeedPostCollectionGao> call, Response<FeedPostCollectionGao> response) {
