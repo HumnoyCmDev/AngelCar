@@ -1,5 +1,6 @@
-package com.beta.cls.angelcar.util;
+package com.beta.cls.angelcar.gao;
 
+import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import org.parceler.Parcel;
@@ -9,18 +10,26 @@ import org.parceler.Parcel;
  */
 
 @Parcel
-public class FeedPostItem {
-
+public class FeedPostGao {
+    @SerializedName("id")
+    @Expose
     String id;
-    String cartype;
+
+    @SerializedName("cartype")
+    @Expose
+    String carType;
 
     @SerializedName("cartype_sub")
+    @Expose
     String carTypeSub;
 
     @SerializedName("cardetail_sub")
+    @Expose
     String carDetailSub;
 
-    String cardetail;
+    @SerializedName("cardetail")
+    @Expose
+    String carDetail;
 
     public String getId() {
         return id;
@@ -30,12 +39,12 @@ public class FeedPostItem {
         this.id = id;
     }
 
-    public String getCartype() {
-        return cartype;
+    public String getCarType() {
+        return carType;
     }
 
-    public void setCartype(String cartype) {
-        this.cartype = cartype;
+    public void setCarType(String carType) {
+        this.carType = carType;
     }
 
     public String getCarTypeSub() {
@@ -54,11 +63,11 @@ public class FeedPostItem {
         this.carDetailSub = carDetailSub;
     }
 
-    public String getCardetail() {
-        return cardetail;
+    public String getCarDetail() {
+        return carDetail;
     }
 
-    public void setCardetail(String cardetail) {
-        this.cardetail = cardetail;
+    public void setCarDetail(String carDetail) {
+        this.carDetail = carDetail;
     }
 }

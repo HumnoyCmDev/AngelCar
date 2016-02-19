@@ -44,5 +44,11 @@ dependencies {
     //
     //    compile 'de.greenrobot:eventbus:2.4.0'
     compile project(':angelcarlibrary')
+
+    //test retrofit
+    compile 'com.squareup.retrofit2:retrofit:2.0.0-beta4'
+    compile 'com.squareup.retrofit2:converter-gson:2.0.0-beta4'
+
+
 }
 

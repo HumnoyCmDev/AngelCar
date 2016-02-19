@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +14,10 @@ import android.widget.ListView;
 import com.beta.cls.angelcar.Adapter.MessageItemAdapter;
 import com.beta.cls.angelcar.R;
 import com.beta.cls.angelcar.activity.ChatMessageActivity;
+import com.beta.cls.angelcar.gao.MessageCollectionGao;
+import com.beta.cls.angelcar.gao.MessageGao;
+import com.beta.cls.angelcar.manager.http.ApiService;
+import com.beta.cls.angelcar.manager.http.HttpChatManager;
 import com.beta.cls.angelcar.util.BlogMessage;
 import com.beta.cls.angelcar.util.PostBlogMessage;
 import com.google.gson.Gson;
@@ -22,10 +27,13 @@ import com.hndev.library.manager.Callback;
 
 import org.parceler.Parcels;
 
+import java.io.IOException;
 import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import retrofit2.Call;
+import retrofit2.Response;
 
 /**
  * Created by humnoy on 26/1/59.
@@ -89,6 +97,30 @@ public class ChatSellFragment extends Fragment {
                 listView.setAdapter(messageItemAdapter);
             }
         });
+
+
+        /*ApiService call = HttpChatManager.getInstance().getService();
+        call.message("viewclient","2015062900001").enqueue(new retrofit2.Callback<MessageCollectionGao>() {
+            @Override
+            public void onResponse(Call<MessageCollectionGao> call, Response<MessageCollectionGao> response) {
+               if (response.isSuccess()) {
+                   for (MessageGao m : response.body().getMessage()) {
+                       Log.i(TAG, "onResponse: m2 " + m.getMessageText());
+                   }
+               }else {
+                   try {
+                       Log.i(TAG, "onResponse: "+response.errorBody().string());
+                   } catch (IOException e) {
+                       e.printStackTrace();
+                   }
+               }
+            }
+
+            @Override
+            public void onFailure(Call<MessageCollectionGao> call, Throwable t) {
+                Log.i(TAG, "onResponse: "+t.toString());
+            }
+        });*/
 
     }
 

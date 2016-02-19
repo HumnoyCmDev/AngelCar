@@ -1,25 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/rlAnim"
+    android:orientation="vertical"
     android:background="#FFF6E8">
 
-    <TextView
+
+
+   <FrameLayout
+       android:background="@color/colorAccent"
+       android:id="@+id/testAnim"
+       android:text="HH"
+       android:layout_width="match_parent"
+       android:layout_height="wrap_content" >
+
+       <TextView
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:text="ช่วยเหลือ"
+           android:textSize="40dp"
+           android:textStyle="bold"
+           android:layout_centerInParent="true"/>
+       </FrameLayout>
+
+    <Button
+        android:id="@+id/button"
+        android:text="post"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="ช่วยเหลือ"
-        android:textSize="40dp"
-        android:textStyle="bold"
-        android:layout_centerInParent="true"/>
+        android:layout_below="@+id/testAnim"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="78dp"
+        android:layout_gravity="center_horizontal" />
 
-    <com.hndev.library.view.AngelCarPost
-        app:radius="30dp"
-        app:colorTitle="@android:color/white"
-        app:colorDetail="@android:color/white"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+    <ImageView
+        android:background="@color/colorAccent"
+        android:src="@drawable/simple_product"
+        android:scaleType="centerCrop"
+        android:id="@+id/ivPhoto"
+        android:layout_width="match_parent"
+        android:layout_height="200dp" />
 
-
-</RelativeLayout>
+</LinearLayout>

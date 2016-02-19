@@ -40,11 +40,13 @@ public class NoticeFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        FragmentManager fragManager = myContext.getSupportFragmentManager();
-        PostFragment fragment = new PostFragment();
-        FragmentTransaction transaction = fragManager.beginTransaction();
-        transaction.add(R.id.fragment_container, fragment);
-        transaction.commit();
+        if(savedInstanceState == null) {
+            FragmentManager fragManager = myContext.getSupportFragmentManager();
+            BrandFragment fragment = new BrandFragment();
+            FragmentTransaction transaction = fragManager.beginTransaction();
+            transaction.add(R.id.fragment_container, fragment);
+            transaction.commit();
+        }
 
     }
 

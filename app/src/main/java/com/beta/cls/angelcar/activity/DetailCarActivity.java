@@ -9,7 +9,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.telephony.TelephonyManager;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -17,7 +16,7 @@ import com.beta.cls.angelcar.Adapter.ImageAdapter;
 import com.beta.cls.angelcar.Adapter.MultipleChatAdapter;
 import com.beta.cls.angelcar.R;
 import com.beta.cls.angelcar.util.BlogMessage;
-import com.beta.cls.angelcar.util.FeedPostItem;
+import com.beta.cls.angelcar.gao.FeedPostGao;
 
 import org.parceler.Parcels;
 
@@ -108,8 +107,9 @@ public class DetailCarActivity extends AppCompatActivity {
         // getIntent
         Intent getIntent = getIntent();
         if (getIntent != null){
-            FeedPostItem postItem = Parcels.unwrap(getIntent.getParcelableExtra("FeedPostItem"));
-            tvCarType.setText(postItem.getCartype());
+            FeedPostGao postItem = Parcels.unwrap(
+                    getIntent.getParcelableExtra("FeedPostGao"));
+            tvCarType.setText(postItem.getCarType());
         }
 
     }

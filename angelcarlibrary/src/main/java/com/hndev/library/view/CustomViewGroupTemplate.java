@@ -43,7 +43,7 @@ public class CustomViewGroupTemplate extends BaseCustomViewGroup {
     }
 
     private void initInflate() {
-        inflate(getContext(), R.layout.custom_view_ui_post, this);
+//        inflate(getContext(), R.layout.custom_view_, this);
     }
 
     private void initInstances() {

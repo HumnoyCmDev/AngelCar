@@ -14,20 +14,22 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.view.animation.BounceInterpolator;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 
 import com.beta.cls.angelcar.Adapter.ListViewPostAdapter;
 import com.beta.cls.angelcar.activity.DetailCarActivity;
 import com.beta.cls.angelcar.R;
-import com.beta.cls.angelcar.util.FeedBlogJson;
-import com.beta.cls.angelcar.util.FeedPostItem;
-import com.beta.cls.angelcar.manager.GetResultJson;
-import com.beta.cls.angelcar.interfaces.AsyncResult;
-import com.google.gson.Gson;
+import com.beta.cls.angelcar.anim.ResizeHeight;
+import com.beta.cls.angelcar.gao.FeedPostCollectionGao;
+import com.beta.cls.angelcar.gao.FeedPostGao;
+import com.beta.cls.angelcar.manager.http.ApiService;
+import com.beta.cls.angelcar.manager.http.HttpPostManager;
 
 import org.parceler.Parcels;
 
@@ -35,6 +37,9 @@ import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 
 public class HomeFragment extends Fragment {
@@ -46,9 +51,9 @@ public class HomeFragment extends Fragment {
     Animation animDown,animUp;
 
     private static final String TAG = "HomeFragment";
+    private List<FeedPostGao> postItems;
 
-    private List<FeedPostItem> postItems;
-
+    private ListViewPostAdapter adapter;
     public HomeFragment() {
     }
 
@@ -100,75 +105,74 @@ public class HomeFragment extends Fragment {
             }
         });
 
-        loadData();
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                FeedPostItem item = postItems.get(position);
-                Intent intent = new Intent(getActivity(), DetailCarActivity.class);
-                intent.putExtra("FeedPostItem", Parcels.wrap(item));
-                startActivity(intent);
+        if (savedInstanceState == null){
+            loadData();
+            initInstance();
 
-            }
-        });
+        }
+
+
         animDown = AnimationUtils.loadAnimation(getActivity(), R.anim.animation_slide_down);
         animUp = AnimationUtils.loadAnimation(getActivity(), R.anim.animation_slide_up);
-//        animDown.setAnimationListener(new Animation.AnimationListener() {
-//            @Override
-//            public void onAnimationStart(Animation animation) {
-//            }
-//
-//            @Override
-//            public void onAnimationEnd(Animation animation) {
-//            }
-//
-//            @Override
-//            public void onAnimationRepeat(Animation animation) {
-//            }
-//        });
-//        animUp.setAnimationListener(new Animation.AnimationListener() {
-//            @Override
-//            public void onAnimationStart(Animation animation) {
-//
-//            }
-//
-//            @Override
-//            public void onAnimationEnd(Animation animation) {
-//
-//            }
-//
-//            @Override
-//            public void onAnimationRepeat(Animation animation) {
-//
-//            }
-//        });
+
         btFilter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (ctFilter.getVisibility() == View.GONE) {
+                    ResizeHeight resizeHeight = new ResizeHeight(ctFilter,1000,true);
+                    resizeHeight.setInterpolator(new BounceInterpolator());
+                    resizeHeight.setDuration(1000);
+                    ctFilter.startAnimation(resizeHeight);
                     ctFilter.setVisibility(View.VISIBLE);
-                    ctFilter.startAnimation(animDown);
                 } else {
-                    ctFilter.setVisibility(View.GONE);
-                    ctFilter.startAnimation(animUp);
+                    ResizeHeight resizeHeight = new ResizeHeight(ctFilter,0,false);
+                    resizeHeight.setDuration(500);
+                    ctFilter.startAnimation(resizeHeight);
+//                    ctFilter.setVisibility(View.GONE);
+//                    ctFilter.startAnimation(animUp);
                 }
+
+            }
+        });
+    }
+
+    private void initInstance() {
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                FeedPostGao item = postItems.get(position);
+                Intent intent = new Intent(getActivity(), DetailCarActivity.class);
+                intent.putExtra("FeedPostGao", Parcels.wrap(item));
+                startActivity(intent);
+
             }
         });
     }
 
     void loadData(){
-        new GetResultJson(new AsyncResult() {
+
+        ApiService call = HttpPostManager.getInstance().getService();
+        call.loadPost().enqueue(new Callback<FeedPostCollectionGao>() {
             @Override
-            public void onSucceed(String s) {
-                Gson gson = new Gson();
-                FeedBlogJson blogJson = gson.fromJson(s,FeedBlogJson.class);
-                postItems = blogJson.getRows();
-                ListViewPostAdapter adapter = new ListViewPostAdapter(blogJson.getRows());
-                listView.setAdapter(adapter);
+            public void onResponse(Call<FeedPostCollectionGao> call, Response<FeedPostCollectionGao> response) {
+                if (response.isSuccess()){
+                    postItems = response.body().getRows();
+                    adapter = new ListViewPostAdapter(postItems);
+                    listView.setAdapter(adapter);
+                }else {
+                    Toast.makeText(getActivity(),
+                            response.errorBody().toString(),
+                            Toast.LENGTH_SHORT).show();
+                }
             }
+
             @Override
-            public void onFail() {
+            public void onFailure(Call<FeedPostCollectionGao> call, Throwable t) {
+                Toast.makeText(getActivity(),
+                        t.toString(),
+                        Toast.LENGTH_SHORT).show();
             }
-        }).execute("http://www.usedcar.co.th/yobtestjson.php");
+        });
     }
 }

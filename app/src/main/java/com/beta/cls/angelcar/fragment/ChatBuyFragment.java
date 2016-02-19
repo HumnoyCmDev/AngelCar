@@ -42,10 +42,8 @@ public class ChatBuyFragment extends Fragment {
     @Bind(R.id.list_view)
     ListView listView;
 
-//    private List<PostBlogArrayMessage.BlogMessageJson> message;
     private List<BlogMessage> message;
-//    private BlogMessage blogMessage;
-    MessageItemAdapter itemAdapter;
+    private MessageItemAdapter itemAdapter;
 
     private static final String TAG = "ChatBuyFragment";
 

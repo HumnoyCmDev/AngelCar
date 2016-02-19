@@ -44,7 +44,6 @@ public class GetResultJson extends AsyncTask<String,Void,String>{
     protected void onPostExecute(String s) {
         super.onPostExecute(s);
         if (isSucceed && s != null){
-            Gson gson = new Gson();
             asyncResult.onSucceed(s);
         }else {
             asyncResult.onFail();

@@ -3,14 +3,13 @@ package com.beta.cls.angelcar.Adapter;
 /**
  * Created by ABaD on 12/15/2015.
  */
-import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
 import com.beta.cls.angelcar.R;
-import com.beta.cls.angelcar.util.FeedPostItem;
+import com.beta.cls.angelcar.gao.FeedPostGao;
 import com.hndev.library.view.AngelCarPost;
 
 import java.util.List;
@@ -20,19 +19,18 @@ import butterknife.ButterKnife;
 
 public class ListViewPostAdapter extends BaseAdapter {
 
-    private List<FeedPostItem> postItem;
-
-    public ListViewPostAdapter(List<FeedPostItem> postItem) {
-        this.postItem = postItem;
+    private List<FeedPostGao> postItems;
+    public ListViewPostAdapter(List<FeedPostGao> postItems) {
+        this.postItems = postItems;
     }
-
 
     public int getCount() {
-        return postItem.size();
+        if(postItems == null) return 0;
+        return postItems.size();
     }
 
-    public FeedPostItem getItem(int position) {
-        return postItem.get(position);
+    public FeedPostGao getItem(int position) {
+        return postItems.get(position);
     }
 
     public long getItemId(int position) {
@@ -48,7 +46,7 @@ public class ListViewPostAdapter extends BaseAdapter {
     }
 
     public View getView(int position, View view, ViewGroup parent) {
-        FeedPostItem postItem = getItem(position);
+        FeedPostGao postItem = getItem(position);
         int switching_position = getItemViewType(position);
         switch (switching_position){
             case 0: view = inFlaterLayoutRight(view,parent,postItem);
@@ -59,7 +57,7 @@ public class ListViewPostAdapter extends BaseAdapter {
         return view;
     }
 
-    private View inFlaterLayoutLeft(View view, ViewGroup parent,FeedPostItem postItem){
+    private View inFlaterLayoutLeft(View view, ViewGroup parent,FeedPostGao postItem){
         ViewHolderItemLeft holder;
         if(view != null) {
             holder = (ViewHolderItemLeft) view.getTag();
@@ -69,15 +67,15 @@ public class ListViewPostAdapter extends BaseAdapter {
             view.setTag(holder);
         }
         holder.angelCarPost.setDetails(
-                "" + postItem.getCartype() + " " +
+                "" + postItem.getCarType() + " " +
                         "" + postItem.getCarTypeSub() + " " +
                         "" + postItem.getCarDetailSub() + " " +
-                        "" + postItem.getCardetail());
+                        "" + postItem.getCarDetail());
 
         return view;
     }
 
-    private View inFlaterLayoutRight(View view, ViewGroup parent,FeedPostItem postItem){
+    private View inFlaterLayoutRight(View view, ViewGroup parent,FeedPostGao postItem){
         ViewHolderItemRight holder;
         if(view != null) {
             holder = (ViewHolderItemRight) view.getTag();
@@ -87,10 +85,10 @@ public class ListViewPostAdapter extends BaseAdapter {
             view.setTag(holder);
         }
         holder.angelCarPost.setDetails(
-                "" + postItem.getCartype() + " " +
+                "" + postItem.getCarType() + " " +
                         "" + postItem.getCarTypeSub() + " " +
                         "" + postItem.getCarDetailSub() + " " +
-                        "" + postItem.getCardetail());
+                        "" + postItem.getCarDetail());
         return view;
     }
 

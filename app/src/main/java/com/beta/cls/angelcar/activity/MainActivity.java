@@ -3,7 +3,6 @@ package com.beta.cls.angelcar.activity;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Typeface;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
@@ -11,14 +10,10 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.text.Html;
-import android.text.Spanned;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.beta.cls.angelcar.R;
 import com.beta.cls.angelcar.Adapter.MainViewPagerAdapter;
@@ -47,10 +42,8 @@ public class MainActivity extends AppCompatActivity {
         initViewPager();
         initTabIcons(); //ตั้งค่า tab
 
-//        String html = "<img>http://cls.paiyannoi.me/profileimages/default.png</img>";
-//        Spanned spanned = Html.fromHtml(html);
-//        Log.i(TAG, "onCreate: "+spanned.toString());
     }
+
 
     private void initViewPager() {
         viewPager.setAdapter(new MainViewPagerAdapter(getSupportFragmentManager()));
@@ -89,9 +82,8 @@ public class MainActivity extends AppCompatActivity {
             public boolean onMenuItemClick(MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.action_settings:
-                        // TODO
                         break;
-                    // TODO: Other cases
+
                 }
                 return true;
             }
