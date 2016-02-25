@@ -17,6 +17,7 @@ import android.widget.TextView;
 
 import com.beta.cls.angelcar.R;
 import com.beta.cls.angelcar.Adapter.MainViewPagerAdapter;
+import com.beta.cls.angelcar.fragment.YearFragmentDialog;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -41,6 +42,9 @@ public class MainActivity extends AppCompatActivity {
         initToolbars();
         initViewPager();
         initTabIcons(); //ตั้งค่า tab
+
+        Intent i = new Intent(MainActivity.this,ActivitySample.class);
+        startActivity(i);
 
     }
 

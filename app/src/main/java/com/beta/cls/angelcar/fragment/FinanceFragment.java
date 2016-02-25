@@ -4,12 +4,16 @@ package com.beta.cls.angelcar.fragment;
  * Created by ABaD on 12/15/2015.
  */
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.beta.cls.angelcar.R;
 
@@ -38,6 +42,26 @@ public class FinanceFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+
+        FragmentTransaction ft = getFragmentManager().beginTransaction();
+        Fragment fragment = getFragmentManager().findFragmentByTag("YearFragmentDialog");
+        if (fragment != null){
+            ft.remove(fragment);
+        }
+        ft.addToBackStack(null);
+
+        YearFragmentDialog dialog = new YearFragmentDialog();
+        dialog.setTargetFragment(this,99);
+        dialog.show(getFragmentManager(),"YearFragmentDialog");
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == 99 && resultCode == Activity.RESULT_OK && data != null){
+            Toast.makeText(getActivity(),"Result :"+data.getStringExtra(YearFragmentDialog.ARG_YEAR),Toast.LENGTH_SHORT).show();
+        }
 
     }
 }

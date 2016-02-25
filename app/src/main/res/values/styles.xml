@@ -20,4 +20,8 @@
 
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
+    <style name="AllPostEditTextStyle">
+        <item name="android:textSize">18sp</item>
+        <item name="android:inputType">text</item>
+    </style>
 </resources>

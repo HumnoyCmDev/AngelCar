@@ -28,6 +28,10 @@ import com.beta.cls.angelcar.Adapter.CustomAdapterGridSub;
 import com.beta.cls.angelcar.R;
 import com.beta.cls.angelcar.manager.http.ApiService;
 import com.beta.cls.angelcar.manager.http.HttpManager;
+import com.beta.cls.angelcar.model.InformationFromUser;
+
+import org.parceler.Parcel;
+import org.parceler.Parcels;
 
 import java.io.IOException;
 import java.util.Calendar;
@@ -41,8 +45,8 @@ import retrofit2.Response;
 
 
 public class CarTypeFragment extends Fragment {
-    private static String ARG_DATA_CAR_TYPE = "ARGS_DATA_CART_TYPE";
-    private static final String TAG = "CarTypeFragment";
+    private static String ARG_InformationFromUser = "ARG_InformationFromUser";
+    private static String TAG = "CarTypeFragment";
     
     
     @Bind(R.id.grid_sub_model) GridView mGridView;
@@ -50,13 +54,13 @@ public class CarTypeFragment extends Fragment {
     private FragmentActivity myContext;
     private ProgressDialog mProgressDialog;
     private CustomAdapterGridSub mAdapter;
-    private String dataCarType,dataCarTypeSub;
+    private InformationFromUser user;
 
-    List<CarDataTypeGao> posts;
+    private List<CarDataTypeGao> posts;
 
-    public static CarTypeFragment newInstance(String dataCarType) {
+    public static CarTypeFragment newInstance(InformationFromUser user) {
         Bundle args = new Bundle();
-        args.putString(ARG_DATA_CAR_TYPE,dataCarType);
+        args.putParcelable(ARG_InformationFromUser, Parcels.wrap(user));
         CarTypeFragment fragment = new CarTypeFragment();
         fragment.setArguments(args);
         return fragment;
@@ -67,7 +71,7 @@ public class CarTypeFragment extends Fragment {
         super.onCreate(savedInstanceState);
         Bundle args = getArguments();
         if (args != null){
-            dataCarType = args.getString(ARG_DATA_CAR_TYPE);
+            user = Parcels.unwrap(args.getParcelable(ARG_InformationFromUser));
         }
     }
 
@@ -87,7 +91,7 @@ public class CarTypeFragment extends Fragment {
         mGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
                 Toast.makeText(v.getContext(), "--"+posts.get(position).getCarTypeSub(), Toast.LENGTH_SHORT).show();
-                dataCarTypeSub = posts.get(position).getCarTypeSub();
+                user.setTypeSub(posts.get(position).getCarTypeSub());
                 showDialog();
 
 
@@ -95,7 +99,7 @@ public class CarTypeFragment extends Fragment {
         });
         
         ApiService server = HttpManager.getInstance().getService();
-        Call<CarDataTypeCollectionGao> call = server.loadCarType(dataCarType);
+        Call<CarDataTypeCollectionGao> call = server.loadCarType(user.getBrand());
         call.enqueue(new Callback<CarDataTypeCollectionGao>() {
             @Override
             public void onResponse(Call<CarDataTypeCollectionGao> call, Response<CarDataTypeCollectionGao> response) {
@@ -120,50 +124,43 @@ public class CarTypeFragment extends Fragment {
 
     }
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        Log.i(TAG, "onActivityResult: "+requestCode + " , "+ resultCode);
-
-        if (resultCode == getActivity().RESULT_OK){
-
-        }
-    }
+    private Dialog d;
+    private NumberPicker np;
+    int intYear = 0;
 
     public void showDialog() {
-        final Dialog d = new Dialog(getActivity());
+        d = new Dialog(getActivity());
         d.setTitle("ปีรถของท่าน");
         d.setContentView(R.layout.dialog_year);
-        int year = Calendar.getInstance().get(Calendar.YEAR);
-        final NumberPicker np = (NumberPicker) d.findViewById(R.id.numberPicker1);
+        np = (NumberPicker) d.findViewById(R.id.numberPicker1);
         np.setMaxValue(2016);
-        np.setValue(year);
+        np.setValue(Calendar.getInstance().get(Calendar.YEAR));
         np.setMinValue(1950);
         np.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
         np.setWrapSelectorWheel(false);
+
+
         np.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
-                int x = ((NumberPicker) v).getValue();
-                Toast.makeText(v.getContext(), "Number selected" + x, Toast.LENGTH_SHORT).show(); //value ปี
-                d.dismiss();
+                intYear = ((NumberPicker) v).getValue();
+                Toast.makeText(v.getContext(), "Number selected" + intYear, Toast.LENGTH_SHORT).show(); //value ปี
 
-                FragmentManager fragManager = myContext.getSupportFragmentManager();
-                CarDetailFragment PostFragment = CarDetailFragment.newInstance(dataCarType,dataCarTypeSub);
-                FragmentTransaction transaction = fragManager.beginTransaction();
-                transaction.replace(R.id.fragment_container, PostFragment);
-                transaction.addToBackStack(null);
-                transaction.commit();
-                Log.i("test", "onClick: ");
+                user.setYear(intYear);
+
+                CarDetailFragment fragment = CarDetailFragment.newInstance(user);
+                myContext.getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.fragment_container, fragment)
+                        .addToBackStack(null)
+                        .commit();
+                d.dismiss();
 
 
             }
         });
 
         d.show();
-
 
     }
 

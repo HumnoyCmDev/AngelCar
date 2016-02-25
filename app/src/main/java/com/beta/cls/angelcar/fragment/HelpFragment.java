@@ -6,10 +6,12 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,9 +23,11 @@ import android.widget.Toast;
 
 import com.beta.cls.angelcar.R;
 import com.beta.cls.angelcar.gao.SuccessGao;
+import com.beta.cls.angelcar.manager.EncodeImageAsync;
 import com.beta.cls.angelcar.manager.http.ApiService;
 import com.beta.cls.angelcar.manager.http.HttpManager;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 
@@ -37,6 +41,7 @@ import retrofit2.Response;
 public class HelpFragment extends Fragment {
 
     private ImageView ivPhoto;
+    String picturePath;
 
     public HelpFragment() {
     }
@@ -72,50 +77,6 @@ public class HelpFragment extends Fragment {
             @Override
             public void onClick(View v) {
 
-//                ApiService service = HttpManager.getInstance().getService();
-//
-//                RequestBody.create(MediaType.parse("text/plain"),"");
-//
-//                SimpleDateFormat format = new SimpleDateFormat("yyy-MM-dd");
-//                String dfm = format.format(new Date());
-//                Date d = null;
-//                try {
-//                     d = format.parse(dfm);
-//                } catch (ParseException e) {
-//                    e.printStackTrace();
-//                }
-//
-//                Call<SuccessGao> call = service.postCar(
-//                        "Toyota", "Fortuner", "1.6 v", "2016",
-//                        2016, "1 ro 2", "900000", "กท 0100", "Nonthaburi", "รถใหม่ใช่น้อย",
-//                        "รถใหม่ใช่น้อย เจ้าของใช้งานเอง", "นายสุวิท สกิดติ่ง", "099 999 9999", "192.168.1.1", d, "userID"
-//                );
-//
-//                call.enqueue(new Callback<SuccessGao>() {
-//                    @Override
-//                    public void onResponse(Call<SuccessGao> call, Response<SuccessGao> response) {
-//                        if (response.isSuccess()) {
-//                            Toast.makeText(getActivity(), "Success :" + response.body().getSuccess() ,Toast.LENGTH_LONG).show();
-//                        }else {
-//                            try {
-//                                Toast.makeText(getActivity(), "e:: "+response.errorBody().string(),Toast.LENGTH_LONG).show();
-//                            } catch (IOException e) {
-//                                e.printStackTrace();
-//                            }
-//                        }
-//                    }
-//
-//                    @Override
-//                    public void onFailure(Call<SuccessGao> call, Throwable t) {
-//                        Toast.makeText(getActivity(), t.toString() ,Toast.LENGTH_LONG).show();
-//
-//                        Log.e(TAG, "onFailure :", t);
-//                    }
-//                });
-
-
-
-
                 Intent i = new Intent(Intent.ACTION_PICK,
                         android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
 //                i.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
@@ -125,6 +86,57 @@ public class HelpFragment extends Fragment {
             }
         });
 
+
+        Button up = (Button) v.findViewById(R.id.button_upload);
+        up.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getActivity(),"Up load By Retrofit",Toast.LENGTH_SHORT).show();
+         new AsyncTask<Void,Void,Void>(){
+             String encoded_string;
+             @Override
+             protected Void doInBackground(Void... params) {
+                 File f = new File(picturePath);
+                 Uri uri = Uri.fromFile(f);
+                 Bitmap bitmap = BitmapFactory.decodeFile(uri.getPath());
+                 ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                 bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+
+                 byte[] array = stream.toByteArray();
+                 encoded_string = Base64.encodeToString(array,Base64.DEFAULT);
+
+                 ApiService service = HttpManager.getInstance().getService();
+
+                 RequestBody request = RequestBody.create(MediaType.parse("text/plain"),encoded_string);
+                 RequestBody request2 = RequestBody.create(MediaType.parse("text/plain"),"retrofit_"+f.getName());
+
+                 try {
+                     service.uploadImage(request,request2).execute();
+                 } catch (IOException e) {
+                     e.printStackTrace();
+                 }
+                 return null;
+             }
+
+             @Override
+             protected void onPostExecute(Void aVoid) {
+                 super.onPostExecute(aVoid);
+                    Toast.makeText(getActivity(),"Success",Toast.LENGTH_SHORT).show();
+             }
+         }.execute();
+
+            }
+        });
+
+
+        Button up2 = (Button) v.findViewById(R.id.button_upload2);
+        up2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new EncodeImageAsync(getActivity(),new File(picturePath)).execute();
+                Toast.makeText(getActivity(),"Up load Volley",Toast.LENGTH_SHORT).show();
+            }
+        });
 
 //        ValueAnimator amin = ValueAnimator.ofInt(post.getMeasuredHeight(),500);
 //        amin.setInterpolator(new BounceInterpolator());
@@ -164,40 +176,19 @@ public class HelpFragment extends Fragment {
             Cursor cursor = getActivity().getContentResolver().query(selectedImage,filePathColumn, null, null, null);
             cursor.moveToFirst();
             int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-            String picturePath = cursor.getString(columnIndex);
+            picturePath = cursor.getString(columnIndex);
             cursor.close();
 
 
             File imgFile = new File(picturePath);
-            Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
+            Uri uri = Uri.fromFile(imgFile);
+
+            Bitmap myBitmap = BitmapFactory.decodeFile(uri.getPath());
             ivPhoto.setImageBitmap(myBitmap);
 
-            ApiService service = HttpManager.getInstance().getService();
+            Log.i(TAG, "onActivityResult: "+imgFile.getName());
 
-            RequestBody request = RequestBody.create(MediaType.parse("multipart/form-data"),imgFile);
 
-            Call<SuccessGao> call = service.uploadImage(request);
-            call.enqueue(new Callback<SuccessGao>() {
-
-                @Override
-                public void onResponse(Call<SuccessGao> call, Response<SuccessGao> response) {
-                    if (response.isSuccess()) {
-                            Toast.makeText(getActivity(), "Success :" + response.body().getSuccess() ,Toast.LENGTH_LONG).show();
-                    }else {
-                            try {
-                                Toast.makeText(getActivity(), "e:: "+response.errorBody().string(),Toast.LENGTH_LONG).show();
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                }
-
-                @Override
-                public void onFailure(Call<SuccessGao> call, Throwable t) {
-                    Toast.makeText(getActivity(), "Fail :: LogCat",Toast.LENGTH_LONG).show();
-                    Log.e(TAG, "onFailure: ", t);
-                }
-            });
         }
     }
 

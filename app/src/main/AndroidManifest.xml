@@ -42,6 +42,8 @@
         <receiver android:name=".service.RealTimeBroadCast"/>
         <receiver android:name=".service.AlarmChatList"/>
         <!--<service android:name=".service.RealTimeService"/>-->
+
+        <activity android:name=".activity.ActivitySample"/>
     </application>
 
 </manifest>

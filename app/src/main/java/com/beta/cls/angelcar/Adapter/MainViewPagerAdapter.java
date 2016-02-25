@@ -4,6 +4,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
+import com.beta.cls.angelcar.fragment.AllPostFragment;
 import com.beta.cls.angelcar.fragment.FilterFragment;
 import com.beta.cls.angelcar.fragment.FinanceFragment;
 import com.beta.cls.angelcar.fragment.HelpFragment;

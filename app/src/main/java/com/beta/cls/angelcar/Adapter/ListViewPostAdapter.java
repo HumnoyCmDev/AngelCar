@@ -9,28 +9,29 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
 import com.beta.cls.angelcar.R;
-import com.beta.cls.angelcar.gao.FeedPostGao;
+import com.beta.cls.angelcar.gao.PostCollectionGao;
+import com.beta.cls.angelcar.gao.PostGao;
 import com.hndev.library.view.AngelCarPost;
-
-import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
 public class ListViewPostAdapter extends BaseAdapter {
 
-    private List<FeedPostGao> postItems;
-    public ListViewPostAdapter(List<FeedPostGao> postItems) {
-        this.postItems = postItems;
+    PostCollectionGao gao;
+
+    public void setGao(PostCollectionGao gao) {
+        this.gao = gao;
     }
 
     public int getCount() {
-        if(postItems == null) return 0;
-        return postItems.size();
+        if(gao == null) return 0;
+        if(gao.getRows() == null) return 0;
+        return gao.getRows().size();
     }
 
-    public FeedPostGao getItem(int position) {
-        return postItems.get(position);
+    public PostGao getItem(int position) {
+        return gao.getRows().get(position);
     }
 
     public long getItemId(int position) {
@@ -46,7 +47,7 @@ public class ListViewPostAdapter extends BaseAdapter {
     }
 
     public View getView(int position, View view, ViewGroup parent) {
-        FeedPostGao postItem = getItem(position);
+        PostGao postItem = getItem(position);
         int switching_position = getItemViewType(position);
         switch (switching_position){
             case 0: view = inFlaterLayoutRight(view,parent,postItem);
@@ -57,7 +58,7 @@ public class ListViewPostAdapter extends BaseAdapter {
         return view;
     }
 
-    private View inFlaterLayoutLeft(View view, ViewGroup parent,FeedPostGao postItem){
+    private View inFlaterLayoutLeft(View view, ViewGroup parent,PostGao postItem){
         ViewHolderItemLeft holder;
         if(view != null) {
             holder = (ViewHolderItemLeft) view.getTag();
@@ -66,16 +67,17 @@ public class ListViewPostAdapter extends BaseAdapter {
             holder = new ViewHolderItemLeft(view);
             view.setTag(holder);
         }
+        holder.angelCarPost.setTitle(postItem.getPostTopic());
         holder.angelCarPost.setDetails(
-                "" + postItem.getCarType() + " " +
+                        "" + postItem.getCarTypeMain() + " " +
                         "" + postItem.getCarTypeSub() + " " +
-                        "" + postItem.getCarDetailSub() + " " +
-                        "" + postItem.getCarDetail());
+                        "" + postItem.getCarTypeSubDetail() + " " +
+                        " ปี" + postItem.getCarYear());
 
         return view;
     }
 
-    private View inFlaterLayoutRight(View view, ViewGroup parent,FeedPostGao postItem){
+    private View inFlaterLayoutRight(View view, ViewGroup parent,PostGao postItem){
         ViewHolderItemRight holder;
         if(view != null) {
             holder = (ViewHolderItemRight) view.getTag();
@@ -84,25 +86,24 @@ public class ListViewPostAdapter extends BaseAdapter {
             holder = new ViewHolderItemRight(view);
             view.setTag(holder);
         }
+        holder.angelCarPost.setTitle(postItem.getPostTopic());
         holder.angelCarPost.setDetails(
-                "" + postItem.getCarType() + " " +
+                "" + postItem.getCarTypeMain() + " " +
                         "" + postItem.getCarTypeSub() + " " +
-                        "" + postItem.getCarDetailSub() + " " +
-                        "" + postItem.getCarDetail());
+                        "" + postItem.getCarTypeSubDetail() + " " +
+                        " ปี" + postItem.getCarYear());
         return view;
     }
 
     public class ViewHolderItemLeft {
-        @Bind(R.id.item_post)
-        AngelCarPost angelCarPost;
+        @Bind(R.id.item_post) AngelCarPost angelCarPost;
         public ViewHolderItemLeft(View v) {
             ButterKnife.bind(this,v);
         }
     }
 
     public class ViewHolderItemRight {
-        @Bind(R.id.item_post)
-        AngelCarPost angelCarPost;
+        @Bind(R.id.item_post) AngelCarPost angelCarPost;
         public ViewHolderItemRight(View v) {
             ButterKnife.bind(this,v);
         }

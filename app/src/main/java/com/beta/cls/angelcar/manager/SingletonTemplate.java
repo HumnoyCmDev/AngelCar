@@ -4,6 +4,9 @@ import android.content.Context;
 
 /**
  * Created by humnoy on 5/2/59.
+ * - ข้อควรระวัง Singleton ผูกติดกับ Application
+ * - ข้อมูลไม่ควรจะใหญ่ เกินไป
+ * -**** Out Of Memory , Memory Leak ****
  */
 public class SingletonTemplate {
 

@@ -24,10 +24,13 @@ import com.beta.cls.angelcar.Adapter.CustomAdapterGridDetail;
 import com.beta.cls.angelcar.R;
 import com.beta.cls.angelcar.gao.CarDetailGao;
 import com.beta.cls.angelcar.gao.CarDetailCollectionGao;
+import com.beta.cls.angelcar.model.InformationFromUser;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
 import com.google.gson.Gson;
+
+import org.parceler.Parcels;
 
 import java.io.IOException;
 import java.util.Calendar;
@@ -35,21 +38,21 @@ import java.util.List;
 
 
 public class CarDetailFragment extends Fragment {
-    private static String ARG_DATA_CAR_TYPE = "ARGS_DATA_CAR_TYPE";
-    private static String ARG_DATA_CAR_TYPE_SUB = "ARGS_DATA_CAR_TYPE_SUB";
+    private static String ARG_InformationFromUser = "ARG_InformationFromUser";
 
     private FragmentActivity myContext;
     private ProgressDialog mProgressDialog;
     private GridView mGridView;
     private CustomAdapterGridDetail mAdapter;
 
-    private String dataCarType,dataCarTypeSub;
+    private List<CarDetailGao> posts;
+    private InformationFromUser user;
 
 
-    public static CarDetailFragment newInstance(String carType, String subType) {
+
+    public static CarDetailFragment newInstance(InformationFromUser user) {
         Bundle args = new Bundle();
-        args.putString(ARG_DATA_CAR_TYPE,carType);
-        args.putString(ARG_DATA_CAR_TYPE_SUB,subType);
+        args.putParcelable(ARG_InformationFromUser, Parcels.wrap(user));
         CarDetailFragment fragment = new CarDetailFragment();
         fragment.setArguments(args);
         return fragment;
@@ -62,13 +65,11 @@ public class CarDetailFragment extends Fragment {
 
         Bundle args = getArguments();
         if (args != null){
-            dataCarType = args.getString(ARG_DATA_CAR_TYPE);
-            dataCarTypeSub = args.getString(ARG_DATA_CAR_TYPE_SUB);
+            user = Parcels.unwrap(args.getParcelable(ARG_InformationFromUser));
         }
     }
 
     @Override
-
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
 
                              Bundle savedInstanceState) {
@@ -77,12 +78,14 @@ public class CarDetailFragment extends Fragment {
         mGridView = (GridView) rootView.findViewById(R.id.grid_detail_model);
         mGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
-                TextView c = (TextView) v.findViewById(R.id.sub_detail);
-                String playerChanged = c.getText().toString();
+                Toast.makeText(v.getContext(), posts.get(position).getCarDetailSub(), Toast.LENGTH_SHORT).show();
+                user.setTypeSubDetail(posts.get(position).getCarDetailSub());
 
-
-                Toast.makeText(v.getContext(), playerChanged, Toast.LENGTH_SHORT).show();
-                show();
+                AllPostFragment fragment = AllPostFragment.newInstance(user);
+                myContext.getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.fragment_container, fragment)
+                        .addToBackStack(null)
+                        .commit();
 
 
             }
@@ -106,9 +109,9 @@ public class CarDetailFragment extends Fragment {
                 Request.Builder builder = new Request.Builder();
                 Request request =
                         builder.url("http://www.usedcar.co.th/getdatathreefragment.php?cartype="
-                                + dataCarType
+                                + user.getBrand()
                                 + "&carsubtype="
-                                + dataCarTypeSub).build();
+                                + user.getTypeSub()).build();
 
                 try {
 
@@ -145,11 +148,12 @@ public class CarDetailFragment extends Fragment {
         /*StringBuilder builder = new StringBuilder();
         builder.setLength(0);*/
 
-        List<CarDetailGao> posts = blog.getRows();
+       posts = blog.getRows();
 
         mAdapter = new CustomAdapterGridDetail(getActivity(), posts);
         mGridView.setAdapter(mAdapter);
     }
+
 
     public void show() {
 
@@ -173,12 +177,7 @@ public class CarDetailFragment extends Fragment {
                 Toast.makeText(v.getContext(), "Number selected" + x, Toast.LENGTH_SHORT).show(); //value ปี
                 d.dismiss();
 
-                FragmentManager fragManager = myContext.getSupportFragmentManager();
-                CarDetailFragment PostFragment = CarDetailFragment.newInstance(dataCarType,dataCarTypeSub);
-                FragmentTransaction transaction = fragManager.beginTransaction();
-                transaction.replace(R.id.fragment_container, PostFragment);
-                transaction.addToBackStack(null);
-                transaction.commit();
+
                 Log.i("test", "onClick: ");
 
             }

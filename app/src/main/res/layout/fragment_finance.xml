@@ -4,8 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#FFF6E8"
-    android:orientation="vertical"
-    tools:context="com.beta.cls.AngelCar.FinanceFragment">
+    android:orientation="vertical">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -23,132 +22,160 @@
                 android:src="@drawable/profile_car" />
 
             <TextView
+                android:gravity="left|center"
+                android:padding="5dp"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:gravity="center"
-                android:text="สินเชื่อรถทุกชนิด เปรียบเทียบราคา" />
+                android:text="@string/sample_test_text_chat" />
         </LinearLayout>
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:orientation="horizontal">
 
-            <ImageView
-                android:layout_width="64dp"
-                android:layout_height="64dp"
-                android:layout_margin="5dp"
-                android:background="@color/colorAccent" />
-
-            <ImageView
-                android:layout_width="64dp"
-                android:layout_height="64dp"
-                android:layout_margin="5dp"
-                android:background="@color/colorAccent" />
-
-            <ImageView
-                android:layout_width="64dp"
-                android:layout_height="64dp"
-                android:layout_margin="5dp"
-                android:background="@color/colorAccent" />
-
-            <ImageView
-                android:layout_width="64dp"
-                android:layout_height="64dp"
-                android:layout_margin="5dp"
-                android:background="@color/colorAccent" />
-
-        </LinearLayout>
 
         <ScrollView
+            android:fitsSystemWindows="true"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="match_parent">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="10dp">
+                android:orientation="vertical">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:gravity="center"
                     android:orientation="horizontal">
 
-                    <Button
+                    <ImageView
+                        android:src="@drawable/profile_car"
                         android:layout_width="64dp"
-                        android:layout_height="64dp" />
+                        android:layout_height="64dp"
+                        android:layout_margin="5dp" />
 
                     <ImageView
-                        android:layout_margin="5dp"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:background="@color/colorPrimaryDark" />
+                        android:src="@drawable/profile_car"
+                        android:layout_width="64dp"
+                        android:layout_height="64dp"
+                        android:layout_margin="5dp"/>
+
+                    <ImageView
+                        android:src="@drawable/profile_car"
+                        android:layout_width="64dp"
+                        android:layout_height="64dp"
+                        android:layout_margin="5dp"/>
+
+                    <ImageView
+                        android:src="@drawable/profile_car"
+                        android:layout_width="64dp"
+                        android:layout_height="64dp"
+                        android:layout_margin="5dp"/>
+
                 </LinearLayout>
 
                 <LinearLayout
+                    android:padding="5dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
 
                     <Button
+                        android:background="@drawable/ic_hndeveloper"
                         android:layout_width="64dp"
                         android:layout_height="64dp" />
 
-                    <ImageView
-                        android:layout_margin="5dp"
+                    <TextView
+                        android:textColor="@android:color/white"
+                        android:textSize="16sp"
+                        android:gravity="center"
+                        android:text="Description"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:background="@color/colorPrimaryDark" />
+                        android:background="@drawable/background_drawable" />
                 </LinearLayout>
 
                 <LinearLayout
+                    android:padding="5dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
 
                     <Button
+                        android:background="@drawable/ic_hndeveloper"
                         android:layout_width="64dp"
                         android:layout_height="64dp" />
 
-                    <ImageView
-                        android:layout_margin="5dp"
+                    <TextView
+                        android:textColor="@android:color/white"
+                        android:textSize="16sp"
+                        android:gravity="center"
+                        android:text="Description"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:background="@color/colorPrimaryDark" />
+                        android:background="@drawable/background_drawable" />
                 </LinearLayout>
 
                 <LinearLayout
+                    android:padding="5dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
 
                     <Button
+                        android:background="@drawable/ic_hndeveloper"
                         android:layout_width="64dp"
                         android:layout_height="64dp" />
 
-                    <ImageView
-                        android:layout_margin="5dp"
+                    <TextView
+                        android:textColor="@android:color/white"
+                        android:textSize="16sp"
+                        android:gravity="center"
+                        android:text="Description"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:background="@color/colorPrimaryDark" />
+                        android:background="@drawable/background_drawable" />
                 </LinearLayout>
 
                 <LinearLayout
+                    android:padding="5dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
 
                     <Button
+                        android:background="@drawable/ic_hndeveloper"
                         android:layout_width="64dp"
                         android:layout_height="64dp" />
 
-                    <ImageView
-                        android:layout_margin="5dp"
+                    <TextView
+                        android:textColor="@android:color/white"
+                        android:textSize="16sp"
+                        android:gravity="center"
+                        android:text="Description"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:background="@color/colorPrimaryDark" />
+                        android:background="@drawable/background_drawable" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:padding="5dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <Button
+                        android:background="@drawable/ic_hndeveloper"
+                        android:layout_width="64dp"
+                        android:layout_height="64dp" />
+
+                    <TextView
+                        android:textColor="@android:color/white"
+                        android:textSize="16sp"
+                        android:gravity="center"
+                        android:text="Description"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@drawable/background_drawable" />
                 </LinearLayout>
 
 

@@ -24,22 +24,52 @@
            android:layout_centerInParent="true"/>
        </FrameLayout>
 
-    <Button
-        android:id="@+id/button"
-        android:text="post"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/testAnim"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="78dp"
-        android:layout_gravity="center_horizontal" />
-
-    <ImageView
-        android:background="@color/colorAccent"
-        android:src="@drawable/simple_product"
-        android:scaleType="centerCrop"
-        android:id="@+id/ivPhoto"
+    <ScrollView
+        android:fillViewport="true"
         android:layout_width="match_parent"
-        android:layout_height="200dp" />
+        android:layout_height="match_parent">
 
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+
+        <Button
+            android:layout_margin="20dp"
+            android:id="@+id/button"
+            android:text="Photo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_gravity="center_horizontal" />
+
+        <ImageView
+            android:background="@color/colorAccent"
+            android:src="@drawable/simple_product"
+            android:scaleType="centerCrop"
+            android:id="@+id/ivPhoto"
+            android:layout_width="match_parent"
+            android:layout_height="200dp" />
+
+        <Button
+            android:layout_marginTop="10dp"
+            android:id="@+id/button_upload"
+            android:text="upload-Retrofit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center" />
+
+        <Button
+            android:layout_marginTop="20dp"
+            android:id="@+id/button_upload2"
+            android:text="upload-Volley"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center" />
+
+
+    </LinearLayout>
+    </ScrollView>
 </LinearLayout>

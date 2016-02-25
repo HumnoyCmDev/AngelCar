@@ -15,6 +15,7 @@ import android.widget.GridView;
 
 import com.beta.cls.angelcar.Adapter.CustomAdapterGrid;
 import com.beta.cls.angelcar.R;
+import com.beta.cls.angelcar.model.InformationFromUser;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -47,16 +48,20 @@ public class BrandFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        CustomAdapterGrid adapter = new CustomAdapterGrid(getActivity(), getIntsImageID());
+        CustomAdapterGrid adapter = new CustomAdapterGrid(getActivity(),
+                getIntsImageID());
         gridview.setAdapter(adapter);
         gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
-                FragmentManager fragManager = myContext.getSupportFragmentManager();
-                CarTypeFragment TwoFragment = CarTypeFragment.newInstance(getDataCarType(position));
-                FragmentTransaction transaction = fragManager.beginTransaction();
-                transaction.replace(R.id.fragment_container, TwoFragment);
-                transaction.addToBackStack(null);
-                transaction.commit();
+
+                InformationFromUser user = new InformationFromUser();
+                user.setBrand(getBrand(position));
+
+                CarTypeFragment TwoFragment = CarTypeFragment.newInstance(user);
+                myContext.getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.fragment_container, TwoFragment)
+                        .addToBackStack(null)
+                        .commit();
 
             }
         });
@@ -85,7 +90,7 @@ public class BrandFragment extends Fragment {
         myContext = (FragmentActivity) context;
     }
 
-    private String getDataCarType(int position){
+    private String getBrand(int position){
         switch (position){
             case 0 : return "toyota";
             case 1 : return "honda";

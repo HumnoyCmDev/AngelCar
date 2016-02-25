@@ -11,9 +11,12 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
+import com.beta.cls.angelcar.Adapter.MessageAdapter;
 import com.beta.cls.angelcar.Adapter.MessageItemAdapter;
 import com.beta.cls.angelcar.R;
 import com.beta.cls.angelcar.activity.ChatMessageActivity;
+import com.beta.cls.angelcar.gao.MessageAdminCollectionGao;
+import com.beta.cls.angelcar.gao.MessageGao;
 import com.beta.cls.angelcar.util.BlogMessage;
 import com.beta.cls.angelcar.interfaces.AsyncResult;
 import com.beta.cls.angelcar.manager.LoadMessageAsync;
@@ -87,32 +90,7 @@ public class ChatBuyFragment extends Fragment {
     }
 
     private void initMessage() {
-        MessageAPI api = new MessageAPI();
-        api.putMessage("26");
-        Log.i(TAG, "initMessage: "+api.getURL());
-        new LoadMessageAsync(new AsyncResult() {
-            @Override
-            public void onSucceed(String s) {
-                Gson gson = new Gson();
-                PostBlogArrayMessage blogArrayMessage = gson.fromJson(s, PostBlogArrayMessage.class);
-                message = blogArrayMessage.getMessageViewByAdmin().get(0).getMessage();
-                Collections.sort(message, new Comparator<BlogMessage>() {
-                    @Override
-                    public int compare(BlogMessage lhs, BlogMessage rhs) {
-                        return rhs.getMessagestamp().compareToIgnoreCase(lhs.getMessagestamp());
-                    }
-                });
-                itemAdapter =
-                        new MessageItemAdapter(message);
-                listView.setAdapter(itemAdapter);
 
-            }
-
-            @Override
-            public void onFail() {
-                Log.i(TAG, "onFail: ");
-            }
-        }).execute(api);
     }
 
 
@@ -120,36 +98,34 @@ public class ChatBuyFragment extends Fragment {
     public void onStart() {
         super.onStart();
         BusProvider.getInstance().register(this);
-//        Toast.makeText(getActivity(), "onStart", Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void onStop() {
         super.onStop();
         BusProvider.getInstance().unregister(this);
-//        Toast.makeText(getActivity(), "onStop", Toast.LENGTH_SHORT).show();
     }
 
     @Subscribe // broadcast
     public void onEvent(PostBlogArrayMessage blogArrayMessage){
-        message = blogArrayMessage.getMessageViewByAdmin().get(0).getMessage();
-            itemAdapter =
-                    new MessageItemAdapter(message);
-            listView.setAdapter(itemAdapter);
+//        message = blogArrayMessage.getMessageViewByAdmin().get(0).getMessage();
+//            itemAdapter =
+//                    new MessageItemAdapter(message);
+//            listView.setAdapter(itemAdapter);
 
 
     }
 
+    @Subscribe
+    public void onProductMessageAdminGao(MessageAdminCollectionGao gao){
+        // TODO Retrofit 2.0 ReQuest Message #Code 001
+        MessageGao messageGao = gao.getMessageAdmin().get(0).getMessage().get(0);
+        Log.i(TAG, "onProductMessageAdminGao: "+messageGao.getMessagesTamp().toString());
 
-    @Override
-    public void onResume() {
-        super.onResume();
-//        initMessage();
+        MessageAdapter adapter = new MessageAdapter(gao.getMessageAdmin().get(0).getMessage());
+        listView.setAdapter(adapter);
     }
 
-    @Override
-    public void onPause() {
-        super.onPause();
-    }
+
 }
 

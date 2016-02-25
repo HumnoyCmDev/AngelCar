@@ -15,8 +15,8 @@ import android.widget.TextView;
 import com.beta.cls.angelcar.Adapter.ImageAdapter;
 import com.beta.cls.angelcar.Adapter.MultipleChatAdapter;
 import com.beta.cls.angelcar.R;
+import com.beta.cls.angelcar.gao.PostGao;
 import com.beta.cls.angelcar.util.BlogMessage;
-import com.beta.cls.angelcar.gao.FeedPostGao;
 
 import org.parceler.Parcels;
 
@@ -29,21 +29,16 @@ import butterknife.OnClick;
 
 public class DetailCarActivity extends AppCompatActivity {
 
-    @Bind(R.id.collapsingToolbarLayout)
-    CollapsingToolbarLayout collapsingToolbarLayout;
-    @Bind(R.id.toolbar_top)
-    Toolbar toolbar;
+    @Bind(R.id.collapsingToolbarLayout) CollapsingToolbarLayout collapsingToolbarLayout;
+    @Bind(R.id.toolbar_top) Toolbar toolbar;
 
-    @Bind(R.id.recycler_view)
-    RecyclerView recyclerView;
+    @Bind(R.id.recycler_view) RecyclerView recyclerView;
 
-    @Bind(R.id.activity_detail_tvCarType)
-    TextView tvCarType;
+    @Bind(R.id.activity_detail_tvCarType) TextView tvCarType;
+    @Bind(R.id.recycler_view_chat_layout_input_chat) EditText input_chat;
 
-    @Bind(R.id.recycler_view_chat_layout_input_chat)
-    EditText input_chat;
-
-
+    List<BlogMessage> blogMessages;
+    MultipleChatAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,9 +57,16 @@ public class DetailCarActivity extends AppCompatActivity {
         initData();
 
     }
-    List<BlogMessage> blogMessages;
-    MultipleChatAdapter adapter;
+
     private void initData() {
+
+        // getIntent
+        Intent getIntent = getIntent();
+        if (getIntent != null){
+            PostGao postItem = Parcels.unwrap(
+                    getIntent.getParcelableExtra("PostGao"));
+        }
+
 
         blogMessages = new ArrayList<>();
         BlogMessage b = new BlogMessage();
@@ -103,14 +105,6 @@ public class DetailCarActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-        // getIntent
-        Intent getIntent = getIntent();
-        if (getIntent != null){
-            FeedPostGao postItem = Parcels.unwrap(
-                    getIntent.getParcelableExtra("FeedPostGao"));
-            tvCarType.setText(postItem.getCarType());
-        }
 
     }
 

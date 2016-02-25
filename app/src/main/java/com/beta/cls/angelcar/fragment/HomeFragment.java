@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.animation.BounceInterpolator;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -26,11 +27,12 @@ import com.beta.cls.angelcar.Adapter.ListViewPostAdapter;
 import com.beta.cls.angelcar.activity.DetailCarActivity;
 import com.beta.cls.angelcar.R;
 import com.beta.cls.angelcar.anim.ResizeHeight;
-import com.beta.cls.angelcar.gao.FeedPostCollectionGao;
-import com.beta.cls.angelcar.gao.FeedPostGao;
+import com.beta.cls.angelcar.gao.PostCollectionGao;
+import com.beta.cls.angelcar.gao.PostGao;
 import com.beta.cls.angelcar.manager.http.ApiService;
 import com.beta.cls.angelcar.manager.http.HttpManager;
 
+import org.parceler.Parcel;
 import org.parceler.Parcels;
 
 import java.util.List;
@@ -43,17 +45,18 @@ import retrofit2.Response;
 
 
 public class HomeFragment extends Fragment {
-
+    public static final String SAVE_STATE_GAO = "SAVE_STATE_GAO";
     @Bind(R.id.list_view) ListView listView;
     @Bind(R.id.swipe_container) SwipeRefreshLayout mSwipeRefresh;
     @Bind(R.id.ctFilter) RelativeLayout ctFilter;
     @Bind(R.id.btFilter) ImageView btFilter;
-    Animation animDown,animUp;
+//    Animation animDown,animUp;
 
     private static final String TAG = "HomeFragment";
-    private List<FeedPostGao> postItems;
 
+    private PostCollectionGao gao;
     private ListViewPostAdapter adapter;
+
     public HomeFragment() {
     }
 
@@ -75,45 +78,17 @@ public class HomeFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mSwipeRefresh.setColorSchemeColors(
-                Color.parseColor("#104F94"),
-                Color.parseColor("#104F94"),
-                Color.parseColor("#FFC11E"),
-                Color.parseColor("#FFC11E"));
-
-        int[] resId = {R.drawable.profile_car
-                , R.drawable.profile_car, R.drawable.profile_car
-                , R.drawable.profile_car, R.drawable.profile_car
-                , R.drawable.profile_car, R.drawable.profile_car
-                , R.drawable.profile_car, R.drawable.profile_car
-                , R.drawable.profile_car, R.drawable.profile_car};
-
-        String[] list = {"TOYOTA", "HONDA", "MAZDA"
-                , "SUBARU", "ISUZU", "AUDI", "BENZ"
-                , "BMW", "NISSAN", "MITSUBISHI"
-                , "FORD"};
-
-        mSwipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        mSwipeRefresh.setRefreshing(false);
-                    }
-                }, 3000);
-            }
-        });
-
+        initInstance();
         if (savedInstanceState == null){
             loadData();
-            initInstance();
-
+        }else { // Restore
+            gao = Parcels.unwrap(savedInstanceState.getParcelable(SAVE_STATE_GAO));
+            adapter.setGao(gao);
+            adapter.notifyDataSetChanged();
         }
 
-
-        animDown = AnimationUtils.loadAnimation(getActivity(), R.anim.animation_slide_down);
-        animUp = AnimationUtils.loadAnimation(getActivity(), R.anim.animation_slide_up);
+//        animDown = AnimationUtils.loadAnimation(getActivity(), R.anim.animation_slide_down);
+//        animUp = AnimationUtils.loadAnimation(getActivity(), R.anim.animation_slide_up);
 
         btFilter.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -137,30 +112,58 @@ public class HomeFragment extends Fragment {
     }
 
     private void initInstance() {
+        adapter = new ListViewPostAdapter();
+        listView.setAdapter(adapter);
+        mSwipeRefresh.setColorSchemeColors(
+                Color.parseColor("#104F94"),
+                Color.parseColor("#104F94"),
+                Color.parseColor("#FFC11E"),
+                Color.parseColor("#FFC11E"));
 
+        mSwipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+               loadData();
+            }
+        });
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                FeedPostGao item = postItems.get(position);
+                PostGao item = gao.getRows().get(position);
                 Intent intent = new Intent(getActivity(), DetailCarActivity.class);
-                intent.putExtra("FeedPostGao", Parcels.wrap(item));
+                intent.putExtra("PostGao", Parcels.wrap(item));
                 startActivity(intent);
 
             }
         });
+
+        listView.setOnScrollListener(new AbsListView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(AbsListView view, int scrollState) {
+
+            }
+
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+                mSwipeRefresh.setEnabled(firstVisibleItem == 0);
+            }
+        });
+
     }
 
-    void loadData(){
+    private void loadData(){
 
         ApiService call = HttpManager.getInstance().getService();
-        call.loadPost().enqueue(new Callback<FeedPostCollectionGao>() {
+        call.loadPost().enqueue(new Callback<PostCollectionGao>() {
             @Override
-            public void onResponse(Call<FeedPostCollectionGao> call, Response<FeedPostCollectionGao> response) {
+            public void onResponse(Call<PostCollectionGao> call, Response<PostCollectionGao> response) {
                 if (response.isSuccess()){
-                    postItems = response.body().getRows();
-                    adapter = new ListViewPostAdapter(postItems);
-                    listView.setAdapter(adapter);
+                    mSwipeRefresh.setRefreshing(false);
+                    gao = response.body();
+                    adapter.setGao(response.body());
+                    adapter.notifyDataSetChanged();
                 }else {
+                    mSwipeRefresh.setRefreshing(false);
                     Toast.makeText(getActivity(),
                             response.errorBody().toString(),
                             Toast.LENGTH_SHORT).show();
@@ -168,11 +171,20 @@ public class HomeFragment extends Fragment {
             }
 
             @Override
-            public void onFailure(Call<FeedPostCollectionGao> call, Throwable t) {
+            public void onFailure(Call<PostCollectionGao> call, Throwable t) {
+                mSwipeRefresh.setRefreshing(false);
                 Toast.makeText(getActivity(),
                         t.toString(),
                         Toast.LENGTH_SHORT).show();
             }
         });
+
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelable(SAVE_STATE_GAO,Parcels.wrap(gao));
+
     }
 }
