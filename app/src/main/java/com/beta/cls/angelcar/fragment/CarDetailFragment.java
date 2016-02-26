@@ -22,13 +22,18 @@ import android.widget.Toast;
 
 import com.beta.cls.angelcar.Adapter.CustomAdapterGridDetail;
 import com.beta.cls.angelcar.R;
+import com.beta.cls.angelcar.activity.PostActivity;
 import com.beta.cls.angelcar.gao.CarDetailGao;
 import com.beta.cls.angelcar.gao.CarDetailCollectionGao;
+import com.beta.cls.angelcar.interfaces.OnSelectData;
+import com.beta.cls.angelcar.manager.bus.BusProvider;
 import com.beta.cls.angelcar.model.InformationFromUser;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
 import com.google.gson.Gson;
+import com.squareup.otto.Produce;
+import com.squareup.otto.Subscribe;
 
 import org.parceler.Parcels;
 
@@ -36,25 +41,24 @@ import java.io.IOException;
 import java.util.Calendar;
 import java.util.List;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
+
 
 public class CarDetailFragment extends Fragment {
-    private static String ARG_InformationFromUser = "ARG_InformationFromUser";
+    private static String SAVE_INSTANCE_CAT_DETAIL = "SAVE_INSTANCE_CAT_DETAIL";
 
-    private FragmentActivity myContext;
     private ProgressDialog mProgressDialog;
-    private GridView mGridView;
+
+     @Bind(R.id.grid_detail_model) GridView mGridView;
+
     private CustomAdapterGridDetail mAdapter;
 
-    private List<CarDetailGao> posts;
+    CarDetailCollectionGao gao;
     private InformationFromUser user;
 
-
-
-    public static CarDetailFragment newInstance(InformationFromUser user) {
-        Bundle args = new Bundle();
-        args.putParcelable(ARG_InformationFromUser, Parcels.wrap(user));
+    public static CarDetailFragment newInstance() {
         CarDetailFragment fragment = new CarDetailFragment();
-        fragment.setArguments(args);
         return fragment;
     }
 
@@ -63,10 +67,6 @@ public class CarDetailFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        Bundle args = getArguments();
-        if (args != null){
-            user = Parcels.unwrap(args.getParcelable(ARG_InformationFromUser));
-        }
     }
 
     @Override
@@ -74,24 +74,51 @@ public class CarDetailFragment extends Fragment {
 
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_three_post, container, false);
+        ButterKnife.bind(this,rootView);
 
-        mGridView = (GridView) rootView.findViewById(R.id.grid_detail_model);
         mGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
-                Toast.makeText(v.getContext(), posts.get(position).getCarDetailSub(), Toast.LENGTH_SHORT).show();
-                user.setTypeSubDetail(posts.get(position).getCarDetailSub());
-
-                AllPostFragment fragment = AllPostFragment.newInstance(user);
-                myContext.getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.fragment_container, fragment)
-                        .addToBackStack(null)
-                        .commit();
+                user.setTypeSubDetail(gao.getRows().get(position).getCarDetailSub());
+                BusProvider.getInstance().post(user);
+                OnSelectData onSelectData = (OnSelectData) getActivity();
+                onSelectData.onSelectedCallback(PostActivity.CALLBACK_CAR_TYPE_DETAIL);
 
 
             }
         });
 
+        return rootView;
 
+    }
+
+    private void showData(String jsonString) {
+        Gson gson = new Gson();
+        CarDetailCollectionGao blog = gson.fromJson(jsonString, CarDetailCollectionGao.class);
+        gao = blog;
+        mAdapter = new CustomAdapterGridDetail(getActivity(), gao.getRows());
+        mGridView.setAdapter(mAdapter);
+
+        Log.i(TAG, "showData: ");
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        BusProvider.getInstance().register(this);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        BusProvider.getInstance().unregister(this);
+    }
+
+    private static final String TAG = "CarDetailFragment";
+
+    @Subscribe
+    public void getProduceData(InformationFromUser iuser){
+        this.user = iuser;
+        if (iuser.getTypeSub() == null) return;
         new AsyncTask<Void, Void, String>() {
             @Override
             protected void onPreExecute() {
@@ -136,62 +163,7 @@ public class CarDetailFragment extends Fragment {
             }
 
         }.execute();
-
-        return rootView;
-
     }
 
-    private void showData(String jsonString) {
-        Gson gson = new Gson();
-        CarDetailCollectionGao blog = gson.fromJson(jsonString, CarDetailCollectionGao.class);
-
-        /*StringBuilder builder = new StringBuilder();
-        builder.setLength(0);*/
-
-       posts = blog.getRows();
-
-        mAdapter = new CustomAdapterGridDetail(getActivity(), posts);
-        mGridView.setAdapter(mAdapter);
-    }
-
-
-    public void show() {
-
-        final Dialog d = new Dialog(getActivity());
-        d.setTitle("ปีรถของท่าน");
-        d.setContentView(R.layout.dialog_year);
-        //Button b1 = (Button) d.findViewById(R.id. button1);
-        //Button b2 = (Button) d.findViewById(R.id.button2);
-        int year = Calendar.getInstance().get(Calendar.YEAR);
-        final NumberPicker np = (NumberPicker) d.findViewById(R.id.numberPicker1);
-        np.setMaxValue(2016);
-        np.setValue(year);
-        np.setMinValue(1950);
-        np.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
-        np.setWrapSelectorWheel(false);
-        np.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                int x = ((NumberPicker) v).getValue();
-                Toast.makeText(v.getContext(), "Number selected" + x, Toast.LENGTH_SHORT).show(); //value ปี
-                d.dismiss();
-
-
-                Log.i("test", "onClick: ");
-
-            }
-        });
-
-        d.show();
-
-
-    }
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        myContext = (FragmentActivity) context;
-    }
 
 }

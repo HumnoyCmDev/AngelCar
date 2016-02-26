@@ -65,7 +65,7 @@ public class YearFragmentDialog extends DialogFragment{
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent intent = getActivity().getIntent();
-                intent.putExtra(ARG_YEAR,dataYear.get(position));
+                intent.putExtra(ARG_YEAR,Integer.valueOf(dataYear.get(position)));
                 getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK,intent);
                 dismiss();
             }

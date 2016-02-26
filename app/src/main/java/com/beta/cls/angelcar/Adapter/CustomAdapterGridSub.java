@@ -15,22 +15,15 @@ import com.beta.cls.angelcar.gao.CarDataTypeGao;
 import java.util.List;
 
 public class CustomAdapterGridSub extends BaseAdapter {
-    private LayoutInflater mInflater;
     List<CarDataTypeGao> post;
-    private ViewHolder mViewHolder;
 
-    private Bitmap mBitmap;
-    private Activity mActivity;
-
-    public CustomAdapterGridSub(Activity activity, List<CarDataTypeGao> post) {
-        mInflater = (LayoutInflater) activity.getSystemService(
-                Context.LAYOUT_INFLATER_SERVICE);
+    public CustomAdapterGridSub(List<CarDataTypeGao> post) {
         this.post = post;
-        mActivity = activity;
     }
 
     @Override
     public int getCount() {
+        if (post == null) return 0;
         return post.size();
     }
 
@@ -46,8 +39,9 @@ public class CustomAdapterGridSub extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
+        ViewHolder mViewHolder;
         if (convertView == null) {
-            convertView = mInflater.inflate(R.layout.grid_row, parent, false);
+            convertView = LayoutInflater.from(parent.getContext()).inflate(R.layout.grid_row, parent, false);
             mViewHolder = new ViewHolder();
              mViewHolder.cartype_sub = (TextView) convertView.findViewById(R.id.name_cartype);
 

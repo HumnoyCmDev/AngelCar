@@ -5,8 +5,6 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,7 +13,11 @@ import android.widget.GridView;
 
 import com.beta.cls.angelcar.Adapter.CustomAdapterGrid;
 import com.beta.cls.angelcar.R;
+import com.beta.cls.angelcar.activity.PostActivity;
+import com.beta.cls.angelcar.interfaces.OnSelectData;
+import com.beta.cls.angelcar.manager.bus.BusProvider;
 import com.beta.cls.angelcar.model.InformationFromUser;
+import com.squareup.otto.Produce;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -23,8 +25,10 @@ import butterknife.ButterKnife;
 
 public class BrandFragment extends Fragment {
 
-    private FragmentActivity myContext;
+
     @Bind(R.id.gridview) GridView gridview;
+
+    InformationFromUser user;
 
     public BrandFragment(){
         super();
@@ -54,15 +58,12 @@ public class BrandFragment extends Fragment {
         gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
 
-                InformationFromUser user = new InformationFromUser();
+                user = new InformationFromUser();
                 user.setBrand(getBrand(position));
+                BusProvider.getInstance().post(user);
 
-                CarTypeFragment TwoFragment = CarTypeFragment.newInstance(user);
-                myContext.getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.fragment_container, TwoFragment)
-                        .addToBackStack(null)
-                        .commit();
-
+                OnSelectData onSelectData = (OnSelectData) getActivity();
+                onSelectData.onSelectedCallback(PostActivity.CALLBACK_BRAND);
             }
         });
 
@@ -82,12 +83,6 @@ public class BrandFragment extends Fragment {
                     , R.drawable.foton, R.drawable.hino
                     , R.drawable.holden, R.drawable.honda
                     , R.drawable.hummer, R.drawable.hyundai};
-    }
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        myContext = (FragmentActivity) context;
     }
 
     private String getBrand(int position){
@@ -114,4 +109,10 @@ public class BrandFragment extends Fragment {
         }
         return "";
     }
+
+    @Produce
+    public InformationFromUser produceData(){
+        return user;
+    }
+
 }

@@ -22,12 +22,16 @@ import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.beta.cls.angelcar.R;
+import com.beta.cls.angelcar.activity.PostActivity;
 import com.beta.cls.angelcar.gao.SuccessGao;
+import com.beta.cls.angelcar.interfaces.OnSelectData;
 import com.beta.cls.angelcar.manager.Contextor;
+import com.beta.cls.angelcar.manager.bus.BusProvider;
 import com.beta.cls.angelcar.manager.http.ApiService;
 import com.beta.cls.angelcar.manager.http.HttpManager;
 import com.beta.cls.angelcar.model.InformationFromUser;
 import com.beta.cls.angelcar.util.IpAddress;
+import com.squareup.otto.Subscribe;
 import com.squareup.picasso.Picasso;
 
 import org.parceler.Parcels;
@@ -83,11 +87,8 @@ public class AllPostFragment extends Fragment implements View.OnClickListener{
         super();
     }
 
-    public static AllPostFragment newInstance(InformationFromUser user) {
+    public static AllPostFragment newInstance() {
         AllPostFragment fragment = new AllPostFragment();
-        Bundle args = new Bundle();
-        args.putParcelable(ARG_InformationFromUser, Parcels.wrap(user));
-        fragment.setArguments(args);
         return fragment;
     }
 
@@ -128,13 +129,6 @@ public class AllPostFragment extends Fragment implements View.OnClickListener{
         super.onActivityCreated(savedInstanceState);
 
         if (savedInstanceState == null) {
-            // Restore Instance State here
-
-            Bundle args = getArguments();
-            if (args != null){
-                user = Parcels.unwrap(args.getParcelable(ARG_InformationFromUser));
-            }
-
             initData();
             initInstance();
             initDataProvince();
@@ -189,31 +183,26 @@ public class AllPostFragment extends Fragment implements View.OnClickListener{
     }
 
     private void initData() {
-//
-//        Log.i(TAG, "initData: "+user.getBrand());
-//        Log.i(TAG, "initData: "+user.getTypeSub());
-//        Log.i(TAG, "initData: "+user.getTypeSubDetail());
-//        Log.i(TAG, "initData: "+user.getYear());
-//        Log.i(TAG, "initData: "+tgGear.isChecked());
 
-        editTextBrand.setText(user.getBrand());
-        editTextType.setText(user.getTypeSub());
-        editTextTypeSub.setText(user.getTypeSubDetail());
-        editTextYear.setText(""+user.getYear());
+
+//        editTextBrand.setText(user.getBrand());
+//        editTextType.setText(user.getTypeSub());
+//        editTextTypeSub.setText(user.getTypeSubDetail());
+//        editTextYear.setText(""+user.getYear());
 
         //
-        detailPostCar.setText(
-                        user.getBrand().toUpperCase()+" "+
-                        user.getTypeSub()+" "+
-                        user.getTypeSubDetail()+" ปี"+
-                        user.getYear());
+//        detailPostCar.setText(
+//                        user.getBrand().toUpperCase()+" "+
+//                        user.getTypeSub()+" "+
+//                        user.getTypeSubDetail()+" ปี"+
+//                        user.getYear());
     }
 
     @OnClick(R.id.fragment_all_post_ButtonPost)
     public void onClickPost(){
 
         //TODO 19/02/2016
-        String postUserId = "1111111";
+        /*String postUserId = "1111111";
         String carTypeMain = user.getBrand().toUpperCase(); // toyota
         String carTypeSub = user.getTypeSub(); // fortuner
         String carTypeSubDetail = user.getTypeSubDetail(); // 1.6 v
@@ -256,8 +245,10 @@ public class AllPostFragment extends Fragment implements View.OnClickListener{
                 Toast.makeText(Contextor.getInstance().getContext(),
                         t.toString(),Toast.LENGTH_SHORT).show();
             }
-        });
+        });*/
 
+        OnSelectData onSelectData = (OnSelectData) getActivity();
+        onSelectData.onSelectedCallback(PostActivity.CALLBACK_ALL_POST);
     }
 
     @Override
@@ -303,5 +294,26 @@ public class AllPostFragment extends Fragment implements View.OnClickListener{
         Intent i = new Intent(Intent.ACTION_PICK,
                 MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         startActivityForResult(i, RESULT_LOAD_IMAGE);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        BusProvider.getInstance().register(this);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        BusProvider.getInstance().unregister(this);
+    }
+
+    @Subscribe
+    public void getProduceData(InformationFromUser user){
+        Log.i(TAG, "getProduceData3: "+user.getBrand());
+        Log.i(TAG, "getProduceData3: "+user.getTypeSub());
+        Log.i(TAG, "getProduceData3: "+user.getTypeSubDetail());
+        Log.i(TAG, "getProduceData3: "+user.getYear());
+
     }
 }

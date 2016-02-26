@@ -5,7 +5,7 @@
       <module fileurl="file://$PROJECT_DIR$/AngelCar.iml" filepath="$PROJECT_DIR$/AngelCar.iml" />
       <module fileurl="file://$PROJECT_DIR$/angelcarlibrary/angelcarlibrary.iml" filepath="$PROJECT_DIR$/angelcarlibrary/angelcarlibrary.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/libraryIndicator/libraryIndicator.iml" filepath="$PROJECT_DIR$/libraryIndicator/libraryIndicator.iml" />
+      <module fileurl="file://$PROJECT_DIR$/lbindicator/lbindicator.iml" filepath="$PROJECT_DIR$/lbindicator/lbindicator.iml" />
     </modules>
   </component>
 </project>

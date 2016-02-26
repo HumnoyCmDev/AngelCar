@@ -22,7 +22,7 @@
         android:name=".MainApplication">
 
         <activity
-            android:name=".activity.MainActivity"
+            android:name=".activity.PostActivity"
             android:uiOptions="splitActionBarWhenNarrow">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -44,6 +44,7 @@
         <!--<service android:name=".service.RealTimeService"/>-->
 
         <activity android:name=".activity.ActivitySample"/>
+        <!--<activity android:name=".activity.PostActivity"/>-->
     </application>
 
 </manifest>

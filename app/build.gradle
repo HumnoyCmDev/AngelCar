@@ -28,7 +28,7 @@ dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     testCompile 'junit:junit:4.12'
     compile project(':angelcarlibrary')
-//    compile project(':libraryIndicator')
+//    compile project(':lbindicator')
 
     compile "com.android.support:appcompat-v7:${versionSupportLibrary}"
     compile "com.android.support:design:${versionSupportLibrary}"

@@ -1,2 +1,2 @@
 include ':app', ':angelcarlibrary'
-include ':libraryIndicator'
+include ':lbindicator'
