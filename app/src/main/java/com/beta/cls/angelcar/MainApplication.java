@@ -18,12 +18,12 @@ public class MainApplication extends Application{
         super.onCreate();
 
         Contextor.getInstance().init(getApplicationContext());
-
-        Intent intent = new Intent(this, RealTimeBroadCast.class);
-        long scTime = 1000;
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, intent, 0);
-        AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
-        alarmManager.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + scTime, pendingIntent);
+        //TODO ปิดไว้ ก่อน อย่าลืมมาแก้
+//        Intent intent = new Intent(this, RealTimeBroadCast.class);
+//        long scTime = 1000;
+//        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, intent, 0);
+//        AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+//        alarmManager.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + scTime, pendingIntent);
     }
 
     @Override

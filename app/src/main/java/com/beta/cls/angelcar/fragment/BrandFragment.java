@@ -26,15 +26,15 @@ public class BrandFragment extends Fragment {
     private FragmentActivity myContext;
     @Bind(R.id.gridview) GridView gridview;
 
-    public BrandFragment() {
-        /*ข้อมูลรถ*/
+    public BrandFragment(){
+        super();
     }
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
+    public static BrandFragment  newInstance(){
+        BrandFragment fragment = new BrandFragment();
+        return fragment;
     }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState) {

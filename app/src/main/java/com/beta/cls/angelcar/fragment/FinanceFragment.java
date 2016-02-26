@@ -43,25 +43,25 @@ public class FinanceFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        FragmentTransaction ft = getFragmentManager().beginTransaction();
-        Fragment fragment = getFragmentManager().findFragmentByTag("YearFragmentDialog");
-        if (fragment != null){
-            ft.remove(fragment);
-        }
-        ft.addToBackStack(null);
-
-        YearFragmentDialog dialog = new YearFragmentDialog();
-        dialog.setTargetFragment(this,99);
-        dialog.show(getFragmentManager(),"YearFragmentDialog");
+//        FragmentTransaction ft = getFragmentManager().beginTransaction();
+//        Fragment fragment = getFragmentManager().findFragmentByTag("YearFragmentDialog");
+//        if (fragment != null){
+//            ft.remove(fragment);
+//        }
+//        ft.addToBackStack(null);
+//
+//        YearFragmentDialog dialog = new YearFragmentDialog();
+//        dialog.setTargetFragment(this,99);
+//        dialog.show(getFragmentManager(),"YearFragmentDialog");
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == 99 && resultCode == Activity.RESULT_OK && data != null){
-            Toast.makeText(getActivity(),"Result :"+data.getStringExtra(YearFragmentDialog.ARG_YEAR),Toast.LENGTH_SHORT).show();
-        }
+//        if (requestCode == 99 && resultCode == Activity.RESULT_OK && data != null){
+//            Toast.makeText(getActivity(),"Result :"+data.getStringExtra(YearFragmentDialog.ARG_YEAR),Toast.LENGTH_SHORT).show();
+//        }
 
     }
 }

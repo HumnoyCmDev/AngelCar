@@ -1,6 +1,8 @@
 package com.beta.cls.angelcar.activity;
 
 import android.content.Intent;
+import android.graphics.drawable.AnimatedVectorDrawable;
+import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -8,8 +10,10 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewStub;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.Toast;
 import android.widget.ToggleButton;
@@ -32,6 +36,7 @@ public class ActivitySample extends AppCompatActivity {
 
     private static final String TAG = "ActivitySample";
 
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,7 +53,6 @@ public class ActivitySample extends AppCompatActivity {
 //        YearFragmentDialog dialog = new YearFragmentDialog();
 //        dialog.setTargetFragment(getFragmentMa,0);
 //        dialog.show(getSupportFragmentManager(),"YearFragmentDialog");
-
     }
 
     @Override

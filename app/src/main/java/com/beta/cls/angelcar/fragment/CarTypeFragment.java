@@ -1,5 +1,6 @@
 package com.beta.cls.angelcar.fragment;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -47,6 +48,7 @@ import retrofit2.Response;
 public class CarTypeFragment extends Fragment {
     private static String ARG_InformationFromUser = "ARG_InformationFromUser";
     private static String TAG = "CarTypeFragment";
+    private static int DIALOG_YEAR = 99;
     
     
     @Bind(R.id.grid_sub_model) GridView mGridView;
@@ -92,8 +94,9 @@ public class CarTypeFragment extends Fragment {
             public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
                 Toast.makeText(v.getContext(), "--"+posts.get(position).getCarTypeSub(), Toast.LENGTH_SHORT).show();
                 user.setTypeSub(posts.get(position).getCarTypeSub());
-                showDialog();
+//                showDialog();
 
+                dialogSelectYear();
 
             }
         });
@@ -121,6 +124,32 @@ public class CarTypeFragment extends Fragment {
                 Log.e(TAG, "onFailure: ", t);
             }
         });
+
+    }
+
+    private void dialogSelectYear() {
+        FragmentTransaction ft = getFragmentManager().beginTransaction();
+        Fragment fragment = getFragmentManager().findFragmentByTag("YearFragmentDialog");
+        if (fragment != null){
+            ft.remove(fragment);
+        }
+        ft.addToBackStack(null);
+        YearFragmentDialog dialog = new YearFragmentDialog();
+        dialog.setTargetFragment(this,DIALOG_YEAR);
+        dialog.show(getFragmentManager(),"YearFragmentDialog");
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == DIALOG_YEAR && resultCode == Activity.RESULT_OK && data != null){
+            CarDetailFragment fragment = CarDetailFragment.newInstance(user);
+            myContext.getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.fragment_container, fragment)
+                    .addToBackStack(null)
+                    .commit();
+        }
 
     }
 
