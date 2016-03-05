@@ -1,12 +1,8 @@
 package com.beta.cls.angelcar;
 
-import android.app.AlarmManager;
 import android.app.Application;
-import android.app.PendingIntent;
-import android.content.Intent;
 
 import com.beta.cls.angelcar.manager.Contextor;
-import com.beta.cls.angelcar.service.RealTimeBroadCast;
 
 /**
  * Created by humnoy on 27/1/59.

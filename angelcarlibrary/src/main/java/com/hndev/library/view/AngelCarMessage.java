@@ -22,6 +22,8 @@ import com.hndev.library.R;
 import com.hndev.library.view.sate.BundleSavedState;
 import com.squareup.picasso.Picasso;
 
+import javax.xml.parsers.DocumentBuilder;
+
 public class AngelCarMessage extends BaseCustomViewGroup {
 
     private CircularImageView iconProfile;
@@ -134,6 +136,7 @@ public class AngelCarMessage extends BaseCustomViewGroup {
     }
 
     public void setMessage(String msg) {
+
         if (!msg.contains("<img>") && !msg.contains("</img>")) {
             this.msg = msg;
             background.setVisibility(VISIBLE);

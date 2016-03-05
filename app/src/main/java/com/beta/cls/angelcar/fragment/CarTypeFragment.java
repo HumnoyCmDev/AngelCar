@@ -1,16 +1,11 @@
 package com.beta.cls.angelcar.fragment;
 
 import android.app.Activity;
-import android.app.Dialog;
-import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -19,29 +14,23 @@ import android.view.ViewGroup;
 
 import android.widget.AdapterView;
 import android.widget.GridView;
-import android.widget.NumberPicker;
-import android.widget.Toast;
 
 
 import com.beta.cls.angelcar.activity.PostActivity;
 import com.beta.cls.angelcar.gao.CarDataTypeCollectionGao;
-import com.beta.cls.angelcar.gao.CarDataTypeGao;
 import com.beta.cls.angelcar.Adapter.CustomAdapterGridSub;
 import com.beta.cls.angelcar.R;
 import com.beta.cls.angelcar.interfaces.OnSelectData;
 import com.beta.cls.angelcar.manager.bus.BusProvider;
+import com.beta.cls.angelcar.manager.http.ApiChatService;
 import com.beta.cls.angelcar.manager.http.ApiService;
 import com.beta.cls.angelcar.manager.http.HttpManager;
 import com.beta.cls.angelcar.model.InformationFromUser;
-import com.squareup.otto.Produce;
 import com.squareup.otto.Subscribe;
 
-import org.parceler.Parcel;
 import org.parceler.Parcels;
 
 import java.io.IOException;
-import java.util.Calendar;
-import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -93,15 +82,11 @@ public class CarTypeFragment extends Fragment {
             gao = Parcels.unwrap(savedInstanceState.getParcelable(SAVE_INSTANCE_CAT_TYPE_SUB));
                 mAdapter = new CustomAdapterGridSub(gao.getRows());
                 mGridView.setAdapter(mAdapter);
+            Log.i(TAG, "onActivityCreated: restore");
 
         }
-
-        mGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
-                user.setTypeSub(gao.getRows().get(position).getCarTypeSub());
-                dialogSelectYear();
-            }
-        });
+        Log.i(TAG, "onActivityCreated: ");
+        mGridView.setOnItemClickListener(selectTypeListener);
 
     }
 
@@ -123,11 +108,6 @@ public class CarTypeFragment extends Fragment {
 
         if (requestCode == DIALOG_YEAR && resultCode == Activity.RESULT_OK && data != null){
             user.setYear(data.getIntExtra(YearFragmentDialog.ARG_YEAR,2016));
-//            CarDetailFragment fragment = CarDetailFragment.newInstance(user);
-//            myContext.getSupportFragmentManager().beginTransaction()
-//                    .replace(R.id.fragment_container, fragment)
-//                    .addToBackStack(null)
-//                    .commit();
             BusProvider.getInstance().post(user);
             OnSelectData onSelectData = (OnSelectData) getActivity();
             onSelectData.onSelectedCallback(PostActivity.CALLBACK_CAR_TYPE);
@@ -153,33 +133,8 @@ public class CarTypeFragment extends Fragment {
         this.user = user;
         ApiService server = HttpManager.getInstance().getService();
         Call<CarDataTypeCollectionGao> call = server.loadCarType(user.getBrand());
-        call.enqueue(new Callback<CarDataTypeCollectionGao>() {
-            @Override
-            public void onResponse(Call<CarDataTypeCollectionGao> call, Response<CarDataTypeCollectionGao> response) {
-                if (response.isSuccess()){
-                    gao = response.body();
-                    mAdapter = new CustomAdapterGridSub(gao.getRows());
-                    mGridView.setAdapter(mAdapter);
-                }else {
-                    try {
-                        Log.i(TAG, "onResponse: "+response.errorBody().string());
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-
-            @Override
-            public void onFailure(Call<CarDataTypeCollectionGao> call, Throwable t) {
-                Log.e(TAG, "onFailure: ", t);
-            }
-        });
+        call.enqueue(carDataTypeCollectionGaoCallback);
     }
-
-//    @Produce
-//    public InformationFromUser produceData(){
-//        return user;
-//    }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
@@ -187,8 +142,39 @@ public class CarTypeFragment extends Fragment {
         outState.putParcelable(SAVE_INSTANCE_USER_INFO,Parcels.wrap(user));
         if (gao == null) gao = new CarDataTypeCollectionGao();
         outState.putParcelable(SAVE_INSTANCE_CAT_TYPE_SUB,Parcels.wrap(gao));
-
     }
+
+    /***************
+     * Listener Zone
+     * *************/
+    AdapterView.OnItemClickListener selectTypeListener = new AdapterView.OnItemClickListener() {
+        public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
+            user.setTypeSub(gao.getRows().get(position).getCarTypeSub());
+            dialogSelectYear();
+        }
+    };
+
+    Callback<CarDataTypeCollectionGao> carDataTypeCollectionGaoCallback = new Callback<CarDataTypeCollectionGao>() {
+        @Override
+        public void onResponse(Call<CarDataTypeCollectionGao> call, Response<CarDataTypeCollectionGao> response) {
+            if (response.isSuccess()) {
+                gao = response.body();
+                mAdapter = new CustomAdapterGridSub(gao.getRows());
+                mGridView.setAdapter(mAdapter);
+            } else {
+                try {
+                    Log.i(TAG, "onResponse: " + response.errorBody().string());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        @Override
+        public void onFailure(Call<CarDataTypeCollectionGao> call, Throwable t) {
+            Log.e(TAG, "onFailure: ", t);
+        }
+    };
 }
 
 

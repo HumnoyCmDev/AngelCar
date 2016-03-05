@@ -15,9 +15,14 @@ import com.beta.cls.angelcar.R;
 public class FilterFragment extends Fragment {
 
     public FilterFragment() {
+        super();
+    }
 
-// Required empty public constructor
-
+    public static FilterFragment newInstance() {
+        FilterFragment fragment = new FilterFragment();
+//        Bundle args = new Bundle();
+//        fragment.setArguments(args);
+        return fragment;
     }
 
     @Override

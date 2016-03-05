@@ -131,6 +131,7 @@
             <!--android:layout_weight="1"-->
 
             <TextView
+                android:freezesText="true"
                 android:id="@+id/tvDetailPostCar"
                 android:padding="10dp"
                 android:gravity="center"

@@ -7,7 +7,6 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 public class MessageCollectionGao {
-
     @SerializedName("message")
     @Expose
     private List<MessageGao> message = new ArrayList<MessageGao>();

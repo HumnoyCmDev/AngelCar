@@ -7,7 +7,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
 import com.beta.cls.angelcar.R;
-import com.beta.cls.angelcar.util.BlogMessage;
+import com.beta.cls.angelcar.gao.MessageGao;
 import com.hndev.library.view.AngelCarMessage;
 
 import java.util.List;
@@ -19,25 +19,28 @@ import butterknife.ButterKnife;
  * Created by humnoy on 22/1/59.
  */
 public class MultipleListViewChatAdapter extends BaseAdapter {
-    private Context context;
-    private List<BlogMessage> messages;
+    private List<MessageGao> messages;
     private String messageBy ;
 
     private static final String TAG = "MultipleListViewChatAdapter";
 
-    public MultipleListViewChatAdapter(Context context, List<BlogMessage> messages,String messageBy) {
-        this.context = context;
-        this.messages = messages;
+    public MultipleListViewChatAdapter(String messageBy) {
         this.messageBy = messageBy;
+    }
+
+
+    public void setMessages(List<MessageGao> messages) {
+        this.messages = messages;
     }
 
     @Override
     public int getCount() {
+        if (messages == null) return 0;
         return messages.size();
     }
 
     @Override
-    public BlogMessage getItem(int position) {
+    public MessageGao getItem(int position) {
         return messages.get(position);
     }
 
@@ -53,14 +56,14 @@ public class MultipleListViewChatAdapter extends BaseAdapter {
 
     @Override
     public int getItemViewType(int position) {
-        String by = getItem(position).getMessageby();
+        String by = getItem(position).getMessageBy();
         return byUser(messageBy,by);
     }
 
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        BlogMessage message = getItem(position);
+        MessageGao message = getItem(position);
         int msBy = getItemViewType(position);
         switch (msBy){
             case 0 : convertView = inflatelayoutMyTalk(convertView,parent,message);
@@ -72,35 +75,35 @@ public class MultipleListViewChatAdapter extends BaseAdapter {
     }
 
     //inflate layout
-    private View inflatelayoutTalk(View view, ViewGroup parent, BlogMessage message) {
+    private View inflatelayoutTalk(View view, ViewGroup parent, MessageGao message) {
         TextLeftViewHolder holder;
         if (view != null) {
             holder = (TextLeftViewHolder) view.getTag();
         } else {
-            view = LayoutInflater.from(context).inflate(R.layout.item_chat_left, parent, false);
+            view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_chat_left, parent, false);
             holder = new TextLeftViewHolder(view);
             view.setTag(holder);
         }
         //coding
-        holder.angelCarMessage.setMessage(message.getMessagetext());
-        holder.angelCarMessage.setIconProfile(message.getUserprofileimage());
+        holder.angelCarMessage.setMessage(message.getMessageText());
+        holder.angelCarMessage.setIconProfile(message.getUserProfileImage());
 
 
         return view;
     }
 
-    private View inflatelayoutMyTalk(View view, ViewGroup parent, BlogMessage message) {
+    private View inflatelayoutMyTalk(View view, ViewGroup parent, MessageGao message) {
         TextRightViewHolder holder;
         if (view != null) {
             holder = (TextRightViewHolder) view.getTag();
         } else {
-            view = LayoutInflater.from(context).inflate(R.layout.item_chat_right, parent, false);
+            view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_chat_right, parent, false);
             holder = new TextRightViewHolder(view);
             view.setTag(holder);
         }
         //coding
-        holder.angelCarMessage.setMessage(message.getMessagetext());
-        holder.angelCarMessage.setIconProfile(message.getUserprofileimage());
+        holder.angelCarMessage.setMessage(message.getMessageText());
+        holder.angelCarMessage.setIconProfile(message.getUserProfileImage());
         return view;
     }
 

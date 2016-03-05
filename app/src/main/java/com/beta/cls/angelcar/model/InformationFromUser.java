@@ -7,10 +7,10 @@ import org.parceler.Parcel;
  */
 @Parcel
 public class InformationFromUser {
-    private String brand;
-    private String typeSub;
-    private String typeSubDetail;
-    private int year;
+     String brand;
+     String typeSub;
+     String typeSubDetail;
+     int year;
 
     public String getBrand() {
         return brand;

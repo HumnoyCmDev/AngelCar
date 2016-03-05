@@ -23,13 +23,14 @@ public class MainViewPagerAdapter extends FragmentPagerAdapter {
     @Override
     public Fragment getItem(int position) {
         switch (position){
-            case 0: return new HomeFragment();
-            case 1: return new NoticeFragment();
-            case 2: return new FinanceFragment();
-            case 3: return new FilterFragment();
-            case 4: return HelpFragment.newInstance();//HelpFragment
+            case 0: return HomeFragment.newInstance();
+            case 1: return NoticeFragment.newInstance();
+            case 2: return FinanceFragment.newInstance();
+            case 3: return FilterFragment.newInstance();
+//            case 4: return HelpFragment.newInstance();
+            case 4: return new SampleUploadFileFragment();
+            default: return HomeFragment.newInstance();
         }
-        return null;
     }
 
     @Override

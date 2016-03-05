@@ -11,19 +11,13 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
-import com.beta.cls.angelcar.Adapter.MessageItemAdapter;
+import com.beta.cls.angelcar.Adapter.MessageAdapter;
 import com.beta.cls.angelcar.R;
-import com.beta.cls.angelcar.activity.ChatMessageActivity;
+import com.beta.cls.angelcar.activity.ChatActivity;
 import com.beta.cls.angelcar.gao.MessageCollectionGao;
 import com.beta.cls.angelcar.gao.MessageGao;
-import com.beta.cls.angelcar.manager.http.ApiService;
+import com.beta.cls.angelcar.manager.http.ApiChatService;
 import com.beta.cls.angelcar.manager.http.HttpChatManager;
-import com.beta.cls.angelcar.util.BlogMessage;
-import com.beta.cls.angelcar.util.PostBlogMessage;
-import com.google.gson.Gson;
-import com.hndev.library.api.ConnectAPi;
-import com.hndev.library.api.MessageAPi;
-import com.hndev.library.manager.Callback;
 
 import org.parceler.Parcels;
 
@@ -43,7 +37,13 @@ public class ChatSellFragment extends Fragment {
     @Bind(R.id.list_view)
     ListView listView;
 
-    private List<BlogMessage> message;
+//    private List<BlogMessage> message;
+
+    MessageAdapter adapter;
+    MessageCollectionGao gao;
+
+//    MessageManager messageManager;
+
 
     private static final String TAG = "ChatSellFragment";
 
@@ -64,6 +64,9 @@ public class ChatSellFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
+        adapter = new MessageAdapter();
+        listView.setAdapter(adapter);
+
         if (savedInstanceState == null) {
             initMessage();
         }
@@ -75,38 +78,24 @@ public class ChatSellFragment extends Fragment {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                BlogMessage blogMessage = message.get(position);
-                Intent intent = new Intent(getActivity(), ChatMessageActivity.class);
+                MessageGao messageGao = gao.getMessage().get(position);
+                Intent intent = new Intent(getActivity(), ChatActivity.class);
                 intent.putExtra("messageBy",ARGS_MESSAGE_BY);
-                intent.putExtra("BlogMessage", Parcels.wrap(blogMessage));
+                intent.putExtra("MessageGao", Parcels.wrap(messageGao));
                 startActivity(intent);
             }
         });
     }
     private void initMessage() {
-        MessageAPi messageAPi = new MessageAPi.ViewMessageOutBuilder()
-                .setMessage("2015062900001")
-                .build();
-        new ConnectAPi(messageAPi, new Callback() {
-            @Override
-            public void onSucceed(String s, boolean isSucceed) {
-                Gson gson = new Gson();
-                PostBlogMessage postBlogMessage = gson.fromJson(s, PostBlogMessage.class);
-                message = postBlogMessage.getMessage();
-                MessageItemAdapter messageItemAdapter = new MessageItemAdapter(postBlogMessage.getMessage());
-                listView.setAdapter(messageItemAdapter);
-            }
-        });
 
-
-        /*ApiService call = HttpChatManager.getInstance().getService();
-        call.message("viewclient","2015062900001").enqueue(new retrofit2.Callback<MessageCollectionGao>() {
+        ApiChatService call = HttpChatManager.getInstance().getService();
+        call.messageClient("2016010700001").enqueue(new retrofit2.Callback<MessageCollectionGao>() {
             @Override
             public void onResponse(Call<MessageCollectionGao> call, Response<MessageCollectionGao> response) {
                if (response.isSuccess()) {
-                   for (MessageGao m : response.body().getMessage()) {
-                       Log.i(TAG, "onResponse: m2 " + m.getMessageText());
-                   }
+                   gao = response.body();
+                   adapter.setGao(gao.getMessage());
+                   adapter.notifyDataSetChanged();
                }else {
                    try {
                        Log.i(TAG, "onResponse: "+response.errorBody().string());
@@ -120,7 +109,7 @@ public class ChatSellFragment extends Fragment {
             public void onFailure(Call<MessageCollectionGao> call, Throwable t) {
                 Log.i(TAG, "onResponse: "+t.toString());
             }
-        });*/
+        });
 
     }
 
@@ -134,4 +123,5 @@ public class ChatSellFragment extends Fragment {
     public void onPause() {
         super.onPause();
     }
+
 }

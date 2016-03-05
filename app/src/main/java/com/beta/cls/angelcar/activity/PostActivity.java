@@ -23,9 +23,11 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-/**
- * Created by humnoy on 26/2/59.
- */
+/***************************************
+ * สร้างสรรค์ผลงานดีๆ
+ * โดย humnoy Android Developer
+ * ลงวันที่ 26/2/59. เวลา 10:43
+ ***************************************/
 public class PostActivity extends AppCompatActivity implements OnSelectData{
 
     public static final int CALLBACK_BRAND = 1;
@@ -34,6 +36,7 @@ public class PostActivity extends AppCompatActivity implements OnSelectData{
     public static final int CALLBACK_ALL_POST = 4;
 
     @Bind(R.id.post_viewpager) AngelCarViewPager angelCarViewPager;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,7 +47,7 @@ public class PostActivity extends AppCompatActivity implements OnSelectData{
             PostAdapterViewpager adapter =
                     new PostAdapterViewpager(getSupportFragmentManager());
             angelCarViewPager.setAdapter(adapter);
-            angelCarViewPager.setPagingEnabled(false);
+            angelCarViewPager.setPagingEnabled(true);
 
 //        }
 
@@ -61,18 +64,10 @@ public class PostActivity extends AppCompatActivity implements OnSelectData{
 
     @Override
     public void onSelectedCallback(int callback) {
-
             angelCarViewPager.setCurrentItem(angelCarViewPager.getCurrentItem()+1);
-        if (callback == CALLBACK_BRAND){
-            Toast.makeText(PostActivity.this,""+callback,Toast.LENGTH_SHORT).show();
-        }else if (callback == CALLBACK_CAR_TYPE){
-            Toast.makeText(PostActivity.this,""+callback,Toast.LENGTH_SHORT).show();
-        }
-//        Toast.makeText(PostActivity.this,""+callback,Toast.LENGTH_SHORT).show();
-
     }
 
-    class PostAdapterViewpager extends FragmentPagerAdapter{
+    class PostAdapterViewpager extends FragmentStatePagerAdapter{
 
         int numPager = 4;
 
@@ -83,11 +78,11 @@ public class PostActivity extends AppCompatActivity implements OnSelectData{
         @Override
         public Fragment getItem(int position) {
             switch (position){
-                case 0: return BrandFragment.newInstance();
-                case 1: return CarTypeFragment.newInstance();
-                case 2: return CarDetailFragment.newInstance();
-                case 3: return AllPostFragment.newInstance();
-                default:return BrandFragment.newInstance();
+                case 0: return new BrandFragment();
+                case 1: return new CarTypeFragment();
+                case 2: return new CarDetailFragment();
+                case 3: return new AllPostFragment();
+                default:return new BrandFragment();
             }
         }
 

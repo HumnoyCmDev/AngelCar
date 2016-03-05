@@ -31,4 +31,11 @@ public class MessageAdminGao {
     public void setMessage(List<MessageGao> message) {
         this.message = message;
     }
+
+    // Convert MessageAdmin To MessageCollectionGao
+    public MessageCollectionGao convertToMessageCollectionGao() {
+        MessageCollectionGao gao = new MessageCollectionGao();
+        gao.setMessage(message);
+        return gao;
+    }
 }

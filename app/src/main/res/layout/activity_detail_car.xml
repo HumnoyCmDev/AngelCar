@@ -40,6 +40,7 @@
 
     <!-- HN Dev -->
 
+
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -47,11 +48,11 @@
         android:orientation="vertical"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-
         <android.support.v4.widget.NestedScrollView
+            android:fillViewport="true"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:fitsSystemWindows="true">
+            android:layout_height="wrap_content">
+
 
             <android.support.v7.widget.CardView
                 android:layout_width="match_parent"
@@ -79,10 +80,13 @@
                             android:text="@string/sample_test_text_chat2"
                             android:textStyle="bold" />
 
-                        <Button
+                        <ToggleButton
+                            android:text=""
+                            android:textOff=""
+                            android:textOn=""
                             android:layout_width="48dp"
                             android:layout_height="48dp"
-                            android:background="@android:drawable/star_off" />
+                            android:background="@drawable/selector_button_start" />
 
                     </LinearLayout>
 
@@ -273,6 +277,8 @@
         <include layout="@layout/recycler_chat_layout" />
 
     </LinearLayout>
+
+
 
 </android.support.design.widget.CoordinatorLayout>
 

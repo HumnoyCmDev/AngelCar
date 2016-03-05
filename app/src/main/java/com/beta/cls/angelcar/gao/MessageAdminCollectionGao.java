@@ -20,4 +20,8 @@ public class MessageAdminCollectionGao {
     public void setMessageAdmin(List<MessageAdminGao> messageAdmin) {
         this.messageAdmin = messageAdmin;
     }
+
+    public MessageAdminGao getMessageAdminGao(){
+        return messageAdmin.get(0);
+    }
 }

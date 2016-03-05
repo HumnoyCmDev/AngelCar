@@ -1,6 +1,8 @@
 package com.beta.cls.angelcar.fragment;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -12,13 +14,23 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.beta.cls.angelcar.R;
+import com.beta.cls.angelcar.activity.PostActivity;
+
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 
 public class NoticeFragment extends Fragment {
-    private FragmentActivity myContext;
+
+    private final int REQUEST_CODE = 991;
 
     public NoticeFragment() {
+        super();
+    }
 
+    public static NoticeFragment newInstance() {
+        NoticeFragment fragment = new NoticeFragment();
+        return fragment;
     }
 
     @Override
@@ -31,6 +43,7 @@ public class NoticeFragment extends Fragment {
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_notice, container, false);
+        ButterKnife.bind(this,rootView);
         return rootView;
 
     }
@@ -40,18 +53,24 @@ public class NoticeFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
 
         if(savedInstanceState == null) {
-            FragmentManager fragManager = myContext.getSupportFragmentManager();
-            BrandFragment fragment = new BrandFragment();
-            FragmentTransaction transaction = fragManager.beginTransaction();
-            transaction.add(R.id.fragment_container, fragment);
-            transaction.commit();
+
         }
 
     }
 
+    @OnClick(R.id.btnPost)
+    public void intentPostActivity(){
+        Intent i = new Intent(getActivity(), PostActivity.class);
+        startActivityForResult(i,REQUEST_CODE);
+    }
+
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        myContext = (FragmentActivity) context;
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == REQUEST_CODE
+                && resultCode == Activity.RESULT_OK
+                && data != null){
+
+
+        }
     }
 }

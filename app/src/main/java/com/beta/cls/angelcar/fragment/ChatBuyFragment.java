@@ -12,29 +12,23 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.beta.cls.angelcar.Adapter.MessageAdapter;
-import com.beta.cls.angelcar.Adapter.MessageItemAdapter;
 import com.beta.cls.angelcar.R;
-import com.beta.cls.angelcar.activity.ChatMessageActivity;
+import com.beta.cls.angelcar.activity.ChatActivity;
 import com.beta.cls.angelcar.gao.MessageAdminCollectionGao;
 import com.beta.cls.angelcar.gao.MessageGao;
-import com.beta.cls.angelcar.util.BlogMessage;
-import com.beta.cls.angelcar.interfaces.AsyncResult;
-import com.beta.cls.angelcar.manager.LoadMessageAsync;
-import com.beta.cls.angelcar.util.PostBlogArrayMessage;
-import com.beta.cls.angelcar.manager.bus.BusProvider;
-import com.google.gson.Gson;
-import com.hndev.library.util.MessageAPI;
-import com.squareup.otto.Subscribe;
+import com.beta.cls.angelcar.manager.MessageManager;
+import com.beta.cls.angelcar.manager.http.ApiChatService;
+import com.beta.cls.angelcar.manager.http.HttpChatManager;
 
 
 import org.parceler.Parcels;
 
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.io.IOException;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import retrofit2.Call;
+import retrofit2.Response;
 
 /**
  * Created by humnoy on 26/1/59.
@@ -45,8 +39,9 @@ public class ChatBuyFragment extends Fragment {
     @Bind(R.id.list_view)
     ListView listView;
 
-    private List<BlogMessage> message;
-    private MessageItemAdapter itemAdapter;
+//    MessageAdminCollectionGao gao;
+    MessageAdapter adapter;
+    MessageManager messageManager;
 
     private static final String TAG = "ChatBuyFragment";
 
@@ -70,62 +65,74 @@ public class ChatBuyFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-//        if (savedInstanceState == null) {
-//            initMessage();
-//        }
+        adapter = new MessageAdapter();
+        listView.setAdapter(adapter);
+        messageManager = new MessageManager();
+
+        loadMessage();
         initListener();
+    }
+
+    private void loadMessage() {
+        ApiChatService server = HttpChatManager.getInstance().getService();
+        Call<MessageAdminCollectionGao> call = server.messageAdmin("27");
+        call.enqueue(new retrofit2.Callback<MessageAdminCollectionGao>() {
+            @Override
+            public void onResponse(Call<MessageAdminCollectionGao> call, Response<MessageAdminCollectionGao> response) {
+                if (response.isSuccess()){
+
+                    messageManager.setMessageGao(response.body()
+                            .getMessageAdminGao()
+                            .convertToMessageCollectionGao());
+                    adapter.setGao(messageManager.getMessageGao().getMessage());
+                    adapter.notifyDataSetChanged();
+
+                }else {
+                    try {
+                        Log.i(TAG, "onResponse: error"+response.errorBody().string());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<MessageAdminCollectionGao> call, Throwable t) {
+                Log.e(TAG, "onFailure: ", t);
+            }
+        });
+
+
     }
 
     private void initListener() {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                BlogMessage blogMessage = message.get(position);
-                Intent intent = new Intent(getActivity(), ChatMessageActivity.class);
+                MessageGao messageGao =
+                        messageManager.getMessageGao()
+                                .getMessage().get(position);
+
+                Intent intent = new Intent(getActivity(), ChatActivity.class);
                 intent.putExtra("messageBy",ARGS_MESSAGE_BY);
-                intent.putExtra("BlogMessage", Parcels.wrap(blogMessage));
+                intent.putExtra("MessageGao", Parcels.wrap(messageGao));
                 startActivity(intent);
             }
         });
     }
 
-    private void initMessage() {
-
-    }
 
 
     @Override
     public void onStart() {
         super.onStart();
-        BusProvider.getInstance().register(this);
+//        BusProvider.getInstance().register(this);
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        BusProvider.getInstance().unregister(this);
+//        BusProvider.getInstance().unregister(this);
     }
-
-    @Subscribe // broadcast
-    public void onEvent(PostBlogArrayMessage blogArrayMessage){
-//        message = blogArrayMessage.getMessageViewByAdmin().get(0).getMessage();
-//            itemAdapter =
-//                    new MessageItemAdapter(message);
-//            listView.setAdapter(itemAdapter);
-
-
-    }
-
-    @Subscribe
-    public void onProductMessageAdminGao(MessageAdminCollectionGao gao){
-        // TODO Retrofit 2.0 ReQuest Message #Code 001
-        MessageGao messageGao = gao.getMessageAdmin().get(0).getMessage().get(0);
-        Log.i(TAG, "onProductMessageAdminGao: "+messageGao.getMessagesTamp().toString());
-
-        MessageAdapter adapter = new MessageAdapter(gao.getMessageAdmin().get(0).getMessage());
-        listView.setAdapter(adapter);
-    }
-
-
 }
 

@@ -22,16 +22,23 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.beta.cls.angelcar.R;
-import com.beta.cls.angelcar.manager.EncodeImageAsync;
-import com.beta.cls.angelcar.manager.http.ApiService;
-import com.beta.cls.angelcar.manager.http.HttpManager;
+
+
+import org.jsoup.nodes.Document;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
+import okhttp3.FormBody;
 import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
 import okhttp3.RequestBody;
+import okhttp3.Response;
+
 
 @Deprecated
 public class SampleUploadFileFragment extends Fragment {
@@ -39,7 +46,10 @@ public class SampleUploadFileFragment extends Fragment {
     private ImageView ivPhoto;
     String picturePath;
 
+    private static final MediaType MEDIA_TYPE_PNG = MediaType.parse("image/png");
+
     public SampleUploadFileFragment() {
+
     }
 
     @Override
@@ -87,70 +97,103 @@ public class SampleUploadFileFragment extends Fragment {
         up.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getActivity(),"Up load By Retrofit",Toast.LENGTH_SHORT).show();
-         new AsyncTask<Void,Void,Void>(){
-             String encoded_string;
-             @Override
-             protected Void doInBackground(Void... params) {
-                 File f = new File(picturePath);
-                 Uri uri = Uri.fromFile(f);
-                 Bitmap bitmap = BitmapFactory.decodeFile(uri.getPath());
-                 ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                 bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+                File file = new File(picturePath);
+                Toast.makeText(getContext(),"Put :: "+file.getName(),Toast.LENGTH_SHORT).show();
+                final OkHttpClient client = new OkHttpClient();
+                RequestBody requestBody = new MultipartBody.Builder()
+                        .setType(MultipartBody.FORM)
 
-                 byte[] array = stream.toByteArray();
-                 encoded_string = Base64.encodeToString(array,Base64.DEFAULT);
+                        .addFormDataPart("userfile", file.getName(),
+                                RequestBody.create(MEDIA_TYPE_PNG, file))
+                        .build();
 
-                 ApiService service = HttpManager.getInstance().getService();
+                final Request request = new Request.Builder()
+//                        .url("http://ga.paiyannoi.me/gachatcarimageupload.php")
+                        .url("http://angelcar.com/gachatcarimageupload.php")
+                        .post(requestBody)
+                        .build();
 
-                 RequestBody request = RequestBody.create(MediaType.parse("text/plain"),encoded_string);
-                 RequestBody request2 = RequestBody.create(MediaType.parse("text/plain"),"retrofit_"+f.getName());
-
-                 try {
-                     service.uploadImage(request,request2).execute();
-                 } catch (IOException e) {
-                     e.printStackTrace();
-                 }
-                 return null;
-             }
-
-             @Override
-             protected void onPostExecute(Void aVoid) {
-                 super.onPostExecute(aVoid);
-                    Toast.makeText(getActivity(),"Success",Toast.LENGTH_SHORT).show();
-             }
-         }.execute();
+                new AsyncTask<Void,Void,Void>(){
+                    @Override
+                    protected Void doInBackground(Void... params) {
+                        try {
+                            Response r = client.newCall(request).execute();
+                            if (r.isSuccessful()){
+                                Log.i(TAG, "doInBackground:api paiyannoi "+r.body().string());
+                            }else {
+                                Log.i(TAG, "doInBackground: api paiyannoi false");
+                            }
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                        return null;
+                    }
+                }.execute();
 
             }
         });
 
 
-        Button up2 = (Button) v.findViewById(R.id.button_upload2);
-        up2.setOnClickListener(new View.OnClickListener() {
+        Button upOkhttp = (Button) v.findViewById(R.id.button_upload3);
+        upOkhttp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new EncodeImageAsync(getActivity(),new File(picturePath)).execute();
-                Toast.makeText(getActivity(),"Up load Volley",Toast.LENGTH_SHORT).show();
+
+                new AsyncTask<Void,Void,Void>(){
+
+                    @Override
+                    protected Void doInBackground(Void... params) {
+                        try {
+                            File f = new File(picturePath);
+                            Bitmap bitmap = BitmapFactory.decodeFile(f.getPath());
+                            ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                            bitmap.compress(Bitmap.CompressFormat.JPEG, 50, stream);
+
+                            byte[] array = stream.toByteArray();
+                            String encoded_string = Base64.encodeToString(array, Base64.DEFAULT);
+
+
+                            RequestBody requestBody = new MultipartBody.Builder()
+                                    .setType(MultipartBody.FORM)
+                                    .addFormDataPart("image_name","Okhttp1_"+f.getName())
+                                    .addFormDataPart("encoded_string",encoded_string)
+                                    .build();/*ทำงานได้*/
+
+                            RequestBody formBody = new FormBody.Builder()
+                                    .add("image_name", "Okhttp2_"+f.getName())
+                                    .add("encoded_string", encoded_string)
+                                    .build();
+
+                            Request request = new Request.Builder()
+                                    .url("http://www.usedcar.co.th/imgupload.php")
+                                    .post(requestBody)
+                                    .build();
+
+                            OkHttpClient client = new OkHttpClient
+                                    .Builder()
+                                    .readTimeout(60*1000,TimeUnit.MILLISECONDS).build();
+
+                            Response r = client.newCall(request).execute();
+                            if (r.isSuccessful()){
+                                Log.i(TAG, "doInBackground: "+r.body().string());
+                            }else {
+                                Log.i(TAG, "doInBackground: false");
+
+                            }
+
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+
+                        return null;
+                    }
+                }.execute();
+
             }
         });
-
-//        ValueAnimator amin = ValueAnimator.ofInt(post.getMeasuredHeight(),500);
-//        amin.setInterpolator(new BounceInterpolator());
-//        amin.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-//            @Override
-//            public void onAnimationUpdate(ValueAnimator animation) {
-//                int val = (int) animation.getAnimatedValue();
-//                ViewGroup.LayoutParams params = post.getLayoutParams();
-//                params.height = val;
-//                post.setLayoutParams(params);
-//            }
-//        });
-//        amin.setDuration(3000);
-//        amin.start();
 
 
     }
-
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {

@@ -22,6 +22,16 @@ import butterknife.ButterKnife;
 public class FinanceFragment extends Fragment {
 
     public FinanceFragment() {
+        super();
+    }
+
+    public static FinanceFragment newInstance() {
+
+
+        FinanceFragment fragment = new FinanceFragment();
+//        Bundle args = new Bundle();
+//        fragment.setArguments(args);
+        return fragment;
     }
 
     @Override

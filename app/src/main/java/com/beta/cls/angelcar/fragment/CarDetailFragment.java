@@ -6,6 +6,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
@@ -28,9 +29,6 @@ import com.beta.cls.angelcar.gao.CarDetailCollectionGao;
 import com.beta.cls.angelcar.interfaces.OnSelectData;
 import com.beta.cls.angelcar.manager.bus.BusProvider;
 import com.beta.cls.angelcar.model.InformationFromUser;
-import com.squareup.okhttp.OkHttpClient;
-import com.squareup.okhttp.Request;
-import com.squareup.okhttp.Response;
 import com.google.gson.Gson;
 import com.squareup.otto.Produce;
 import com.squareup.otto.Subscribe;
@@ -43,6 +41,9 @@ import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 
 public class CarDetailFragment extends Fragment {
@@ -56,6 +57,8 @@ public class CarDetailFragment extends Fragment {
 
     CarDetailCollectionGao gao;
     private InformationFromUser user;
+
+    private static final String TAG = "CarDetailFragment";
 
     public static CarDetailFragment newInstance() {
         CarDetailFragment fragment = new CarDetailFragment();
@@ -75,6 +78,25 @@ public class CarDetailFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_three_post, container, false);
         ButterKnife.bind(this,rootView);
+        return rootView;
+
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelable(SAVE_INSTANCE_CAT_DETAIL,Parcels.wrap(gao));
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        if (savedInstanceState != null){
+            gao = Parcels.unwrap(savedInstanceState.getParcelable(SAVE_INSTANCE_CAT_DETAIL));
+            mAdapter = new CustomAdapterGridDetail(getActivity(), gao.getRows());
+            mGridView.setAdapter(mAdapter);
+        }
 
         mGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
@@ -83,22 +105,16 @@ public class CarDetailFragment extends Fragment {
                 OnSelectData onSelectData = (OnSelectData) getActivity();
                 onSelectData.onSelectedCallback(PostActivity.CALLBACK_CAR_TYPE_DETAIL);
 
-
             }
         });
-
-        return rootView;
 
     }
 
     private void showData(String jsonString) {
         Gson gson = new Gson();
-        CarDetailCollectionGao blog = gson.fromJson(jsonString, CarDetailCollectionGao.class);
-        gao = blog;
+        gao = gson.fromJson(jsonString, CarDetailCollectionGao.class);
         mAdapter = new CustomAdapterGridDetail(getActivity(), gao.getRows());
         mGridView.setAdapter(mAdapter);
-
-        Log.i(TAG, "showData: ");
     }
 
     @Override
@@ -113,13 +129,25 @@ public class CarDetailFragment extends Fragment {
         BusProvider.getInstance().unregister(this);
     }
 
-    private static final String TAG = "CarDetailFragment";
 
     @Subscribe
-    public void getProduceData(InformationFromUser iuser){
+    public void getProduceData(InformationFromUser iuser) {
         this.user = iuser;
         if (iuser.getTypeSub() == null) return;
-        new AsyncTask<Void, Void, String>() {
+        new LoadDetail().execute();
+    }
+
+
+    /***************
+    * Listener Zone
+    * *************/
+
+
+    /***************
+     * InnerClass Zone
+     * *************/
+
+    class LoadDetail extends AsyncTask<Void,Void,String>{
             @Override
             protected void onPreExecute() {
                 super.onPreExecute();
@@ -130,39 +158,37 @@ public class CarDetailFragment extends Fragment {
                 mProgressDialog.show();
             }
 
-            protected String doInBackground(Void... voids) {
+        protected String doInBackground(Void... voids) {
 
-                OkHttpClient okHttpClient = new OkHttpClient();
-                Request.Builder builder = new Request.Builder();
-                Request request =
-                        builder.url("http://www.usedcar.co.th/getdatathreefragment.php?cartype="
-                                + user.getBrand()
-                                + "&carsubtype="
-                                + user.getTypeSub()).build();
+            OkHttpClient okHttpClient = new OkHttpClient();
+            Request.Builder builder = new Request.Builder();
+            Request request =
+                    builder.url("http://www.usedcar.co.th/getdatathreefragment.php?cartype="
+                            + user.getBrand()
+                            + "&carsubtype="
+                            + user.getTypeSub()).build();
 
-                try {
+            try {
 
-                    Response response = okHttpClient.newCall(request).execute();
-                    if (response.isSuccessful()) {
-                        return response.body().string();
-                    } else {
-                        return "Not Success - code : " + response.code();
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    return "Error - " + e.getMessage();
+                Response response = okHttpClient.newCall(request).execute();
+                if (response.isSuccessful()) {
+                    return response.body().string();
+                } else {
+                    return "Not Success - code : " + response.code();
                 }
+            } catch (IOException e) {
+                e.printStackTrace();
+                return "Error - " + e.getMessage();
             }
+        }
 
-            @Override
-            protected void onPostExecute(String string) {
-                super.onPostExecute(string);
-                showData(string);
+        @Override
+        protected void onPostExecute(String string) {
+            super.onPostExecute(string);
+            showData(string);
+            mProgressDialog.dismiss();
+        }
 
-                mProgressDialog.dismiss();
-            }
-
-        }.execute();
     }
 
 

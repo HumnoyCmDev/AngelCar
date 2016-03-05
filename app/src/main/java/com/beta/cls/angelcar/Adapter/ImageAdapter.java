@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.beta.cls.angelcar.R;
+import com.squareup.picasso.Picasso;
 
 /**
  * Created by ABaD on 12/2/2015.
@@ -42,7 +43,10 @@ public class ImageAdapter extends PagerAdapter {
         //int padding = context.getResources().getDimensionPixelSize(R.dimen.activity_horizontal_margin);
         //imageView.setPadding(padding, padding, padding, padding);
         imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-        imageView.setImageResource(GalImages[position]);
+
+        Picasso.with(container.getContext())
+                .load(GalImages[position])
+                .into(imageView);
 
         ((ViewPager) container).addView(imageView, 0);
         return imageView;

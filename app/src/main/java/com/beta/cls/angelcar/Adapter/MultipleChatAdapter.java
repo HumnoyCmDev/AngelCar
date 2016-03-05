@@ -2,38 +2,47 @@ package com.beta.cls.angelcar.Adapter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.beta.cls.angelcar.R;
-import com.beta.cls.angelcar.util.BlogMessage;
+import com.beta.cls.angelcar.gao.MessageGao;
 import com.hndev.library.view.AngelCarMessage;
+
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-/**
- * Created by humnoy on 3/2/59.
- */
+/***************************************
+ * สร้างสรรค์ผลงานดีๆ
+ * โดย humnoy Android Developer
+ * ลงวันที่ 3/2/59. เวลา 10:56
+ ***************************************/
 public class MultipleChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
-    private List<BlogMessage> messages;
+    private List<MessageGao> messagesGao;
     private String messageBy ;
-    private Context context;
 
-
-    public MultipleChatAdapter(Context context,List<BlogMessage> messages, String messageBy) {
-        this.context = context;
-        this.messages = messages;
+    public MultipleChatAdapter(List<MessageGao> messagesGao, String messageBy) {
+        this.messagesGao = messagesGao;
         this.messageBy = messageBy;
+    }
+
+    public void setMessagesGao(List<MessageGao> messagesGao) {
+        this.messagesGao = messagesGao;
     }
 
     @Override
     public int getItemViewType(int position) {
-        String by = messages.get(position).getMessageby();
-        return byUser(messageBy,by);
+        String messageByGao = messagesGao.get(position).getMessageBy();
+        return byUser(messageBy,messageByGao);
     }
 
     @Override
@@ -52,20 +61,28 @@ public class MultipleChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         // get item
-        BlogMessage blogMessage = messages.get(position);
+        MessageGao blogMessage = messagesGao.get(position);
 
         switch (holder.getItemViewType()){
             case 0 :
                 ViewHolderLeft holderLeft = (ViewHolderLeft) holder;
-                holderLeft.angelCarMessage.setMessage(blogMessage.getMessagetext());
-                holderLeft.angelCarMessage.setIconProfile(blogMessage.getUserprofileimage());
+                holderLeft.angelCarMessage.setMessage(blogMessage.getMessageText());
+                holderLeft.angelCarMessage.setIconProfile(blogMessage.getUserProfileImage());
                 break;
             case 1:
                 ViewHolderRight holderRight = (ViewHolderRight) holder;
-                holderRight.angelCarMessage.setMessage(blogMessage.getMessagetext());
-                holderRight.angelCarMessage.setIconProfile(blogMessage.getUserprofileimage());
+                holderRight.angelCarMessage.setMessage(blogMessage.getMessageText());
+                holderRight.angelCarMessage.setIconProfile(blogMessage.getUserProfileImage());
                 break;
         }
+
+        Document doc = Jsoup.parse(blogMessage.getMessageText());
+        Elements e = doc.select("img");
+        if (!e.isEmpty()) {
+            Log.i("log jsoup", "onBindViewHolder: " + e.size());
+            Log.i("log jsoup", "onBindViewHolder: " + e.select("img").text());
+        }
+
 
     }
 
@@ -89,23 +106,18 @@ public class MultipleChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     @Override
     public int getItemCount() {
-        return messages.size();
+        return messagesGao.size();
     }
 
-    private int byUser(String messageBy, String by) {
-        if (messageBy.equals("shop")) {
-            if (by.equals("shop")) {
-                return 0;
-            } else {
-                return 1;
-            }
-        } else {
-            if (by.equals("user")) {
-                return 0;
-            } else {
-                return 1;
-            }
-        }
+    private int byUser(String messageBy, String messageByGao) {
+        /*0 = ซ้าย || 1 = ขวา*/
+        if (messageBy.equals(messageByGao))
+            return 1;
+        else
+            return 0;
+
+        /*@ messageBy ได้มาจาก DetailActivity ส่งเข้ามา
+        *ถ้า messageBy ตรงกับใน messageByGao เรียงแชทไว้ขวา*/
     }
 
 }

@@ -43,8 +43,6 @@ public class MainActivity extends AppCompatActivity {
         initViewPager();
         initTabIcons(); //ตั้งค่า tab
 
-        Intent i = new Intent(MainActivity.this,PostActivity.class);
-        startActivity(i);
 
     }
 

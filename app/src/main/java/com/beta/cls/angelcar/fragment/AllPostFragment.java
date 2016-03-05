@@ -23,10 +23,11 @@ import android.widget.ToggleButton;
 
 import com.beta.cls.angelcar.R;
 import com.beta.cls.angelcar.activity.PostActivity;
-import com.beta.cls.angelcar.gao.SuccessGao;
+import com.beta.cls.angelcar.gao.LogFromServerGao;
 import com.beta.cls.angelcar.interfaces.OnSelectData;
 import com.beta.cls.angelcar.manager.Contextor;
 import com.beta.cls.angelcar.manager.bus.BusProvider;
+import com.beta.cls.angelcar.manager.http.ApiChatService;
 import com.beta.cls.angelcar.manager.http.ApiService;
 import com.beta.cls.angelcar.manager.http.HttpManager;
 import com.beta.cls.angelcar.model.InformationFromUser;
@@ -34,11 +35,10 @@ import com.beta.cls.angelcar.util.IpAddress;
 import com.squareup.otto.Subscribe;
 import com.squareup.picasso.Picasso;
 
-import org.parceler.Parcels;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -49,9 +49,11 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-/**
- * Created by humnoy on 5/2/59.
- */
+/***************************************
+ * สร้างสรรค์ผลงานดีๆ
+ * โดย humnoy Android Developer
+ * ลงวันที่ 5/2/59. เวลา 10:41
+ ***************************************/
 public class AllPostFragment extends Fragment implements View.OnClickListener{
     @Bind({
             R.id.fragment_all_post_photo_1,R.id.fragment_all_post_photo_2,
@@ -129,7 +131,7 @@ public class AllPostFragment extends Fragment implements View.OnClickListener{
         super.onActivityCreated(savedInstanceState);
 
         if (savedInstanceState == null) {
-            initData();
+//            initData();
             initInstance();
             initDataProvince();
             
@@ -140,9 +142,7 @@ public class AllPostFragment extends Fragment implements View.OnClickListener{
     private void initDataProvince() {
         List<String> list = new ArrayList<String>();
         getResources().getStringArray(R.array.province);
-        for (String s :getResources().getStringArray(R.array.province)){
-            list.add(s);
-        }
+        Collections.addAll(list, getResources().getStringArray(R.array.province));
 
         ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>
                 (getActivity(), android.R.layout.simple_spinner_item,list);
@@ -153,8 +153,8 @@ public class AllPostFragment extends Fragment implements View.OnClickListener{
         spinnerProvince.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(parent.getContext(),parent.getItemAtPosition(position).toString(),
-                        Toast.LENGTH_LONG).show();
+//                Toast.makeText(parent.getContext(),parent.getItemAtPosition(position).toString(),
+//                        Toast.LENGTH_LONG).show();
                 id_province = position;
             }
 
@@ -169,7 +169,6 @@ public class AllPostFragment extends Fragment implements View.OnClickListener{
         for (ImageView imv : photo) {
             imv.setOnClickListener(this);
         }
-
         editTextDescription.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -191,18 +190,17 @@ public class AllPostFragment extends Fragment implements View.OnClickListener{
 //        editTextYear.setText(""+user.getYear());
 
         //
-//        detailPostCar.setText(
-//                        user.getBrand().toUpperCase()+" "+
-//                        user.getTypeSub()+" "+
-//                        user.getTypeSubDetail()+" ปี"+
-//                        user.getYear());
+        detailPostCar.setText(
+                        user.getBrand().toUpperCase()+" "+
+                        user.getTypeSub()+" "+
+                        user.getTypeSubDetail()+" ปี"+
+                        user.getYear());
     }
 
     @OnClick(R.id.fragment_all_post_ButtonPost)
     public void onClickPost(){
 
-        //TODO 19/02/2016
-        /*String postUserId = "1111111";
+        String postUserId = "1111111";
         String carTypeMain = user.getBrand().toUpperCase(); // toyota
         String carTypeSub = user.getTypeSub(); // fortuner
         String carTypeSubDetail = user.getTypeSubDetail(); // 1.6 v
@@ -219,33 +217,11 @@ public class AllPostFragment extends Fragment implements View.OnClickListener{
         Date postDate = new Date();
 
         ApiService service = HttpManager.getInstance().getService();
-        Call<SuccessGao> call = service.postCar(
+        Call<LogFromServerGao> call = service.postCar(
                 postUserId, carTypeMain, carTypeSub, carTypeSubDetail,
                 carYear, gear, price, carRegister, province, postTopic,
                 postDetail, postName, postTel, ipPost, postDate);
-
-        call.enqueue(new Callback<SuccessGao>() {
-            @Override
-            public void onResponse(Call<SuccessGao> call, Response<SuccessGao> response) {
-                    if (response.isSuccess()){
-                        Toast.makeText(Contextor.getInstance().getContext(),
-                                "Completed",Toast.LENGTH_SHORT).show();
-                    }else {
-                        try {
-                            Toast.makeText(Contextor.getInstance().getContext(),
-                                    response.errorBody().string(),Toast.LENGTH_SHORT).show();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }
-            }
-
-            @Override
-            public void onFailure(Call<SuccessGao> call, Throwable t) {
-                Toast.makeText(Contextor.getInstance().getContext(),
-                        t.toString(),Toast.LENGTH_SHORT).show();
-            }
-        });*/
+        call.enqueue(postCallback);
 
         OnSelectData onSelectData = (OnSelectData) getActivity();
         onSelectData.onSelectedCallback(PostActivity.CALLBACK_ALL_POST);
@@ -310,10 +286,38 @@ public class AllPostFragment extends Fragment implements View.OnClickListener{
 
     @Subscribe
     public void getProduceData(InformationFromUser user){
+        this.user = user;
+        initData();
         Log.i(TAG, "getProduceData3: "+user.getBrand());
         Log.i(TAG, "getProduceData3: "+user.getTypeSub());
         Log.i(TAG, "getProduceData3: "+user.getTypeSubDetail());
         Log.i(TAG, "getProduceData3: "+user.getYear());
 
     }
+
+    /*********
+    *Listener Zone
+    **********/
+    Callback<LogFromServerGao> postCallback = new Callback<LogFromServerGao>() {
+        @Override
+        public void onResponse(Call<LogFromServerGao> call, Response<LogFromServerGao> response) {
+            if (response.isSuccess()) {
+                Toast.makeText(Contextor.getInstance().getContext(),
+                        "Completed", Toast.LENGTH_SHORT).show();
+            } else {
+                try {
+                    Toast.makeText(Contextor.getInstance().getContext(),
+                            response.errorBody().string(), Toast.LENGTH_SHORT).show();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        @Override
+        public void onFailure(Call<LogFromServerGao> call, Throwable t) {
+            Toast.makeText(Contextor.getInstance().getContext(),
+                    t.toString(), Toast.LENGTH_SHORT).show();
+        }
+    };
 }

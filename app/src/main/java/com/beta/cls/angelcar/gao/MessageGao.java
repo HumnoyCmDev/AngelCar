@@ -4,40 +4,27 @@ package com.beta.cls.angelcar.gao;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import org.parceler.Parcel;
+
 import java.util.Date;
 
+@Parcel
 public class MessageGao {
 
-    @SerializedName("messageid")
-    @Expose
-    private String messageId;
-    @SerializedName("messagecarid")
-    @Expose
-    private String messageCarId;
-    @SerializedName("messagefromuser")
-    @Expose
-    private String messageFromUser;
-    @SerializedName("messagetext")
-    @Expose
-    private String messageText;
-    @SerializedName("displayname")
-    @Expose
-    private String displayName;
-    @SerializedName("messageby")
-    @Expose
-    private String messageBy;
-    @SerializedName("userprofileimage")
-    @Expose
-    private String userProfileImage;
-    @SerializedName("messagestamp")
-    @Expose
-    private Date messagesTamp;
+    @SerializedName("messageid")        @Expose int messageId;
+    @SerializedName("messagecarid")     @Expose String messageCarId;
+    @SerializedName("messagefromuser")  @Expose String messageFromUser;
+    @SerializedName("messagetext")      @Expose String messageText;
+    @SerializedName("displayname")      @Expose String displayName;
+    @SerializedName("messageby")        @Expose String messageBy;
+    @SerializedName("userprofileimage") @Expose String userProfileImage;
+    @SerializedName("messagestamp")     @Expose Date messagesTamp;
 
-    public String getMessageId() {
+    public int getMessageId() {
         return messageId;
     }
 
-    public void setMessageId(String messageId) {
+    public void setMessageId(int messageId) {
         this.messageId = messageId;
     }
 

@@ -5,15 +5,12 @@ package com.beta.cls.angelcar.fragment;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.view.animation.BounceInterpolator;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
@@ -29,13 +26,11 @@ import com.beta.cls.angelcar.R;
 import com.beta.cls.angelcar.anim.ResizeHeight;
 import com.beta.cls.angelcar.gao.PostCollectionGao;
 import com.beta.cls.angelcar.gao.PostGao;
+import com.beta.cls.angelcar.manager.http.ApiChatService;
 import com.beta.cls.angelcar.manager.http.ApiService;
 import com.beta.cls.angelcar.manager.http.HttpManager;
 
-import org.parceler.Parcel;
 import org.parceler.Parcels;
-
-import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -58,8 +53,15 @@ public class HomeFragment extends Fragment {
     private ListViewPostAdapter adapter;
 
     public HomeFragment() {
+        super();
     }
 
+    public static HomeFragment newInstance() {
+        HomeFragment fragment = new HomeFragment();
+//        Bundle args = new Bundle();
+//        fragment.setArguments(args);
+        return fragment;
+    }
     @Override
 
     public void onCreate(Bundle savedInstanceState) {
@@ -120,65 +122,15 @@ public class HomeFragment extends Fragment {
                 Color.parseColor("#FFC11E"),
                 Color.parseColor("#FFC11E"));
 
-        mSwipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-               loadData();
-            }
-        });
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                PostGao item = gao.getRows().get(position);
-                Intent intent = new Intent(getActivity(), DetailCarActivity.class);
-                intent.putExtra("PostGao", Parcels.wrap(item));
-                startActivity(intent);
-
-            }
-        });
-
-        listView.setOnScrollListener(new AbsListView.OnScrollListener() {
-            @Override
-            public void onScrollStateChanged(AbsListView view, int scrollState) {
-
-            }
-
-            @Override
-            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-                mSwipeRefresh.setEnabled(firstVisibleItem == 0);
-            }
-        });
+        mSwipeRefresh.setOnRefreshListener(pullRefresh);
+        listView.setOnItemClickListener(onItemClickListViewListener);
+        listView.setOnScrollListener(onScrollListener);
 
     }
 
     private void loadData(){
-
         ApiService call = HttpManager.getInstance().getService();
-        call.loadPost().enqueue(new Callback<PostCollectionGao>() {
-            @Override
-            public void onResponse(Call<PostCollectionGao> call, Response<PostCollectionGao> response) {
-                if (response.isSuccess()){
-                    mSwipeRefresh.setRefreshing(false);
-                    gao = response.body();
-                    adapter.setGao(response.body());
-                    adapter.notifyDataSetChanged();
-                }else {
-                    mSwipeRefresh.setRefreshing(false);
-                    Toast.makeText(getActivity(),
-                            response.errorBody().toString(),
-                            Toast.LENGTH_SHORT).show();
-                }
-            }
-
-            @Override
-            public void onFailure(Call<PostCollectionGao> call, Throwable t) {
-                mSwipeRefresh.setRefreshing(false);
-                Toast.makeText(getActivity(),
-                        t.toString(),
-                        Toast.LENGTH_SHORT).show();
-            }
-        });
-
+        call.loadPost().enqueue(new loadDataPostCallback());
     }
 
     @Override
@@ -186,5 +138,64 @@ public class HomeFragment extends Fragment {
         super.onSaveInstanceState(outState);
         outState.putParcelable(SAVE_STATE_GAO,Parcels.wrap(gao));
 
+    }
+
+    /**************
+    *Listener Zone
+    ***************/
+    SwipeRefreshLayout.OnRefreshListener pullRefresh = new SwipeRefreshLayout.OnRefreshListener() {
+        @Override
+        public void onRefresh() {
+            loadData();
+        }
+    };
+
+    AbsListView.OnScrollListener onScrollListener = new AbsListView.OnScrollListener() {
+        @Override
+        public void onScrollStateChanged(AbsListView view, int scrollState) {
+        }
+        @Override
+        public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+            mSwipeRefresh.setEnabled(firstVisibleItem == 0);
+        }
+    };
+    AdapterView.OnItemClickListener onItemClickListViewListener = new AdapterView.OnItemClickListener() {
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            PostGao item = gao.getRows().get(position);
+            Intent intent = new Intent(getActivity(), DetailCarActivity.class);
+            intent.putExtra("PostGao", Parcels.wrap(item));
+            startActivity(intent);
+
+        }
+    };
+
+    /***********
+    *Inner Class Zone
+    ************/
+    private class loadDataPostCallback implements Callback<PostCollectionGao>{
+
+        @Override
+        public void onResponse(Call<PostCollectionGao> call, Response<PostCollectionGao> response) {
+            if (response.isSuccess()){
+                mSwipeRefresh.setRefreshing(false);
+                gao = response.body();
+                adapter.setGao(response.body());
+                adapter.notifyDataSetChanged();
+            }else {
+                mSwipeRefresh.setRefreshing(false);
+                Toast.makeText(getActivity(),
+                        response.errorBody().toString(),
+                        Toast.LENGTH_SHORT).show();
+            }
+        }
+
+        @Override
+        public void onFailure(Call<PostCollectionGao> call, Throwable t) {
+            mSwipeRefresh.setRefreshing(false);
+            Toast.makeText(getActivity(),
+                    t.toString(),
+                    Toast.LENGTH_SHORT).show();
+        }
     }
 }

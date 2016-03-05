@@ -1,10 +1,8 @@
 package com.beta.cls.angelcar.fragment;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -55,17 +53,7 @@ public class BrandFragment extends Fragment {
         CustomAdapterGrid adapter = new CustomAdapterGrid(getActivity(),
                 getIntsImageID());
         gridview.setAdapter(adapter);
-        gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
-
-                user = new InformationFromUser();
-                user.setBrand(getBrand(position));
-                BusProvider.getInstance().post(user);
-
-                OnSelectData onSelectData = (OnSelectData) getActivity();
-                onSelectData.onSelectedCallback(PostActivity.CALLBACK_BRAND);
-            }
-        });
+        gridview.setOnItemClickListener(selectBrandListener);
 
     }
 
@@ -114,5 +102,20 @@ public class BrandFragment extends Fragment {
     public InformationFromUser produceData(){
         return user;
     }
+
+    /***************
+     * Listener Zone
+     * *************/
+    AdapterView.OnItemClickListener selectBrandListener = new AdapterView.OnItemClickListener() {
+        public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
+
+            user = new InformationFromUser();
+            user.setBrand(getBrand(position));
+            BusProvider.getInstance().post(user);
+
+            OnSelectData onSelectData = (OnSelectData) getActivity();
+            onSelectData.onSelectedCallback(PostActivity.CALLBACK_BRAND);
+        }
+    };
 
 }
