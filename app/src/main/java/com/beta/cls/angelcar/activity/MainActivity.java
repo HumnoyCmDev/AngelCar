@@ -190,7 +190,7 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(i1);
                 break;
             case R.id.menu_bottom_list_shop:
-                Intent i2 = new Intent(MainActivity.this,ShopIOSActivity.class);
+                Intent i2 = new Intent(MainActivity.this,ShopActivity.class);
                 startActivity(i2);
                 break;
             case R.id.menu_bottom_profile:
