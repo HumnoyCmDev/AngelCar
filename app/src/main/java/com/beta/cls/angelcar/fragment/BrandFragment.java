@@ -98,11 +98,6 @@ public class BrandFragment extends Fragment {
         return "";
     }
 
-    @Produce
-    public InformationFromUser produceData(){
-        return user;
-    }
-
     /***************
      * Listener Zone
      * *************/

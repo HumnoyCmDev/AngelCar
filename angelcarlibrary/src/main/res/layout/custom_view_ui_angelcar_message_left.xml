@@ -8,13 +8,13 @@
     android:padding="5dp">
 
     <com.github.siyamed.shapeimageview.CircularImageView
-        android:id="@+id/custom_view_iu_angelcar_icon_profile"
+        android:id="@+id/custom_view_ui_angelcar_icon_profile"
         android:layout_width="32dp"
         android:layout_height="32dp"
         android:src="@drawable/ic_hndeveloper" />
 
     <LinearLayout
-        android:id="@+id/custom_view_iu_angelcar_background"
+        android:id="@+id/custom_view_ui_angelcar_background"
         android:layout_marginLeft="5dp"
         android:padding="2dp"
         android:orientation="horizontal"
@@ -23,7 +23,8 @@
         android:layout_height="wrap_content">
 
         <TextView
-            android:id="@+id/custom_view_iu_angelcar_message"
+            android:visibility="visible"
+            android:id="@+id/custom_view_ui_angelcar_message"
             android:padding="5dp"
             android:textSize="14sp"
             android:textColor="@android:color/white"
@@ -36,11 +37,17 @@
     <com.github.siyamed.shapeimageview.RoundedImageView
         android:visibility="gone"
         android:layout_marginLeft="5dp"
-        android:id="@+id/custom_view_iu_angelcar_image"
+        android:id="@+id/custom_view_ui_angelcar_image"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/simple_product"
         app:siRadius="4dp"/>
+
+    <!--<ViewStub-->
+        <!--android:id="@+id/ViewSubMessageImage"-->
+        <!--android:layout="@layout/message_image"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content" />-->
 
 
 </LinearLayout>

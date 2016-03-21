@@ -1,6 +1,7 @@
 package com.beta.cls.angelcar.Adapter;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -35,6 +36,10 @@ public class MultipleChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         this.messageBy = messageBy;
     }
 
+    public MultipleChatAdapter(String messageBy) {
+        this.messageBy = messageBy;
+    }
+
     public void setMessagesGao(List<MessageGao> messagesGao) {
         this.messagesGao = messagesGao;
     }
@@ -61,27 +66,39 @@ public class MultipleChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         // get item
-        MessageGao blogMessage = messagesGao.get(position);
+        MessageGao message = messagesGao.get(position);
 
         switch (holder.getItemViewType()){
             case 0 :
                 ViewHolderLeft holderLeft = (ViewHolderLeft) holder;
-                holderLeft.angelCarMessage.setMessage(blogMessage.getMessageText());
-                holderLeft.angelCarMessage.setIconProfile(blogMessage.getUserProfileImage());
+                holderLeft.angelCarMessage.setMessage(message.getMessageText());
+                holderLeft.angelCarMessage.setIconProfile(message.getUserProfileImage());
+
+                if (position == 0)
+                   holderLeft.angelCarMessage.setBackground(Color.parseColor("#50E3C2"));
+                else if (position == 1)
+                    holderLeft.angelCarMessage.setBackground(Color.parseColor("#7ED321"));
+
                 break;
             case 1:
                 ViewHolderRight holderRight = (ViewHolderRight) holder;
-                holderRight.angelCarMessage.setMessage(blogMessage.getMessageText());
-                holderRight.angelCarMessage.setIconProfile(blogMessage.getUserProfileImage());
+                holderRight.angelCarMessage.setMessage(message.getMessageText());
+                holderRight.angelCarMessage.setIconProfile(message.getUserProfileImage());
+
+                if (position == 0)
+                    holderRight.angelCarMessage.setBackground(Color.parseColor("#50E3C2"));
+                else if (position == 1)
+                    holderRight.angelCarMessage.setBackground(Color.parseColor("#7ED321"));
+
                 break;
         }
 
-        Document doc = Jsoup.parse(blogMessage.getMessageText());
-        Elements e = doc.select("img");
-        if (!e.isEmpty()) {
-            Log.i("log jsoup", "onBindViewHolder: " + e.size());
-            Log.i("log jsoup", "onBindViewHolder: " + e.select("img").text());
-        }
+//        Document doc = Jsoup.parse(blogMessage.getMessageText());
+//        Elements e = doc.select("img");
+//        if (!e.isEmpty()) {
+//            Log.i("log jsoup", "onBindViewHolder: " + e.size());
+//            Log.i("log jsoup", "onBindViewHolder: " + e.select("img").text());
+//        }
 
 
     }
@@ -106,6 +123,7 @@ public class MultipleChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     @Override
     public int getItemCount() {
+        if (messagesGao == null) return 0;
         return messagesGao.size();
     }
 

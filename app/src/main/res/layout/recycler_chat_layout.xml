@@ -22,25 +22,25 @@
         android:padding="5dp">
 
         <Button
-            android:layout_margin="2dp"
+            android:layout_marginLeft="5dp"
             android:background="@drawable/ic_person_add"
             android:id="@+id/message_button_personnel"
-            android:layout_width="24dp"
-            android:layout_height="24dp"/>
+            android:layout_width="32dp"
+            android:layout_height="32dp"/>
 
         <Button
-            android:layout_margin="2dp"
+            android:layout_marginLeft="7dp"
             android:background="@drawable/ic_camera"
             android:id="@+id/message_button_image"
-            android:layout_width="24dp"
-            android:layout_height="24dp"/>
+            android:layout_width="32dp"
+            android:layout_height="32dp"/>
 
-        <Button
-            android:layout_margin="2dp"
-            android:background="@drawable/ic_place"
-            android:id="@+id/message_button_place"
-            android:layout_width="24dp"
-            android:layout_height="24dp"/>
+        <!--<Button-->
+            <!--android:layout_margin="2dp"-->
+            <!--android:background="@drawable/ic_place"-->
+            <!--android:id="@+id/message_button_place"-->
+            <!--android:layout_width="24dp"-->
+            <!--android:layout_height="24dp"/>-->
 
         <EditText
             android:textSize="15sp"

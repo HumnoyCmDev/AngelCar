@@ -13,6 +13,7 @@
         android:background="@color/colorPrimary">
 
         <TextView
+            android:id="@+id/countCarAll"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center"
@@ -24,6 +25,7 @@
             android:singleLine="true"/>
 
         <TextView
+            android:id="@+id/countCarMonth"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:padding="6dp"
@@ -35,7 +37,9 @@
             android:layout_weight="1"
             android:text="เดือนนี้ 500 คัน"
             android:singleLine="true"/>
+
         <TextView
+            android:id="@+id/countCarDay"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:padding="6dp"
@@ -47,6 +51,7 @@
             android:layout_weight="1"
             android:text="วันนี้ 100 คัน"
             android:singleLine="true"/>
+
         <ImageView
             android:id="@+id/btFilter"
             android:layout_width="match_parent"

@@ -16,12 +16,6 @@ import com.squareup.picasso.Picasso;
 public class ImageAdapter extends PagerAdapter {
     Context context;
     private int[] GalImages = new int[] {
-            R.drawable.pic_a,
-            R.drawable.pic_b,
-            R.drawable.pic_c,
-            R.drawable.pic_d,
-            R.drawable.pic_e,
-            R.drawable.pic_f
 
     };
     public ImageAdapter(Context context){

@@ -127,25 +127,25 @@ public class AngelCarPost extends BaseCustomViewGroup {
         }
     }
 
-    public void setIc_Profile(String urlImage) {
+    public void setPictureProfile(String urlImage) {
         Picasso.with(getContext())
                 .load(urlImage)
                 .into(ic_Profile);
     }
 
-    public void setIc_Profile(int resourceId) {
+    public void setPictureProfile(int resourceId) {
         Picasso.with(getContext())
                 .load(resourceId)
                 .into(ic_Profile);
     }
 
-    public void setIc_Product(String urlImage) {
+    public void setPictureProduct(String urlImage) {
         Picasso.with(getContext())
                 .load(urlImage)
                 .into(ic_Product);
     }
 
-    public void setIc_Product(int resourceId) {
+    public void setPictureProduct(int resourceId) {
         Picasso.with(getContext())
                 .load(resourceId)
                 .into(ic_Product);

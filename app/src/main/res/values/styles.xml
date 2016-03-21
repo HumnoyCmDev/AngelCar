@@ -21,7 +21,25 @@
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <style name="AllPostEditTextStyle">
-        <item name="android:textSize">18sp</item>
+        <item name="android:layout_width">@dimen/post_all_edit_width</item>
+        <item name="android:layout_marginLeft">@dimen/post_all_marginleft_icon</item>
+        <item name="android:paddingLeft">5dp</item>
+        <item name="android:textSize">16sp</item>
         <item name="android:inputType">text</item>
+        <item name="android:textColorHint">#BDBDBD</item>
+    </style>
+
+    <style name="TextTitleStyle">
+        <item name="android:textSize">18sp</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:gravity">end</item>
+    </style>
+
+    <style name="PhotoListStyle">
+        <item name="android:layout_weight">1</item>
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:layout_margin">2dp</item>
+        <item name="android:src">@drawable/photo</item>
     </style>
 </resources>

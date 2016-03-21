@@ -52,7 +52,7 @@ public class YearFragmentDialog extends DialogFragment{
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-
+        getDialog().setTitle("เลือกปี");
         dataYear = new ArrayList<String>();
         for (int i = 2016; i >= 1950; i--) {
             dataYear.add(String.valueOf(i));

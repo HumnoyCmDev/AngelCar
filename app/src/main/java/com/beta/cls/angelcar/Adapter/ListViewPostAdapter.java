@@ -1,16 +1,18 @@
 package com.beta.cls.angelcar.Adapter;
 
 /**
- * Created by ABaD on 12/15/2015.
+ * Created by Developer on 12/15/2015. 14:35
  */
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
 import com.beta.cls.angelcar.R;
-import com.beta.cls.angelcar.gao.PostCollectionGao;
-import com.beta.cls.angelcar.gao.PostGao;
+import com.beta.cls.angelcar.gao.PostCarCollectionGao;
+import com.beta.cls.angelcar.gao.PostCarGao;
+import com.beta.cls.angelcar.util.LineUp;
 import com.hndev.library.view.AngelCarPost;
 
 import butterknife.Bind;
@@ -18,9 +20,9 @@ import butterknife.ButterKnife;
 
 public class ListViewPostAdapter extends BaseAdapter {
 
-    PostCollectionGao gao;
+    PostCarCollectionGao gao;
 
-    public void setGao(PostCollectionGao gao) {
+    public void setGao(PostCarCollectionGao gao) {
         this.gao = gao;
     }
 
@@ -30,7 +32,7 @@ public class ListViewPostAdapter extends BaseAdapter {
         return gao.getRows().size();
     }
 
-    public PostGao getItem(int position) {
+    public PostCarGao getItem(int position) {
         return gao.getRows().get(position);
     }
 
@@ -47,7 +49,7 @@ public class ListViewPostAdapter extends BaseAdapter {
     }
 
     public View getView(int position, View view, ViewGroup parent) {
-        PostGao postItem = getItem(position);
+        PostCarGao postItem = getItem(position);
         int switching_position = getItemViewType(position);
         switch (switching_position){
             case 0: view = inFlaterLayoutRight(view,parent,postItem);
@@ -58,7 +60,7 @@ public class ListViewPostAdapter extends BaseAdapter {
         return view;
     }
 
-    private View inFlaterLayoutLeft(View view, ViewGroup parent,PostGao postItem){
+    private View inFlaterLayoutLeft(View view, ViewGroup parent,PostCarGao postItem){
         ViewHolderItemLeft holder;
         if(view != null) {
             holder = (ViewHolderItemLeft) view.getTag();
@@ -67,17 +69,19 @@ public class ListViewPostAdapter extends BaseAdapter {
             holder = new ViewHolderItemLeft(view);
             view.setTag(holder);
         }
-        holder.angelCarPost.setTitle(postItem.getPostTopic());
-        holder.angelCarPost.setDetails(
-                        "" + postItem.getCarTypeMain() + " " +
-                        "" + postItem.getCarTypeSub() + " " +
-                        "" + postItem.getCarTypeSubDetail() + " " +
-                        " ปี" + postItem.getCarYear());
+            String topic = LineUp.getInstance().subTopic(postItem.getCarDetail());
+            String detail = LineUp.getInstance().subDetail(postItem.getCarDetail());
+            String carName = postItem.getCarName();
+            String bast_url_image = postItem.getCarImagePath();
+            String urlImage = bast_url_image.replaceFirst("chatcarimage","thumbnailcarimages");
+            holder.angelCarPost.setPictureProduct("http://angelcar.com/"+urlImage);
+            holder.angelCarPost.setTitle(topic);
+            holder.angelCarPost.setDetails(carName +" "+ detail.replaceAll("<n>"," "));
 
         return view;
     }
 
-    private View inFlaterLayoutRight(View view, ViewGroup parent,PostGao postItem){
+    private View inFlaterLayoutRight(View view, ViewGroup parent,PostCarGao postItem){
         ViewHolderItemRight holder;
         if(view != null) {
             holder = (ViewHolderItemRight) view.getTag();
@@ -86,12 +90,15 @@ public class ListViewPostAdapter extends BaseAdapter {
             holder = new ViewHolderItemRight(view);
             view.setTag(holder);
         }
-        holder.angelCarPost.setTitle(postItem.getPostTopic());
-        holder.angelCarPost.setDetails(
-                "" + postItem.getCarTypeMain() + " " +
-                        "" + postItem.getCarTypeSub() + " " +
-                        "" + postItem.getCarTypeSubDetail() + " " +
-                        " ปี" + postItem.getCarYear());
+            String topic = LineUp.getInstance().subTopic(postItem.getCarDetail());
+            String detail = LineUp.getInstance().subDetail(postItem.getCarDetail());
+            String carName = postItem.getCarName();
+            String bast_url_image = postItem.getCarImagePath();
+            String urlImage = bast_url_image.replaceFirst("chatcarimage","thumbnailcarimages");
+            holder.angelCarPost.setPictureProduct("http://angelcar.com/"+urlImage);
+            holder.angelCarPost.setTitle(topic);
+            holder.angelCarPost.setDetails(carName +" "+ detail.replaceAll("<n>"," "));
+
         return view;
     }
 

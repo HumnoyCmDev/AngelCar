@@ -40,237 +40,243 @@
 
     <!-- HN Dev -->
 
-
     <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:background="#EEEEEE"
         android:orientation="vertical"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-        <android.support.v4.widget.NestedScrollView
-            android:fillViewport="true"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+        <!--<android.support.v4.widget.NestedScrollView-->
+            <!--android:fillViewport="true"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content">-->
 
 
-            <android.support.v7.widget.CardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="5dp"
-                card_view:cardCornerRadius="6dp">
+            <!--<android.support.v7.widget.CardView-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_margin="5dp"-->
+                <!--card_view:cardCornerRadius="6dp">-->
 
-                <LinearLayout
-                    android:id="@+id/main_layout"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical">
-                    <!--root-->
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:padding="7dp">
+                <!--<LinearLayout-->
+                    <!--android:id="@+id/main_layout"-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:orientation="vertical">-->
+                    <!--&lt;!&ndash;root&ndash;&gt;-->
+                    <!--<LinearLayout-->
+                        <!--android:layout_width="match_parent"-->
+                        <!--android:layout_height="wrap_content"-->
+                        <!--android:orientation="horizontal"-->
+                        <!--android:padding="7dp">-->
 
-                        <TextView
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:padding="5dp"
-                            android:text="@string/sample_test_text_chat2"
-                            android:textStyle="bold" />
+                        <!--<TextView-->
+                            <!--android:id="@+id/tvTopic"-->
+                            <!--android:layout_width="0dp"-->
+                            <!--android:layout_height="wrap_content"-->
+                            <!--android:layout_weight="1"-->
+                            <!--android:padding="6dp"-->
+                            <!--android:text="@string/sample_test_text_chat"-->
+                            <!--android:textStyle="bold" />-->
 
-                        <ToggleButton
-                            android:text=""
-                            android:textOff=""
-                            android:textOn=""
-                            android:layout_width="48dp"
-                            android:layout_height="48dp"
-                            android:background="@drawable/selector_button_start" />
+                        <!--<ToggleButton-->
+                            <!--android:text=""-->
+                            <!--android:textOff=""-->
+                            <!--android:textOn=""-->
+                            <!--android:layout_width="48dp"-->
+                            <!--android:layout_height="48dp"-->
+                            <!--android:background="@drawable/selector_button_start" />-->
 
-                    </LinearLayout>
+                    <!--</LinearLayout>-->
 
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:padding="10dp">
-                        <!--ss-->
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:orientation="vertical">
+                    <!--<LinearLayout-->
+                        <!--android:layout_width="match_parent"-->
+                        <!--android:layout_height="wrap_content"-->
+                        <!--android:orientation="horizontal"-->
+                        <!--android:padding="10dp">-->
+                        <!--&lt;!&ndash;ss&ndash;&gt;-->
+                        <!--<LinearLayout-->
+                            <!--android:layout_width="0dp"-->
+                            <!--android:layout_height="wrap_content"-->
+                            <!--android:layout_weight="1"-->
+                            <!--android:orientation="vertical">-->
 
-                            <LinearLayout
-                                android:layout_width="match_parent"
-                                android:layout_height="match_parent"
-                                android:orientation="horizontal">
+                            <!--<LinearLayout-->
+                                <!--android:layout_width="match_parent"-->
+                                <!--android:layout_height="match_parent"-->
+                                <!--android:orientation="horizontal">-->
 
-                                <TextView
-                                    android:layout_width="0dp"
-                                    android:layout_height="match_parent"
-                                    android:layout_weight="0.5"
-                                    android:text="ยี่ห้อ :" />
+                                <!--<TextView-->
+                                    <!--android:layout_width="0dp"-->
+                                    <!--android:layout_height="match_parent"-->
+                                    <!--android:layout_weight="0.5"-->
+                                    <!--android:text="ยี่ห้อ :" />-->
 
-                                <TextView
-                                    android:id="@+id/activity_detail_tvCarType"
-                                    android:layout_width="0dp"
-                                    android:layout_height="match_parent"
-                                    android:layout_weight="1"
-                                    android:text="111111" />
-                            </LinearLayout>
+                                <!--<TextView-->
+                                    <!--android:id="@+id/tvCarType"-->
+                                    <!--android:layout_width="0dp"-->
+                                    <!--android:layout_height="match_parent"-->
+                                    <!--android:layout_weight="1"-->
+                                    <!--android:text="111111" />-->
+                            <!--</LinearLayout>-->
 
-                            <LinearLayout
-                                android:layout_width="match_parent"
-                                android:layout_height="match_parent"
-                                android:orientation="horizontal">
+                            <!--<LinearLayout-->
+                                <!--android:layout_width="match_parent"-->
+                                <!--android:layout_height="match_parent"-->
+                                <!--android:orientation="horizontal">-->
 
-                                <TextView
-                                    android:layout_width="0dp"
-                                    android:layout_height="match_parent"
-                                    android:layout_weight="0.5"
-                                    android:text="รุ่น :" />
+                                <!--<TextView-->
+                                    <!--android:layout_width="0dp"-->
+                                    <!--android:layout_height="match_parent"-->
+                                    <!--android:layout_weight="0.5"-->
+                                    <!--android:text="รุ่น :" />-->
 
-                                <TextView
-                                    android:layout_width="0dp"
-                                    android:layout_height="match_parent"
-                                    android:layout_weight="1"
-                                    android:text="111111" />
-                            </LinearLayout>
+                                <!--<TextView-->
+                                    <!--android:id="@+id/tvBrand"-->
+                                    <!--android:layout_width="0dp"-->
+                                    <!--android:layout_height="match_parent"-->
+                                    <!--android:layout_weight="1"-->
+                                    <!--android:text="111111" />-->
+                            <!--</LinearLayout>-->
 
-                            <LinearLayout
-                                android:layout_width="match_parent"
-                                android:layout_height="match_parent"
-                                android:orientation="horizontal">
+                            <!--<LinearLayout-->
+                                <!--android:layout_width="match_parent"-->
+                                <!--android:layout_height="match_parent"-->
+                                <!--android:orientation="horizontal">-->
 
-                                <TextView
-                                    android:layout_width="0dp"
-                                    android:layout_height="match_parent"
-                                    android:layout_weight="0.5"
-                                    android:text="รุ่นย่อย :" />
+                                <!--<TextView-->
+                                    <!--android:layout_width="0dp"-->
+                                    <!--android:layout_height="match_parent"-->
+                                    <!--android:layout_weight="0.5"-->
+                                    <!--android:text="รุ่นย่อย :" />-->
 
-                                <TextView
-                                    android:layout_width="0dp"
-                                    android:layout_height="match_parent"
-                                    android:layout_weight="1"
-                                    android:text="222222" />
-                            </LinearLayout>
+                                <!--<TextView-->
+                                    <!--android:id="@+id/tvCarSub"-->
+                                    <!--android:layout_width="0dp"-->
+                                    <!--android:layout_height="match_parent"-->
+                                    <!--android:layout_weight="1"-->
+                                    <!--android:text="222222" />-->
+                            <!--</LinearLayout>-->
 
-                            <LinearLayout
-                                android:layout_width="match_parent"
-                                android:layout_height="match_parent"
-                                android:orientation="horizontal">
+                            <!--<LinearLayout-->
+                                <!--android:layout_width="match_parent"-->
+                                <!--android:layout_height="match_parent"-->
+                                <!--android:orientation="horizontal">-->
 
-                                <TextView
-                                    android:layout_width="0dp"
-                                    android:layout_height="match_parent"
-                                    android:layout_weight="0.5"
-                                    android:text="เกียร์ :" />
+                                <!--<TextView-->
+                                    <!--android:layout_width="0dp"-->
+                                    <!--android:layout_height="match_parent"-->
+                                    <!--android:layout_weight="0.5"-->
+                                    <!--android:text="เกียร์ :" />-->
 
-                                <TextView
-                                    android:layout_width="0dp"
-                                    android:layout_height="match_parent"
-                                    android:layout_weight="1"
-                                    android:text="222222" />
-                            </LinearLayout>
+                                <!--<TextView-->
+                                    <!--android:id="@+id/tvGear"-->
+                                    <!--android:layout_width="0dp"-->
+                                    <!--android:layout_height="match_parent"-->
+                                    <!--android:layout_weight="1"-->
+                                    <!--android:text="222222" />-->
+                            <!--</LinearLayout>-->
 
-                            <LinearLayout
-                                android:layout_width="match_parent"
-                                android:layout_height="match_parent"
-                                android:orientation="horizontal">
+                            <!--<LinearLayout-->
+                                <!--android:layout_width="match_parent"-->
+                                <!--android:layout_height="match_parent"-->
+                                <!--android:orientation="horizontal">-->
 
-                                <TextView
-                                    android:layout_width="0dp"
-                                    android:layout_height="match_parent"
-                                    android:layout_weight="0.5"
-                                    android:text="ปี :" />
+                                <!--<TextView-->
+                                    <!--android:layout_width="0dp"-->
+                                    <!--android:layout_height="match_parent"-->
+                                    <!--android:layout_weight="0.5"-->
+                                    <!--android:text="ปี :" />-->
 
-                                <TextView
-                                    android:layout_width="0dp"
-                                    android:layout_height="match_parent"
-                                    android:layout_weight="1"
-                                    android:text="333333" />
-                            </LinearLayout>
+                                <!--<TextView-->
+                                    <!--android:id="@+id/tvYear"-->
+                                    <!--android:layout_width="0dp"-->
+                                    <!--android:layout_height="match_parent"-->
+                                    <!--android:layout_weight="1"-->
+                                    <!--android:text="333333" />-->
+                            <!--</LinearLayout>-->
 
-                            <LinearLayout
-                                android:layout_width="match_parent"
-                                android:layout_height="match_parent"
-                                android:orientation="horizontal">
+                            <!--<LinearLayout-->
+                                <!--android:layout_width="match_parent"-->
+                                <!--android:layout_height="match_parent"-->
+                                <!--android:orientation="horizontal">-->
 
-                                <TextView
-                                    android:layout_width="0dp"
-                                    android:layout_height="match_parent"
-                                    android:layout_weight="0.5"
-                                    android:text="ราคา :" />
+                                <!--<TextView-->
+                                    <!--android:layout_width="0dp"-->
+                                    <!--android:layout_height="match_parent"-->
+                                    <!--android:layout_weight="0.5"-->
+                                    <!--android:text="ราคา :" />-->
 
-                                <TextView
-                                    android:layout_width="0dp"
-                                    android:layout_height="match_parent"
-                                    android:layout_weight="1"
-                                    android:text="333333" />
-                            </LinearLayout>
-
-
-                        </LinearLayout>
-
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:orientation="vertical">
-
-                            <LinearLayout
-                                android:layout_width="match_parent"
-                                android:layout_height="match_parent"
-                                android:orientation="horizontal">
-
-                                <TextView
-                                    android:layout_width="0dp"
-                                    android:layout_height="match_parent"
-                                    android:layout_weight="0.5"
-                                    android:text="โทร :" />
-
-                                <TextView
-                                    android:layout_width="0dp"
-                                    android:layout_height="match_parent"
-                                    android:layout_weight="1"
-                                    android:text="044-551664" />
-                            </LinearLayout>
+                                <!--<TextView-->
+                                    <!--android:id="@+id/tvPrice"-->
+                                    <!--android:layout_width="0dp"-->
+                                    <!--android:layout_height="match_parent"-->
+                                    <!--android:layout_weight="1"-->
+                                    <!--android:text="333333" />-->
+                            <!--</LinearLayout>-->
 
 
-                            <LinearLayout
-                                android:layout_width="match_parent"
-                                android:layout_height="match_parent"
-                                android:orientation="horizontal"
-                                android:visibility="gone">
+                        <!--</LinearLayout>-->
 
-                                <TextView
-                                    android:layout_width="0dp"
-                                    android:layout_height="match_parent"
-                                    android:layout_weight="0.5"
-                                    android:text="444444 :" />
+                        <!--<LinearLayout-->
+                            <!--android:layout_width="0dp"-->
+                            <!--android:layout_height="wrap_content"-->
+                            <!--android:layout_weight="1"-->
+                            <!--android:orientation="vertical">-->
 
-                                <TextView
-                                    android:layout_width="0dp"
-                                    android:layout_height="match_parent"
-                                    android:layout_weight="1"
-                                    android:text="444444" />
-                            </LinearLayout>
+                            <!--<LinearLayout-->
+                                <!--android:layout_width="match_parent"-->
+                                <!--android:layout_height="match_parent"-->
+                                <!--android:orientation="horizontal">-->
 
-                            <!--android:name="com.google.android.gms.maps.SupportMapFragment"-->
-                            <FrameLayout
-                                android:layout_width="match_parent"
-                                android:layout_height="90dp"
-                                android:background="@android:color/darker_gray"></FrameLayout>
-+
-                        </LinearLayout>
+                                <!--<TextView-->
+                                    <!--android:layout_width="0dp"-->
+                                    <!--android:layout_height="match_parent"-->
+                                    <!--android:layout_weight="0.5"-->
+                                    <!--android:text="โทร :" />-->
 
-                    </LinearLayout>
-                </LinearLayout>
-            </android.support.v7.widget.CardView>
+                                <!--<TextView-->
+                                    <!--android:id="@+id/tvPhone"-->
+                                    <!--android:layout_width="0dp"-->
+                                    <!--android:layout_height="match_parent"-->
+                                    <!--android:layout_weight="1"-->
+                                    <!--android:text="044-551664" />-->
+                            <!--</LinearLayout>-->
 
-        </android.support.v4.widget.NestedScrollView>
+
+                            <!--<LinearLayout-->
+                                <!--android:layout_width="match_parent"-->
+                                <!--android:layout_height="match_parent"-->
+                                <!--android:orientation="horizontal"-->
+                                <!--android:visibility="gone">-->
+
+                                <!--<TextView-->
+                                    <!--android:layout_width="0dp"-->
+                                    <!--android:layout_height="match_parent"-->
+                                    <!--android:layout_weight="0.5"-->
+                                    <!--android:text="444444 :" />-->
+
+                                <!--<TextView-->
+                                    <!--android:layout_width="0dp"-->
+                                    <!--android:layout_height="match_parent"-->
+                                    <!--android:layout_weight="1"-->
+                                    <!--android:text="444444" />-->
+                            <!--</LinearLayout>-->
+
+                            <!--&lt;!&ndash;android:name="com.google.android.gms.maps.SupportMapFragment"&ndash;&gt;-->
+                            <!--<FrameLayout-->
+                                <!--android:layout_width="match_parent"-->
+                                <!--android:layout_height="90dp"-->
+                                <!--android:background="@android:color/darker_gray"></FrameLayout>-->
+<!--+-->
+                        <!--</LinearLayout>-->
+
+                    <!--</LinearLayout>-->
+                <!--</LinearLayout>-->
+            <!--</android.support.v7.widget.CardView>-->
+
+        <!--</android.support.v4.widget.NestedScrollView>-->
 
 
         <!--Recycle-->

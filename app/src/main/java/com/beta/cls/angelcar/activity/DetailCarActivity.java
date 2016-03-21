@@ -15,6 +15,8 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.Html;
+import android.text.Spanned;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
@@ -25,7 +27,8 @@ import com.beta.cls.angelcar.Adapter.MultipleChatAdapter;
 import com.beta.cls.angelcar.R;
 import com.beta.cls.angelcar.gao.LogFromServerGao;
 import com.beta.cls.angelcar.gao.MessageCollectionGao;
-import com.beta.cls.angelcar.gao.PostGao;
+import com.beta.cls.angelcar.gao.MessageGao;
+import com.beta.cls.angelcar.gao.PostCarGao;
 import com.beta.cls.angelcar.interfaces.WaitMessageOnBackground;
 import com.beta.cls.angelcar.manager.MessageManager;
 import com.beta.cls.angelcar.manager.WaitMessageSynchronous;
@@ -33,12 +36,15 @@ import com.beta.cls.angelcar.manager.bus.BusProvider;
 import com.beta.cls.angelcar.manager.http.HttpChatManager;
 import com.beta.cls.angelcar.manager.http.OkHttpManager;
 import com.beta.cls.angelcar.interfaces.CallBackMainThread;
+import com.beta.cls.angelcar.util.LineUp;
 import com.squareup.otto.Subscribe;
 
 import org.parceler.Parcels;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -54,8 +60,17 @@ public class DetailCarActivity extends AppCompatActivity {
     @Bind(R.id.toolbar_top) Toolbar toolbar;
     @Bind(R.id.recycler_view) RecyclerView recyclerView;
     @Bind(R.id.viewpager) ViewPager viewPager;
-    @Bind(R.id.activity_detail_tvCarType) TextView tvCarType;
     @Bind(R.id.recycler_view_chat_layout_input_chat) EditText input_chat;
+
+//    @Bind(R.id.tvTopic) TextView tvTopic;
+//    @Bind(R.id.tvCarType) TextView tvCarType;
+//    @Bind(R.id.tvBrand) TextView tvBrand;
+//    @Bind(R.id.tvCarSub) TextView tvCarSub;
+//    @Bind(R.id.tvGear) TextView tvGear;
+//    @Bind(R.id.tvYear) TextView tvYear;
+//    @Bind(R.id.tvPrice) TextView tvPrice;
+//    @Bind(R.id.tvPhone) TextView tvPhone;
+
 
     private final static String MESSAGE_BY = "shop";// shop & user
 
@@ -85,11 +100,11 @@ public class DetailCarActivity extends AppCompatActivity {
 
     private void initInstance() {
         // getIntent
+        /*init detail chat*/
         Intent getIntent = getIntent();
-        if (getIntent != null){
-            PostGao postItem = Parcels.unwrap(
-                    getIntent.getParcelableExtra("PostGao"));
-        }
+        PostCarGao postItem = Parcels.unwrap(
+                getIntent.getParcelableExtra("PostCarGao"));
+
 
         LinearLayoutManager manager = new LinearLayoutManager(this);
         manager.setStackFromEnd(true);
@@ -99,6 +114,28 @@ public class DetailCarActivity extends AppCompatActivity {
         // new Object MessageManager
         messageManager = new MessageManager();
 
+        MessageCollectionGao gao = new MessageCollectionGao();
+        List<MessageGao> messageGao = new ArrayList<>();
+
+        MessageGao mGao = new MessageGao();
+        mGao.setMessageBy("user");
+        mGao.setMessageCarId("2016010700001");
+
+//        String headerText = "<header><b><u><i><h2>Toyota fortuner 1.2v ปี 2016</h2></i></u></b>";
+//        String subDetailText = "<p>รถใช้งานน้อย วิ่ง 100,000 กิโล</p> <p>  <b>ราคา.</b> 1xx,xxx <b>โทร.</b> 082-xxx-xxxx</p></header>";
+
+        mGao.setMessageText(postItem.toMessage());
+        messageGao.add(mGao);
+
+        MessageGao mGaoAdmin = new MessageGao();
+        mGaoAdmin.setMessageBy("user");
+        mGaoAdmin.setMessageText("<header><p><b><u><i><h3>ข้อความจากระบบ “ราคากลาง”</h3></i></u></b></p>" +
+                "<p>............................</p><p><b>ราคา.</b>1x,xxx,xxx$</p></header");
+        messageGao.add(mGaoAdmin);
+
+        gao.setMessage(messageGao);
+        messageManager.setMessageGao(gao);
+        /*****************/
     }
 
     private void initToolbar() {
@@ -128,7 +165,7 @@ public class DetailCarActivity extends AppCompatActivity {
 
             case R.id.message_button_personnel :
                 Dialog dialog = new AlertDialog.Builder(DetailCarActivity.this)
-                        .setTitle("อันเชิญทวนเทพ")
+                        .setTitle("Message!")
                         .setMessage("เชิญบุคคลที่ 3")
                         .setNegativeButton("Ok", listenerDialogConfirm)
                         .create();
@@ -163,15 +200,17 @@ public class DetailCarActivity extends AppCompatActivity {
             File imgFile = new File(picturePath);
             Toast.makeText(DetailCarActivity.this,imgFile.getPath(),Toast.LENGTH_SHORT).show();
 
-
                     new OkHttpManager.UploadFileBuilder("26","2016010700001",MESSAGE_BY)
                             .putImage(imgFile);
-//                            .build();
+
         }
 
     }
 
     private void initDataMessage() {
+        adapter = new MultipleChatAdapter(MESSAGE_BY);
+                recyclerView.setAdapter(adapter);
+
         Call<MessageCollectionGao> call =
                 HttpChatManager.getInstance().getService().viewMessage("26||2016010700001||1");
         call.enqueue(new LoadMessageCallback());
@@ -191,8 +230,9 @@ public class DetailCarActivity extends AppCompatActivity {
     }
 
     @Subscribe
-    public void produceMessage(MessageManager message){
-        adapter.setMessagesGao(message.getMessageGao().getMessage());
+    public void produceMessage(MessageCollectionGao messageGa){
+        messageManager.updateDataToLastPosition(messageGa);
+        adapter.setMessagesGao(messageManager.getMessageGao().getMessage()); // คอมเม้นไว้ หาก list เด้งลงมา Last Position
         adapter.notifyDataSetChanged();
     }
 
@@ -243,14 +283,16 @@ public class DetailCarActivity extends AppCompatActivity {
         public void onResponse(Call<MessageCollectionGao> call, Response<MessageCollectionGao> response) {
             if (response.isSuccess()){
 
-                messageManager.setMessageGao(response.body());
-                adapter = new MultipleChatAdapter(
-                        messageManager.getMessageGao().getMessage(),MESSAGE_BY);
-                recyclerView.setAdapter(adapter);
+//                messageManager.setMessageGao(response.body());
+
+                messageManager.updateDataToLastPosition(response.body());
+
+                adapter.setMessagesGao(messageManager.getMessageGao().getMessage());
+                adapter.notifyDataSetChanged();
 
                     /*start Time Out 1000L wait message */
                 synchronous = new WaitMessageSynchronous(
-                        new WaitMessage());
+                        new WaitMessage(messageManager));
                 synchronous.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
             }else {
@@ -271,10 +313,16 @@ public class DetailCarActivity extends AppCompatActivity {
 
     private class WaitMessage extends WaitMessageOnBackground {
         Response<MessageCollectionGao> response;
+        MessageManager manager;
+
+        public WaitMessage(MessageManager manager) {
+            this.manager = manager;
+        }
+
         @Override
         public void onBackground() {
             Log.i(TAG, "doInBackground: loop");
-            int maxId = messageManager.getMaximumId();
+            int maxId = manager.getMaximumId();
             Call<MessageCollectionGao> call =
                     HttpChatManager.getInstance()
                             .getService(60 * 1000) // Milliseconds (1 นาที)
@@ -291,8 +339,8 @@ public class DetailCarActivity extends AppCompatActivity {
             Log.i(TAG, "onMainThread: ");
             if (response.isSuccess()){
                 Log.i(TAG, "onMainThread: success");
-                messageManager.updateDataToLastPosition(response.body());
-                BusProvider.getInstance().post(messageManager);
+                MessageCollectionGao messageGa = response.body();
+                BusProvider.getInstance().post(messageGa);
             }else {
                 Log.i(TAG, "doInBackground --- : "+response.errorBody());
             }

@@ -1,23 +1,31 @@
 package com.beta.cls.angelcar.activity;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.Typeface;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.beta.cls.angelcar.R;
 import com.beta.cls.angelcar.Adapter.MainViewPagerAdapter;
-import com.beta.cls.angelcar.fragment.YearFragmentDialog;
+import com.beta.cls.angelcar.fragment.RegistrationAlertFragment;
+import com.beta.cls.angelcar.manager.bus.BusProvider;
+import com.beta.cls.angelcar.util.RegistrationResult;
+import com.squareup.otto.Subscribe;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -34,11 +42,17 @@ public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "MainActivity";
 
+    private final String REGISTRATION = "REGISTRATION";
+    private final String REGISTRATION_FIRST_APP = "REGISTRATION_FIRST_APP";
+    private final String REGISTRATION_USER_ID = "REGISTRATION_USER_ID";
+    SharedPreferences preferences ;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
+        initInstance();
         initToolbars();
         initViewPager();
         initTabIcons(); //ตั้งค่า tab
@@ -46,6 +60,59 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    private void initInstance() {
+        preferences = getSharedPreferences(REGISTRATION,MODE_PRIVATE);
+        boolean first_init = preferences.getBoolean(REGISTRATION_FIRST_APP, false);
+        checkRegistrationEmail(first_init);
+    }
+
+    private void checkRegistrationEmail(boolean first_init) {
+        if (!first_init){
+            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+            Fragment prev = getSupportFragmentManager().findFragmentByTag("RegistrationAlertFragment");
+            if (prev != null) {
+                ft.remove(prev);
+            }
+            ft.addToBackStack(null);
+            RegistrationAlertFragment fragment = RegistrationAlertFragment.newInstance();
+            fragment.setCancelable(false);
+            fragment.show(ft, "RegistrationAlertFragment");
+        }else {
+            // กรณีลงทะเบียนแล้วให้ เช็ค cache // หากไม่พบ ให้ Registration Email
+            String cache_User = preferences.getString(REGISTRATION_USER_ID,null);
+            if (cache_User == null){
+
+            }
+        }
+    }
+
+    @Subscribe
+    public void onRegistrationEmail(RegistrationResult result){
+        if (result.getResult() == RegistrationAlertFragment.REGISTRATION_OK){
+
+            // ติดต่อ server
+
+            // หลังจากได้ค่าจาก server [userId]
+            // Save Cache
+            preferences.edit().putString(REGISTRATION_USER_ID,"-USER_ID-").apply();
+            Toast.makeText(MainActivity.this,"ลงทะเบียนเรียบร้อยแล้ว",Toast.LENGTH_LONG).show();
+            preferences.edit().putBoolean(REGISTRATION_FIRST_APP,true).apply();
+
+        }
+    }
+
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        BusProvider.getInstance().register(this);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        BusProvider.getInstance().unregister(this);
+    }
 
     private void initViewPager() {
         viewPager.setAdapter(new MainViewPagerAdapter(getSupportFragmentManager()));
@@ -119,10 +186,12 @@ public class MainActivity extends AppCompatActivity {
             case R.id.menu_bottom_tag:
                 break;
             case R.id.menu_bottom_chat:
-                Intent intent = new Intent(MainActivity.this,MessageBlogActivity.class);
-                startActivity(intent);
+                Intent i1 = new Intent(MainActivity.this,MessageBlogActivity.class);
+                startActivity(i1);
                 break;
             case R.id.menu_bottom_list_shop:
+                Intent i2 = new Intent(MainActivity.this,ShopIOSActivity.class);
+                startActivity(i2);
                 break;
             case R.id.menu_bottom_profile:
                 break;

@@ -13,5 +13,8 @@
     <dimen name="list_view_item_chat_padding_layout">10dp</dimen>
     <dimen name="list_view_item_post_Image_size">64dp</dimen>
     <dimen name="text_all_page">14sp</dimen>
+    <dimen name="post_all_marginleft_icon">8dp</dimen>
+    <dimen name="post_all_edit_width">270dp</dimen>
+    <dimen name="post_all_edit_width_register">180dp</dimen>
 
 </resources>

@@ -6,7 +6,9 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
@@ -35,6 +37,8 @@ public class PostActivity extends AppCompatActivity implements OnSelectData{
     public static final int CALLBACK_CAR_TYPE_DETAIL = 3;
     public static final int CALLBACK_ALL_POST = 4;
 
+    int lastPosition = 3;
+
     @Bind(R.id.post_viewpager) AngelCarViewPager angelCarViewPager;
 
     @Override
@@ -43,28 +47,35 @@ public class PostActivity extends AppCompatActivity implements OnSelectData{
         setContentView(R.layout.activity_post);
         ButterKnife.bind(this);
 
-//        if (savedInstanceState == null){
             PostAdapterViewpager adapter =
                     new PostAdapterViewpager(getSupportFragmentManager());
             angelCarViewPager.setAdapter(adapter);
-            angelCarViewPager.setPagingEnabled(true);
+            angelCarViewPager.setPagingEnabled(false);
 
-//        }
+
 
     }
 
     @OnClick({R.id.btnNext,R.id.btnReturn})
     public void next(View v){
             if (v.getId() == R.id.btnNext){
-                angelCarViewPager.setCurrentItem(angelCarViewPager.getCurrentItem()+1);
+                if (angelCarViewPager.getCurrentItem() + 1 <= lastPosition){
+                    angelCarViewPager.setCurrentItem(angelCarViewPager.getCurrentItem()+1);
+                }
             }else {
                 angelCarViewPager.setCurrentItem(angelCarViewPager.getCurrentItem()-1);
             }
+        Log.i("click", "next: "+lastPosition);
     }
 
     @Override
     public void onSelectedCallback(int callback) {
+        if (callback == CALLBACK_ALL_POST){
+            finish();
+        }
             angelCarViewPager.setCurrentItem(angelCarViewPager.getCurrentItem()+1);
+            lastPosition = angelCarViewPager.getCurrentItem();
+
     }
 
     class PostAdapterViewpager extends FragmentStatePagerAdapter{

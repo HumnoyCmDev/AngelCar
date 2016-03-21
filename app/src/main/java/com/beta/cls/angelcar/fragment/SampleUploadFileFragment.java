@@ -11,20 +11,23 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.text.Layout;
+import android.text.Selection;
 import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.beta.cls.angelcar.R;
+import com.beta.cls.angelcar.util.LineUp;
 
-
-import org.jsoup.nodes.Document;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -72,11 +75,51 @@ public class SampleUploadFileFragment extends Fragment {
     }
 
     private static final String TAG = "HelpFragment1";
-    
+
+    public int getCurrentCursorLine(EditText editText){
+        int selectionStart = Selection.getSelectionStart(editText.getText());
+        Layout layout = editText.getLayout();
+
+        if (!(selectionStart == -1)) {
+            return layout.getLineForOffset(selectionStart);
+        }
+        return -1;
+    }
+
     private void findViewRootView(View v) {
         ivPhoto = (ImageView) v.findViewById(R.id.ivPhoto);
         final FrameLayout post = (FrameLayout) v.findViewById(R.id.testAnim);
         final Button button = (Button) v.findViewById(R.id.button);
+
+        final EditText editText = (EditText) v.findViewById(R.id.editText);
+        final TextView editText2 = (TextView) v.findViewById(R.id.editText2);
+
+        Button btnCheckEd = (Button) v.findViewById(R.id.btnCheckEdit);
+        btnCheckEd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int  i = getCurrentCursorLine(editText);
+                String allString = editText.getText().toString();
+//                String Subline = allString.replaceAll("\n","<n>");
+                String SublineUp = LineUp.getInstance().formatLineUp(allString);
+                String lineUp = LineUp.getInstance().convertLineUp(SublineUp);
+                String topic = LineUp.getInstance().subTopic("1rrrrr1``ssdfsdjkfh");
+
+                String d = LineUp.getInstance().getPostCollection("1rrrrr1``ssdfsdjkfh<n>kdfjgkdfg<n>").getTopic();
+                String d2 = LineUp.getInstance().getPostCollection("1rrrrr1``ssdfsdjkfh<n>kdfjgkdfg<n>").getDetail();
+
+                Log.i(TAG, "onClick: "+ SublineUp);
+                Log.i(TAG, "onClick: "+ lineUp);
+                Log.i(TAG, "onClick: "+ topic);
+                Log.i(TAG, "onClick: "+ d);
+                Log.i(TAG, "onClick: "+ d2);
+
+                String s = "tt``tt";
+                Log.i(TAG, "onClick: "+s.contains("``"));
+
+            }
+        });
+
 
 
         button.setOnClickListener(new View.OnClickListener() {
@@ -102,7 +145,6 @@ public class SampleUploadFileFragment extends Fragment {
                 final OkHttpClient client = new OkHttpClient();
                 RequestBody requestBody = new MultipartBody.Builder()
                         .setType(MultipartBody.FORM)
-
                         .addFormDataPart("userfile", file.getName(),
                                 RequestBody.create(MEDIA_TYPE_PNG, file))
                         .build();

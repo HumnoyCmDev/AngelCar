@@ -19,7 +19,7 @@ android {
     }
 }
 
-def versionSupportLibrary = "23.2.0"
+def versionSupportLibrary = "23.2.1"
 def versionServices = "8.4.0"
 def versionParceler = "1.0.4"
 def versionRetrofit = "2.0.0-beta4"
@@ -28,7 +28,6 @@ dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     testCompile 'junit:junit:4.12'
     compile project(':angelcarlibrary')
-//    compile project(':lbindicator')
 
     compile "com.android.support:appcompat-v7:${versionSupportLibrary}"
     compile "com.android.support:design:${versionSupportLibrary}"

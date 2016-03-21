@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +18,7 @@ import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 
@@ -24,13 +26,15 @@ import com.beta.cls.angelcar.Adapter.ListViewPostAdapter;
 import com.beta.cls.angelcar.activity.DetailCarActivity;
 import com.beta.cls.angelcar.R;
 import com.beta.cls.angelcar.anim.ResizeHeight;
-import com.beta.cls.angelcar.gao.PostCollectionGao;
-import com.beta.cls.angelcar.gao.PostGao;
-import com.beta.cls.angelcar.manager.http.ApiChatService;
-import com.beta.cls.angelcar.manager.http.ApiService;
-import com.beta.cls.angelcar.manager.http.HttpManager;
+import com.beta.cls.angelcar.gao.CountCarCollectionGao;
+import com.beta.cls.angelcar.gao.PostCarCollectionGao;
+import com.beta.cls.angelcar.gao.PostCarGao;
+import com.beta.cls.angelcar.manager.http.HttpChatManager;
 
 import org.parceler.Parcels;
+
+import java.io.IOException;
+import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -45,11 +49,15 @@ public class HomeFragment extends Fragment {
     @Bind(R.id.swipe_container) SwipeRefreshLayout mSwipeRefresh;
     @Bind(R.id.ctFilter) RelativeLayout ctFilter;
     @Bind(R.id.btFilter) ImageView btFilter;
+    @Bind(R.id.countCarAll) TextView countCarAll;
+    @Bind(R.id.countCarDay) TextView countCarDay;
+    @Bind(R.id.countCarMonth) TextView countCarMonth;
+
 //    Animation animDown,animUp;
 
     private static final String TAG = "HomeFragment";
 
-    private PostCollectionGao gao;
+    private PostCarCollectionGao gao;
     private ListViewPostAdapter adapter;
 
     public HomeFragment() {
@@ -129,8 +137,15 @@ public class HomeFragment extends Fragment {
     }
 
     private void loadData(){
-        ApiService call = HttpManager.getInstance().getService();
-        call.loadPost().enqueue(new loadDataPostCallback());
+
+        Call<PostCarCollectionGao> call =
+                HttpChatManager.getInstance().getService().loadPost();
+        call.enqueue(callbackLoadPostCar);
+
+        // load count car
+        Call<CountCarCollectionGao> callLoadCountCar =
+                HttpChatManager.getInstance().getService().loadCountCar();
+        callLoadCountCar.enqueue(countCarCallback);
     }
 
     @Override
@@ -141,7 +156,7 @@ public class HomeFragment extends Fragment {
     }
 
     /**************
-    *Listener Zone
+    *Listener Zone*
     ***************/
     SwipeRefreshLayout.OnRefreshListener pullRefresh = new SwipeRefreshLayout.OnRefreshListener() {
         @Override
@@ -162,28 +177,23 @@ public class HomeFragment extends Fragment {
     AdapterView.OnItemClickListener onItemClickListViewListener = new AdapterView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            PostGao item = gao.getRows().get(position);
+            PostCarGao item = gao.getRows().get(position);
             Intent intent = new Intent(getActivity(), DetailCarActivity.class);
-            intent.putExtra("PostGao", Parcels.wrap(item));
+            intent.putExtra("PostCarGao", Parcels.wrap(item));
             startActivity(intent);
 
         }
     };
 
-    /***********
-    *Inner Class Zone
-    ************/
-    private class loadDataPostCallback implements Callback<PostCollectionGao>{
-
+    Callback<PostCarCollectionGao> callbackLoadPostCar = new Callback<PostCarCollectionGao>() {
         @Override
-        public void onResponse(Call<PostCollectionGao> call, Response<PostCollectionGao> response) {
-            if (response.isSuccess()){
-                mSwipeRefresh.setRefreshing(false);
+        public void onResponse(Call<PostCarCollectionGao> call, Response<PostCarCollectionGao> response) {
+            mSwipeRefresh.setRefreshing(false);
+            if (response.isSuccess()) {
                 gao = response.body();
                 adapter.setGao(response.body());
                 adapter.notifyDataSetChanged();
-            }else {
-                mSwipeRefresh.setRefreshing(false);
+            } else {
                 Toast.makeText(getActivity(),
                         response.errorBody().toString(),
                         Toast.LENGTH_SHORT).show();
@@ -191,11 +201,39 @@ public class HomeFragment extends Fragment {
         }
 
         @Override
-        public void onFailure(Call<PostCollectionGao> call, Throwable t) {
+        public void onFailure(Call<PostCarCollectionGao> call, Throwable t) {
             mSwipeRefresh.setRefreshing(false);
             Toast.makeText(getActivity(),
                     t.toString(),
                     Toast.LENGTH_SHORT).show();
         }
-    }
+    };
+
+    Callback<CountCarCollectionGao> countCarCallback = new Callback<CountCarCollectionGao>() {
+        @Override
+        public void onResponse(Call<CountCarCollectionGao> call, Response<CountCarCollectionGao> response) {
+            if (response.isSuccess()) {
+                CountCarCollectionGao.CountCarGao countCarGao = response.body().getRows().get(0);
+                countCarAll.setText("ทั้งหมด " + countCarGao.getCountAll() + " คัน");
+                countCarMonth.setText("เดือนนี้ " + countCarGao.getCountMonth() + " คัน");
+                countCarDay.setText("วันนี้ " + countCarGao.getCountDay() + " คัน");
+            } else {
+                try {
+                    Log.i(TAG, "onResponse: " + response.errorBody().string());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        @Override
+        public void onFailure(Call<CountCarCollectionGao> call, Throwable t) {
+            Log.e(TAG, "onFailure: ", t);
+        }
+    };
+
+    /*****************
+    *Inner Class Zone*
+    ******************/
+
 }

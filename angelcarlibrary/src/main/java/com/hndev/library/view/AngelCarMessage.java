@@ -3,16 +3,14 @@ package com.hndev.library.view;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.text.Html;
-import android.text.Spanned;
 import android.util.AttributeSet;
-import android.util.Log;
-import android.view.Gravity;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -21,8 +19,8 @@ import com.github.siyamed.shapeimageview.RoundedImageView;
 import com.hndev.library.R;
 import com.hndev.library.view.sate.BundleSavedState;
 import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Transformation;
 
-import javax.xml.parsers.DocumentBuilder;
 
 public class AngelCarMessage extends BaseCustomViewGroup {
 
@@ -82,10 +80,10 @@ public class AngelCarMessage extends BaseCustomViewGroup {
 
     private void initInstances() {
         // findViewById here
-        iconProfile = (CircularImageView) findViewById(R.id.custom_view_iu_angelcar_icon_profile);
-        message = (TextView) findViewById(R.id.custom_view_iu_angelcar_message);
-        background = (LinearLayout) findViewById(R.id.custom_view_iu_angelcar_background);
-        image = (RoundedImageView) findViewById(R.id.custom_view_iu_angelcar_image);
+        iconProfile = (CircularImageView) findViewById(R.id.custom_view_ui_angelcar_icon_profile);
+        message = (TextView) findViewById(R.id.custom_view_ui_angelcar_message);
+        background = (LinearLayout) findViewById(R.id.custom_view_ui_angelcar_background);
+        image = (RoundedImageView) findViewById(R.id.custom_view_ui_angelcar_image);
 
         message.setText(msg);
         message.setTextColor(colorMessage);
@@ -141,6 +139,9 @@ public class AngelCarMessage extends BaseCustomViewGroup {
             this.msg = msg;
             background.setVisibility(VISIBLE);
             image.setVisibility(GONE);
+            if (msg.contains("<header>"))
+                this.message.setText(Html.fromHtml(msg));
+            else
             this.message.setText(msg);
         }else{
             this.msg = msg;
@@ -148,11 +149,12 @@ public class AngelCarMessage extends BaseCustomViewGroup {
             image.setVisibility(VISIBLE);
             String strStart = "<img>";
             String strEnd = "</img>";
-//        String rulImage = url.substring(strStart.length(),url.length()-strEnd.length());
             String rulImage = msg.substring(strStart.length(),msg.lastIndexOf("</img>"));
+
             Picasso.with(getContext())
                     .load(rulImage)
-                    .error(R.drawable.simple_product)
+                    .transform(new PictureReSize())
+                    .placeholder(R.drawable.loading)
                     .into(image);
         }
     }
@@ -161,7 +163,7 @@ public class AngelCarMessage extends BaseCustomViewGroup {
     public void setIconProfile(String url) {
         Picasso.with(getContext())
                 .load(url)
-                .error(R.drawable.ic_hndeveloper)
+                .placeholder(R.drawable.loading)
                 .into(iconProfile);
     }
 
@@ -206,6 +208,27 @@ public class AngelCarMessage extends BaseCustomViewGroup {
         // หลอกขนาดของแม่
 //        setMeasuredDimension(width,heightMeasureSpec);
     }
+
+
+    /*Inner Class Zone*/
+    class PictureReSize implements Transformation{
+        @Override
+        public Bitmap transform(Bitmap source) {
+            int width = source.getWidth() / 4;
+            int height = source.getHeight() / 4;
+            Bitmap result =  Bitmap.createScaledBitmap(source,width,height,false);
+            if (result != source) {
+                source.recycle();
+            }
+            return result;
+        }
+
+        @Override
+        public String key() {
+            return "scaledBitmap";
+        }
+    }
+
 
 
 }
