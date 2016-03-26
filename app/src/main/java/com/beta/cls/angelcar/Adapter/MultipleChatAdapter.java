@@ -1,21 +1,15 @@
 package com.beta.cls.angelcar.Adapter;
 
-import android.content.Context;
 import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.beta.cls.angelcar.R;
-import com.beta.cls.angelcar.gao.MessageGao;
+import com.beta.cls.angelcar.dao.MessageDao;
 import com.hndev.library.view.AngelCarMessage;
 
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 
 import java.util.List;
 
@@ -28,19 +22,19 @@ import butterknife.ButterKnife;
  * ลงวันที่ 3/2/59. เวลา 10:56
  ***************************************/
 public class MultipleChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
-    private List<MessageGao> messagesGao;
+    private List<MessageDao> messagesGao;
     private String messageBy ;
 
-    public MultipleChatAdapter(List<MessageGao> messagesGao, String messageBy) {
-        this.messagesGao = messagesGao;
-        this.messageBy = messageBy;
-    }
+//    public MultipleChatAdapter(List<MessageDao> messagesGao, String messageBy) {
+//        this.messagesGao = messagesGao;
+//        this.messageBy = messageBy;
+//    }
 
     public MultipleChatAdapter(String messageBy) {
         this.messageBy = messageBy;
     }
 
-    public void setMessagesGao(List<MessageGao> messagesGao) {
+    public void setMessagesGao(List<MessageDao> messagesGao) {
         this.messagesGao = messagesGao;
     }
 
@@ -66,7 +60,7 @@ public class MultipleChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         // get item
-        MessageGao message = messagesGao.get(position);
+        MessageDao message = messagesGao.get(position);
 
         switch (holder.getItemViewType()){
             case 0 :
@@ -78,8 +72,8 @@ public class MultipleChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                    holderLeft.angelCarMessage.setBackground(Color.parseColor("#50E3C2"));
                 else if (position == 1)
                     holderLeft.angelCarMessage.setBackground(Color.parseColor("#7ED321"));
-
                 break;
+
             case 1:
                 ViewHolderRight holderRight = (ViewHolderRight) holder;
                 holderRight.angelCarMessage.setMessage(message.getMessageText());
@@ -89,16 +83,9 @@ public class MultipleChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                     holderRight.angelCarMessage.setBackground(Color.parseColor("#50E3C2"));
                 else if (position == 1)
                     holderRight.angelCarMessage.setBackground(Color.parseColor("#7ED321"));
-
                 break;
         }
 
-//        Document doc = Jsoup.parse(blogMessage.getMessageText());
-//        Elements e = doc.select("img");
-//        if (!e.isEmpty()) {
-//            Log.i("log jsoup", "onBindViewHolder: " + e.size());
-//            Log.i("log jsoup", "onBindViewHolder: " + e.select("img").text());
-//        }
 
 
     }

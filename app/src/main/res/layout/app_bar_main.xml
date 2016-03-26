@@ -32,7 +32,7 @@
     </android.support.design.widget.AppBarLayout>
 
     <!--content ViewPager-->
-    <include layout="@layout/activity_main_view_page" />
+    <include layout="@layout/activity_main_contener" />
     <!---->
 
 </android.support.design.widget.CoordinatorLayout>

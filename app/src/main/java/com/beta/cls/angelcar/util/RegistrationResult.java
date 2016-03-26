@@ -4,22 +4,23 @@ package com.beta.cls.angelcar.util;
  * Created by humnoyDeveloper on 3/18/2016 AD. 14:50
  */
 public class RegistrationResult {
-    private int result;
-    private String userId;
+    private int result; // สถานะการทำงาน EventBus
+    private String email;
 
-    public String getUserId() {
-        return userId;
+    public String getEmail() {
+        return email;
     }
 
-    public void setUserId(String userId) {
-        this.userId = userId;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public RegistrationResult() {
     }
 
-    public RegistrationResult(int result) {
+    public RegistrationResult(int result,String email) {
         this.result = result;
+        this.email = email;
     }
 
     public int getResult() {

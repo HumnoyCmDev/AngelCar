@@ -1,8 +1,5 @@
 package com.beta.cls.angelcar.Adapter;
 
-import android.app.Activity;
-import android.content.Context;
-import android.graphics.Bitmap;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,14 +7,14 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.beta.cls.angelcar.R;
-import com.beta.cls.angelcar.gao.CarDataTypeGao;
+import com.beta.cls.angelcar.dao.CarDataTypeDao;
 
 import java.util.List;
 
 public class CustomAdapterGridSub extends BaseAdapter {
-    List<CarDataTypeGao> post;
+    List<CarDataTypeDao> post;
 
-    public CustomAdapterGridSub(List<CarDataTypeGao> post) {
+    public CustomAdapterGridSub(List<CarDataTypeDao> post) {
         this.post = post;
     }
 
@@ -28,7 +25,7 @@ public class CustomAdapterGridSub extends BaseAdapter {
     }
 
     @Override
-    public CarDataTypeGao getItem(int position) {
+    public CarDataTypeDao getItem(int position) {
         return post.get(position);
     }
 
@@ -51,7 +48,7 @@ public class CustomAdapterGridSub extends BaseAdapter {
             mViewHolder = (ViewHolder) convertView.getTag();
         }
 
-        CarDataTypeGao gao = getItem(position);
+        CarDataTypeDao gao = getItem(position);
 
         mViewHolder.cartype_sub.setText(gao.getCarTypeSub());
 

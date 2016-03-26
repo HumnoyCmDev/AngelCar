@@ -8,36 +8,37 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.provider.MediaStore;
-import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
-import android.text.Html;
-import android.text.Spanned;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.TextView;
+import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
-import com.beta.cls.angelcar.Adapter.MultipleChatAdapter;
+import com.beta.cls.angelcar.Adapter.MultipleListViewChatAdapter;
+import com.beta.cls.angelcar.Adapter.PictureAdapter;
 import com.beta.cls.angelcar.R;
-import com.beta.cls.angelcar.gao.LogFromServerGao;
-import com.beta.cls.angelcar.gao.MessageCollectionGao;
-import com.beta.cls.angelcar.gao.MessageGao;
-import com.beta.cls.angelcar.gao.PostCarGao;
+import com.beta.cls.angelcar.dao.FollowCollectionDao;
+import com.beta.cls.angelcar.dao.FollowDao;
+import com.beta.cls.angelcar.dao.LogFromServerDao;
+import com.beta.cls.angelcar.dao.MessageCollectionDao;
+import com.beta.cls.angelcar.dao.MessageDao;
+import com.beta.cls.angelcar.dao.PictureAllCollectionDao;
+import com.beta.cls.angelcar.dao.PictureAllDao;
+import com.beta.cls.angelcar.dao.PostCarDao;
 import com.beta.cls.angelcar.interfaces.WaitMessageOnBackground;
 import com.beta.cls.angelcar.manager.MessageManager;
+import com.beta.cls.angelcar.manager.Registration;
 import com.beta.cls.angelcar.manager.WaitMessageSynchronous;
 import com.beta.cls.angelcar.manager.bus.BusProvider;
-import com.beta.cls.angelcar.manager.http.HttpChatManager;
+import com.beta.cls.angelcar.manager.http.HttpManager;
 import com.beta.cls.angelcar.manager.http.OkHttpManager;
-import com.beta.cls.angelcar.interfaces.CallBackMainThread;
-import com.beta.cls.angelcar.util.LineUp;
 import com.squareup.otto.Subscribe;
+import com.viewpagerindicator.LinePageIndicator;
 
 import org.parceler.Parcels;
 
@@ -56,28 +57,27 @@ import retrofit2.Response;
 public class DetailCarActivity extends AppCompatActivity {
     private static final int RESULT_LOAD_IMAGE = 988;
 
-    @Bind(R.id.collapsingToolbarLayout) CollapsingToolbarLayout collapsingToolbarLayout;
-    @Bind(R.id.toolbar_top) Toolbar toolbar;
-    @Bind(R.id.recycler_view) RecyclerView recyclerView;
+//    @Bind(R.id.recycler_view) RecyclerView recyclerView;
+    @Bind(R.id.list_view) ListView listView;
     @Bind(R.id.viewpager) ViewPager viewPager;
-    @Bind(R.id.recycler_view_chat_layout_input_chat) EditText input_chat;
+    @Bind(R.id.input_chat) EditText input_chat;
+    @Bind(R.id.indicator) LinePageIndicator indicator;
+    @Bind(R.id.group_chat) LinearLayout groupChat;
+    @Bind(R.id.button_follow) ToggleButton buttonFollow;
+    private String MESSAGE_BY = "shop";// shop & user
 
-//    @Bind(R.id.tvTopic) TextView tvTopic;
-//    @Bind(R.id.tvCarType) TextView tvCarType;
-//    @Bind(R.id.tvBrand) TextView tvBrand;
-//    @Bind(R.id.tvCarSub) TextView tvCarSub;
-//    @Bind(R.id.tvGear) TextView tvGear;
-//    @Bind(R.id.tvYear) TextView tvYear;
-//    @Bind(R.id.tvPrice) TextView tvPrice;
-//    @Bind(R.id.tvPhone) TextView tvPhone;
+//    MultipleChatAdapter adapter;
+    MultipleListViewChatAdapter adapter;
 
-
-    private final static String MESSAGE_BY = "shop";// shop & user
-
-//    List<MessageGao> blogMessages;
-    MultipleChatAdapter adapter;
     MessageManager messageManager ;
     WaitMessageSynchronous synchronous;
+
+    PictureAllCollectionDao gao;
+    PictureAdapter pictureAdapter;
+    PostCarDao postItem;
+
+    int intentForm; // 0 = form homeFragment , 1 = ChatAll,ChatBuy,ChatSell
+    String messageFromUser;
 
     private static final String TAG = "DetailCarActivity";
 
@@ -87,62 +87,76 @@ public class DetailCarActivity extends AppCompatActivity {
         setContentView(R.layout.activity_detail_car);
         ButterKnife.bind(this);
 
-//        ImageAdapter adapter = new ImageAdapter(this);
-//        viewPager.setAdapter(adapter);
-//        TelephonyManager tMgr = (TelephonyManager) getSystemService(TELEPHONY_SERVICE);
-//        String mPhoneNumber = tMgr.getLine1Number();
-//        collapsingToolbarLayout.setTitle(mPhoneNumber);
+//        initToolbar();
+        initMessage();
+        loadDataMessage();
+        loadFollow();
 
-        initToolbar();
-        initInstance();
-        initDataMessage();
     }
 
-    private void initInstance() {
+    private void loadFollow() {
+        //init on//off Button Follow
+        Call<FollowCollectionDao> call =
+                HttpManager.getInstance().getService()
+                        .loadFollow(Registration.getInstance().getShopRef());
+        call.enqueue(followCollectionDaoCallback);
+    }
+
+    private void initMessage() {
         // getIntent
         /*init detail chat*/
-        Intent getIntent = getIntent();
-        PostCarGao postItem = Parcels.unwrap(
-                getIntent.getParcelableExtra("PostCarGao"));
+        postItem = Parcels.unwrap(
+                getIntent().getParcelableExtra("PostCarDao"));
+        messageFromUser = getIntent().getStringExtra("messageFromUser");
+        intentForm = getIntent().getIntExtra("intentForm",1);
 
 
-        LinearLayoutManager manager = new LinearLayoutManager(this);
-        manager.setStackFromEnd(true);
-//        manager.setReverseLayout(true);
-        recyclerView.setLayoutManager(manager);
+        /*check user*/
+            MESSAGE_BY = postItem.getShopRef().contains(Registration.getInstance().getShopRef()) ? "shop" : "user";
+            Toast.makeText(DetailCarActivity.this, postItem.getCarId()+","+MESSAGE_BY, Toast.LENGTH_LONG).show();
+
+
+        if (intentForm == 0 && MESSAGE_BY.contains("shop"))
+            groupChat.setVisibility(View.GONE);
+
+        /*load image*/
+        Call<PictureAllCollectionDao> callLoadPictureAll =
+                HttpManager.getInstance().getService().loadAllPicture(String.valueOf(postItem.getCarId()));
+        callLoadPictureAll.enqueue(loadPictureCallback);
 
         // new Object MessageManager
         messageManager = new MessageManager();
 
-        MessageCollectionGao gao = new MessageCollectionGao();
-        List<MessageGao> messageGao = new ArrayList<>();
+        MessageCollectionDao gao = new MessageCollectionDao();
+        List<MessageDao> messageDao = new ArrayList<>();
 
-        MessageGao mGao = new MessageGao();
+        MessageDao mGao = new MessageDao();
         mGao.setMessageBy("user");
-        mGao.setMessageCarId("2016010700001");
+        mGao.setMessageCarId(Registration.getInstance().getUserId());
 
 //        String headerText = "<header><b><u><i><h2>Toyota fortuner 1.2v ปี 2016</h2></i></u></b>";
 //        String subDetailText = "<p>รถใช้งานน้อย วิ่ง 100,000 กิโล</p> <p>  <b>ราคา.</b> 1xx,xxx <b>โทร.</b> 082-xxx-xxxx</p></header>";
 
         mGao.setMessageText(postItem.toMessage());
-        messageGao.add(mGao);
+        messageDao.add(mGao);
 
-        MessageGao mGaoAdmin = new MessageGao();
+        MessageDao mGaoAdmin = new MessageDao();
         mGaoAdmin.setMessageBy("user");
         mGaoAdmin.setMessageText("<header><p><b><u><i><h3>ข้อความจากระบบ “ราคากลาง”</h3></i></u></b></p>" +
                 "<p>............................</p><p><b>ราคา.</b>1x,xxx,xxx$</p></header");
-        messageGao.add(mGaoAdmin);
+        messageDao.add(mGaoAdmin);
 
-        gao.setMessage(messageGao);
-        messageManager.setMessageGao(gao);
+        gao.setMessage(messageDao);
+        messageManager.setMessageDao(gao);
         /*****************/
     }
 
     private void initToolbar() {
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setHomeButtonEnabled(true);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
+        if (getSupportActionBar() != null) {
+//        setSupportActionBar(toolbar);
+            getSupportActionBar().setHomeButtonEnabled(true);
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
     }
 
     @OnClick({R.id.message_button_send,R.id.message_button_personnel,R.id.message_button_image})
@@ -150,15 +164,16 @@ public class DetailCarActivity extends AppCompatActivity {
         switch (v.getId()){
             case R.id.message_button_send:
                 OkHttpManager okHttpManager = new OkHttpManager.SendMessageBuilder()
-                        .setMessage("26||2016010700001||"+
+                        .setMessage(postItem.getCarId()+"||"+messageFromUser+"||"+
                                 input_chat.getText().toString() + "||"+
                                 MESSAGE_BY).build();
-                okHttpManager.callEnqueue(new CallBackMainThread() {
-                    @Override
-                    public void onResponse(okhttp3.Response response) {
-                        Toast.makeText(DetailCarActivity.this,"success",Toast.LENGTH_SHORT).show();
-                    }
-                });
+                okHttpManager.putMessage();
+//                okHttpManager.callEnqueue(new CallBackMainThread() {
+//                    @Override
+//                    public void onResponse(okhttp3.Response response) {
+//                        Toast.makeText(DetailCarActivity.this,"success",Toast.LENGTH_SHORT).show();
+//                    }
+//                });
                 input_chat.setText("");
 
             break;
@@ -200,19 +215,21 @@ public class DetailCarActivity extends AppCompatActivity {
             File imgFile = new File(picturePath);
             Toast.makeText(DetailCarActivity.this,imgFile.getPath(),Toast.LENGTH_SHORT).show();
 
-                    new OkHttpManager.UploadFileBuilder("26","2016010700001",MESSAGE_BY)
+                    new OkHttpManager.UploadFileBuilder(String.valueOf(postItem.getCarId())
+                            ,messageFromUser,MESSAGE_BY)
                             .putImage(imgFile);
 
         }
 
     }
 
-    private void initDataMessage() {
-        adapter = new MultipleChatAdapter(MESSAGE_BY);
-                recyclerView.setAdapter(adapter);
+    private void loadDataMessage() {
+        adapter = new MultipleListViewChatAdapter(MESSAGE_BY);
+        listView.setAdapter(adapter);
 
-        Call<MessageCollectionGao> call =
-                HttpChatManager.getInstance().getService().viewMessage("26||2016010700001||1");
+        Call<MessageCollectionDao> call =
+                HttpManager.getInstance().getService()
+                        .viewMessage(postItem.getCarId()+"||"+ messageFromUser +"||0");
         call.enqueue(new LoadMessageCallback());
 
     }
@@ -230,10 +247,13 @@ public class DetailCarActivity extends AppCompatActivity {
     }
 
     @Subscribe
-    public void produceMessage(MessageCollectionGao messageGa){
-        messageManager.updateDataToLastPosition(messageGa);
-        adapter.setMessagesGao(messageManager.getMessageGao().getMessage()); // คอมเม้นไว้ หาก list เด้งลงมา Last Position
-        adapter.notifyDataSetChanged();
+    public void produceMessage(MessageCollectionDao messageGa){ //รับภายในคลาส
+        if (messageGa.getMessage().size() > 0) {
+            messageManager.updateDataToLastPosition(messageGa);
+            // คอมเม้นไว้ หาก list เด้งลงมา Last Position
+            adapter.setMessages(messageManager.getMessageDao().getMessage());
+            adapter.notifyDataSetChanged();
+        }
     }
 
     @Override
@@ -244,18 +264,36 @@ public class DetailCarActivity extends AppCompatActivity {
         }
     }
 
+    @OnClick(R.id.button_follow)
+    public void onFollowClick(){
+        if (buttonFollow.isChecked()) {
+            //Add Follow
+            Call<LogFromServerDao> callAddFollow = HttpManager.getInstance().getService()
+                    .follow("add",String.valueOf(postItem.getCarId()),
+                    Registration.getInstance().getShopRef());
+            callAddFollow.enqueue(callbackAddOrRemoveFollow);
+        }else {
+            //Delete Follow
+            Call<LogFromServerDao> callDelete = HttpManager.getInstance().getService()
+                    .follow("delete",String.valueOf(postItem.getCarId()),
+                    Registration.getInstance().getShopRef());
+            callDelete.enqueue(callbackAddOrRemoveFollow);
+
+        }
+    }
+
     /*********************
      *Listener Class Zone
      *********************/
-
     DialogInterface.OnClickListener listenerDialogConfirm = new DialogInterface.OnClickListener() {
         @Override
         public void onClick(DialogInterface dialog, int which) {
-                Call<LogFromServerGao> call = HttpChatManager.getInstance().getService().regOfficer("26||2016010700001");
-                call.enqueue(new Callback<LogFromServerGao>() {
+                Call<LogFromServerDao> call =
+                        HttpManager.getInstance().getService().regOfficer(postItem.getCarId()+"||"+messageFromUser);
+                call.enqueue(new Callback<LogFromServerDao>() {
                     @Override
-                    public void onResponse(Call<LogFromServerGao> call, Response<LogFromServerGao> response) {
-                        if (response.isSuccess()){
+                    public void onResponse(Call<LogFromServerDao> call, Response<LogFromServerDao> response) {
+                        if (response.isSuccessful()){
                             Toast.makeText(DetailCarActivity.this,"success ::"+response.body().getResult(),Toast.LENGTH_SHORT).show();
                         }else {
                             try {
@@ -267,27 +305,100 @@ public class DetailCarActivity extends AppCompatActivity {
                     }
 
                     @Override
-                    public void onFailure(Call<LogFromServerGao> call, Throwable t) {
+                    public void onFailure(Call<LogFromServerDao> call, Throwable t) {
                         Log.e(TAG, "onFailure: ", t);
                     }
                 });
         }
     };
 
+    Callback<PictureAllCollectionDao> loadPictureCallback = new Callback<PictureAllCollectionDao>() {
+        @Override
+        public void onResponse(Call<PictureAllCollectionDao> call, Response<PictureAllCollectionDao> response) {
+            if (response.isSuccessful()) {
+                gao = response.body();
+                pictureAdapter = new PictureAdapter(getSupportFragmentManager());
+                pictureAdapter.setGao(gao);
+                viewPager.setAdapter(pictureAdapter);
+                indicator.setViewPager(viewPager);
+
+                for (PictureAllDao s : response.body().getRows()) {
+                    Log.i(TAG, "onResponse: " + s.getCarImagePath());
+                }
+            } else {
+                try {
+                    Log.i(TAG, "onResponse: " + response.errorBody().string());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        @Override
+        public void onFailure(Call<PictureAllCollectionDao> call, Throwable t) {
+            Log.e(TAG, "onFailure: ", t);
+        }
+    };
+
+    Callback<FollowCollectionDao> followCollectionDaoCallback = new Callback<FollowCollectionDao>() {
+        @Override
+        public void onResponse(Call<FollowCollectionDao> call, Response<FollowCollectionDao> response) {
+            if (response.isSuccessful()) {
+                if (response.body().getRows() != null) {
+                    for (FollowDao dao : response.body().getRows()) {
+                        if (dao.getCarRef().
+                                contains(String.valueOf(postItem.getCarId()))) {
+                            buttonFollow.setChecked(true);
+                        }
+                    }
+                }
+
+            } else {
+                try {
+                    Log.i(TAG, "onResponse: " + response.errorBody().string());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        @Override
+        public void onFailure(Call<FollowCollectionDao> call, Throwable t) {
+            Log.e(TAG, "onFailure: ", t);
+        }
+    };
+
+    Callback<LogFromServerDao> callbackAddOrRemoveFollow = new Callback<LogFromServerDao>() {
+        @Override
+        public void onResponse(Call<LogFromServerDao> call, Response<LogFromServerDao> response) {
+            if (response.isSuccessful()) {
+                Log.i(TAG, "onResponse:" + response.body().success);
+            } else {
+                try {
+                    Log.i(TAG, "onResponse: " + response.errorBody().string());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        @Override
+        public void onFailure(Call<LogFromServerDao> call, Throwable t) {
+            Log.e(TAG, "onFailure: ", t);
+        }
+    };
+
     /****************
     *Inner Class Zone
     *****************/
-    private class LoadMessageCallback implements Callback<MessageCollectionGao> {
+    private class LoadMessageCallback implements Callback<MessageCollectionDao> {
 
         @Override
-        public void onResponse(Call<MessageCollectionGao> call, Response<MessageCollectionGao> response) {
-            if (response.isSuccess()){
-
-//                messageManager.setMessageGao(response.body());
+        public void onResponse(Call<MessageCollectionDao> call, Response<MessageCollectionDao> response) {
+            if (response.isSuccessful()){
 
                 messageManager.updateDataToLastPosition(response.body());
-
-                adapter.setMessagesGao(messageManager.getMessageGao().getMessage());
+                adapter.setMessages(messageManager.getMessageDao().getMessage());
                 adapter.notifyDataSetChanged();
 
                     /*start Time Out 1000L wait message */
@@ -305,14 +416,14 @@ public class DetailCarActivity extends AppCompatActivity {
         }
 
         @Override
-        public void onFailure(Call<MessageCollectionGao> call, Throwable t) {
+        public void onFailure(Call<MessageCollectionDao> call, Throwable t) {
             Toast.makeText(DetailCarActivity.this,"Failure LogCat!!",Toast.LENGTH_SHORT).show();
             Log.e(TAG, "onFailure: ", t);
         }
     }
 
     private class WaitMessage extends WaitMessageOnBackground {
-        Response<MessageCollectionGao> response;
+        Response<MessageCollectionDao> response;
         MessageManager manager;
 
         public WaitMessage(MessageManager manager) {
@@ -323,10 +434,10 @@ public class DetailCarActivity extends AppCompatActivity {
         public void onBackground() {
             Log.i(TAG, "doInBackground: loop");
             int maxId = manager.getMaximumId();
-            Call<MessageCollectionGao> call =
-                    HttpChatManager.getInstance()
+            Call<MessageCollectionDao> call =
+                    HttpManager.getInstance()
                             .getService(60 * 1000) // Milliseconds (1 นาที)
-                            .waitMessage("26||2016010700001||" + maxId);
+                            .waitMessage(postItem.getCarId()+"||"+ messageFromUser +"||" + maxId);
             try {
                 response = call.execute(); // ทำงานเสร็จ จะเข้า onMainThread() ต่อ
             } catch (IOException e) {
@@ -337,9 +448,9 @@ public class DetailCarActivity extends AppCompatActivity {
         @Override
         public void onMainThread() {
             Log.i(TAG, "onMainThread: ");
-            if (response.isSuccess()){
+            if (response.isSuccessful()){
                 Log.i(TAG, "onMainThread: success");
-                MessageCollectionGao messageGa = response.body();
+                MessageCollectionDao messageGa = response.body();
                 BusProvider.getInstance().post(messageGa);
             }else {
                 Log.i(TAG, "doInBackground --- : "+response.errorBody());

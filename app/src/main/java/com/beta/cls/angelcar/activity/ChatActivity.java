@@ -11,12 +11,12 @@ import android.widget.Toast;
 
 import com.beta.cls.angelcar.Adapter.MultipleListViewChatAdapter;
 import com.beta.cls.angelcar.R;
-import com.beta.cls.angelcar.gao.MessageCollectionGao;
-import com.beta.cls.angelcar.gao.MessageGao;
+import com.beta.cls.angelcar.dao.MessageCollectionDao;
+import com.beta.cls.angelcar.dao.MessageDao;
 import com.beta.cls.angelcar.interfaces.WaitMessageOnBackground;
 import com.beta.cls.angelcar.manager.MessageManager;
 import com.beta.cls.angelcar.manager.WaitMessageSynchronous;
-import com.beta.cls.angelcar.manager.http.HttpChatManager;
+import com.beta.cls.angelcar.manager.http.HttpManager;
 import com.beta.cls.angelcar.manager.bus.BusProvider;
 import com.beta.cls.angelcar.manager.http.OkHttpManager;
 import com.beta.cls.angelcar.interfaces.CallBackMainThread;
@@ -25,7 +25,6 @@ import com.squareup.otto.Subscribe;
 import org.parceler.Parcels;
 
 import java.io.IOException;
-import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -41,16 +40,14 @@ import retrofit2.Response;
 public class ChatActivity extends AppCompatActivity {
     @Bind(R.id.list_view) ListView listView;
 
-    @Bind(R.id.list_view_chat_layout_input_chat) EditText messageText;
+    @Bind(R.id.input_chat) EditText messageText;
 
     private MultipleListViewChatAdapter chatAdapter;
 
     private static final String TAG = "ChatActivity";
 
-    MessageGao messageGao;
+    MessageDao messageDao;
     private String messageBy;
-
-    private List<MessageGao> listData;
 
     MessageManager messageManager;
     WaitMessageSynchronous synchronous;
@@ -65,7 +62,7 @@ public class ChatActivity extends AppCompatActivity {
         Intent getIntent = getIntent();
         if (getIntent != null){
             messageBy = getIntent.getStringExtra("messageBy");
-            messageGao = Parcels.unwrap(getIntent.getParcelableExtra("MessageGao"));
+            messageDao = Parcels.unwrap(getIntent.getParcelableExtra("MessageDao"));
             Toast.makeText(ChatActivity.this,"-"+messageBy,Toast.LENGTH_SHORT).show();
         }
 
@@ -73,24 +70,22 @@ public class ChatActivity extends AppCompatActivity {
         listView.setAdapter(chatAdapter);
 
         messageManager = new MessageManager();
-
         loadMessage();
     }
 
     private void loadMessage() {
-        Call<MessageCollectionGao> call =
-                HttpChatManager.getInstance().getService().viewMessage(
-                messageGao.getMessageCarId() + "||" +
-                        messageGao.getMessageFromUser() + "||" +
+        Call<MessageCollectionDao> call =
+                HttpManager.getInstance().getService().viewMessage(
+                messageDao.getMessageCarId() + "||" +
+                        messageDao.getMessageFromUser() + "||" +
                         "1");
-
-        call.enqueue(new retrofit2.Callback<MessageCollectionGao>() {
+        call.enqueue(new retrofit2.Callback<MessageCollectionDao>() {
             @Override
-            public void onResponse(Call<MessageCollectionGao> call, Response<MessageCollectionGao> response) {
-                    if (response.isSuccess()){
+            public void onResponse(Call<MessageCollectionDao> call, Response<MessageCollectionDao> response) {
+                    if (response.isSuccessful()){
 
-                        messageManager.setMessageGao(response.body());
-                        chatAdapter.setMessages(messageManager.getMessageGao().getMessage());
+                        messageManager.setMessageDao(response.body());
+                        chatAdapter.setMessages(messageManager.getMessageDao().getMessage());
                         chatAdapter.notifyDataSetChanged();
 
                         synchronous
@@ -107,7 +102,7 @@ public class ChatActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure(Call<MessageCollectionGao> call, Throwable t) {
+            public void onFailure(Call<MessageCollectionDao> call, Throwable t) {
                 Toast.makeText(ChatActivity.this,"Failure LogCat!!",Toast.LENGTH_SHORT).show();
                 Log.e(TAG, "onFailure: ", t);
             }
@@ -115,33 +110,21 @@ public class ChatActivity extends AppCompatActivity {
 
     }
 
-    @OnClick(R.id.list_view_chat_layout_button_send)
+    @OnClick(R.id.message_button_send)
     public void buttonSendMessage(){
-        MessageGao b = new MessageGao();
-        b.setMessageCarId(messageGao.getMessageCarId());
-        b.setMessageFromUser(messageGao.getMessageFromUser());
-        b.setMessageText(messageText.getText().toString()); // edit text
-        b.setDisplayName(messageGao.getDisplayName());
-        b.setMessageBy(messageBy);
-        b.setUserProfileImage(messageGao.getUserProfileImage());
-//      b.setMessagestamp(blogMessage.getMessagestamp()); // date time set**
-        listData.add(b);
-        chatAdapter.notifyDataSetChanged();
 
         sendMessage(messageText.getText().toString().trim());
-
     }
 
     private void sendMessage(String message){
         if (message.equals("")) {
             OkHttpManager aPi = new OkHttpManager.SendMessageBuilder()
-                    .setMessage("26||"+messageGao.getMessageFromUser()+"||"+message+"||"+messageBy).build();
+                    .setMessage(messageDao.getMessageCarId()+"||"+ messageDao.getMessageFromUser()+"||"+message+"||"+messageBy).build();
             aPi.callEnqueue(new CallBackMainThread() {
                 @Override
                 public void onResponse(okhttp3.Response response) {
                     Toast.makeText(ChatActivity.this,"success",Toast.LENGTH_SHORT).show();
                 }
-
             });
             messageText.setText("");
         }
@@ -159,12 +142,9 @@ public class ChatActivity extends AppCompatActivity {
         BusProvider.getInstance().unregister(this);
     }
 
-
-
-
     @Subscribe
     public void produceMessage(MessageManager message){
-        chatAdapter.setMessages(messageManager.getMessageGao().getMessage());
+        chatAdapter.setMessages(messageManager.getMessageDao().getMessage());
         chatAdapter.notifyDataSetChanged();
     }
 
@@ -180,13 +160,13 @@ public class ChatActivity extends AppCompatActivity {
      *Inner Class
      **************/
     WaitMessageOnBackground waitMessageOnBackground = new WaitMessageOnBackground() {
-        Response<MessageCollectionGao> response;
+        Response<MessageCollectionDao> response;
         @Override
         public void onBackground() {
             int maxId = messageManager.getMaximumId();
-            Call<MessageCollectionGao> cell = HttpChatManager.getInstance()
-                    .getService(60 * 1000).waitMessage(messageGao.getMessageCarId() + "||" +
-                            messageGao.getMessageFromUser() + "||" +maxId);
+            Call<MessageCollectionDao> cell = HttpManager.getInstance()
+                    .getService(60 * 1000).waitMessage(messageDao.getMessageCarId() + "||" +
+                            messageDao.getMessageFromUser() + "||" +maxId);
             try {
                 response = cell.execute();
             } catch (IOException e) {
@@ -196,10 +176,10 @@ public class ChatActivity extends AppCompatActivity {
 
         @Override
         public void onMainThread() {
-            if (response.isSuccess()) {
+            if (response.isSuccessful()) {
                 messageManager.updateDataToLastPosition(response.body());
                 BusProvider.getInstance().post(messageManager);
-                for (MessageGao g : response.body().getMessage()) {
+                for (MessageDao g : response.body().getMessage()) {
                     Log.i(TAG, "doInBackground: " + g.getMessageId());
                     Log.i(TAG, "doInBackground: " + g.getMessageText());
                 }

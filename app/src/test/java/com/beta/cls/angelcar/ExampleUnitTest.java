@@ -29,4 +29,6 @@ public class ExampleUnitTest {
         assertEquals(topic,LineUp.getInstance().subTopic(topic));
 
     }
+
+
 }

@@ -1,19 +1,23 @@
 package com.beta.cls.angelcar.activity;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.Typeface;
+import android.preference.PreferenceManager;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -23,15 +27,27 @@ import android.widget.Toast;
 import com.beta.cls.angelcar.R;
 import com.beta.cls.angelcar.Adapter.MainViewPagerAdapter;
 import com.beta.cls.angelcar.fragment.RegistrationAlertFragment;
+import com.beta.cls.angelcar.dao.RegisterResultDao;
+import com.beta.cls.angelcar.gcm.GcmRegisterService;
+import com.beta.cls.angelcar.manager.Registration;
 import com.beta.cls.angelcar.manager.bus.BusProvider;
+import com.beta.cls.angelcar.manager.http.HttpManager;
 import com.beta.cls.angelcar.util.RegistrationResult;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
 import com.squareup.otto.Subscribe;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity {
+
+    private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
+    private boolean isReceiverRegistered;
 
     @Bind(R.id.toolbar_top) Toolbar toolbar;
     @Bind(R.id.tabLayout) TabLayout tabLayout;
@@ -42,28 +58,28 @@ public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "MainActivity";
 
-    private final String REGISTRATION = "REGISTRATION";
-    private final String REGISTRATION_FIRST_APP = "REGISTRATION_FIRST_APP";
-    private final String REGISTRATION_USER_ID = "REGISTRATION_USER_ID";
-    SharedPreferences preferences ;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
+
+        registerReceiver();
+
+        if (checkPlayServices()) {
+            registerGcm();
+        }
+
         initInstance();
         initToolbars();
         initViewPager();
         initTabIcons(); //ตั้งค่า tab
 
-
     }
 
     private void initInstance() {
-        preferences = getSharedPreferences(REGISTRATION,MODE_PRIVATE);
-        boolean first_init = preferences.getBoolean(REGISTRATION_FIRST_APP, false);
-        checkRegistrationEmail(first_init);
+        boolean first = Registration.getInstance().isFirstApp();
+        checkRegistrationEmail(first);
     }
 
     private void checkRegistrationEmail(boolean first_init) {
@@ -79,9 +95,9 @@ public class MainActivity extends AppCompatActivity {
             fragment.show(ft, "RegistrationAlertFragment");
         }else {
             // กรณีลงทะเบียนแล้วให้ เช็ค cache // หากไม่พบ ให้ Registration Email
-            String cache_User = preferences.getString(REGISTRATION_USER_ID,null);
-            if (cache_User == null){
-
+            String cache_User = Registration.getInstance().getUserId();
+            if (cache_User != null){
+                Toast.makeText(MainActivity.this,cache_User,Toast.LENGTH_LONG).show();
             }
         }
     }
@@ -89,18 +105,25 @@ public class MainActivity extends AppCompatActivity {
     @Subscribe
     public void onRegistrationEmail(RegistrationResult result){
         if (result.getResult() == RegistrationAlertFragment.REGISTRATION_OK){
-
             // ติดต่อ server
+            Call<RegisterResultDao> call = HttpManager.getInstance().getService().registrationEmail(result.getEmail());
+            call.enqueue(callbackRegistrationEmail);
 
-            // หลังจากได้ค่าจาก server [userId]
-            // Save Cache
-            preferences.edit().putString(REGISTRATION_USER_ID,"-USER_ID-").apply();
-            Toast.makeText(MainActivity.this,"ลงทะเบียนเรียบร้อยแล้ว",Toast.LENGTH_LONG).show();
-            preferences.edit().putBoolean(REGISTRATION_FIRST_APP,true).apply();
 
         }
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        registerReceiver();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        unregisterReceiver();
+    }
 
     @Override
     protected void onStart() {
@@ -178,26 +201,93 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    @OnClick({R.id.menu_bottom_tag,R.id.menu_bottom_chat,
+    @OnClick({R.id.menu_bottom_follow,R.id.menu_bottom_message,
             R.id.menu_bottom_list_shop,R.id.menu_bottom_profile,
             R.id.menu_bottom_feedback,})
     public void menuBottom(View view){
-        switch (view.getId()){
-            case R.id.menu_bottom_tag:
-                break;
-            case R.id.menu_bottom_chat:
-                Intent i1 = new Intent(MainActivity.this,MessageBlogActivity.class);
-                startActivity(i1);
-                break;
-            case R.id.menu_bottom_list_shop:
-                Intent i2 = new Intent(MainActivity.this,ShopActivity.class);
-                startActivity(i2);
-                break;
-            case R.id.menu_bottom_profile:
-                break;
-            case R.id.menu_bottom_feedback:
-                break;
+        if (Registration.getInstance().getUserId() != null) {
+            switch (view.getId()) {
+                case R.id.menu_bottom_follow:
+                    startActivity(initIntent(FollowActivity.class));
+                    break;
+                case R.id.menu_bottom_message:
+                    startActivity(initIntent(TotalChatActivity.class));
+                    break;
+                case R.id.menu_bottom_list_shop:
+                    startActivity(initIntent(ShopActivity.class));
+                    break;
+                case R.id.menu_bottom_profile:
+                    break;
+                case R.id.menu_bottom_feedback:
+                    break;
+            }
+        }else {
+            checkRegistrationEmail(false);
         }
     }
 
+    private Intent initIntent(Class<?> cls){
+        return new Intent(MainActivity.this,cls);
+    }
+
+
+    private void registerReceiver() {
+        if (!isReceiverRegistered) {
+            LocalBroadcastManager.getInstance(this).registerReceiver(mRegistrationBroadcastReceiver, new IntentFilter(GcmRegisterService.REGISTRATION_COMPLETE));
+            isReceiverRegistered = true;
+        }
+    }
+
+    private void unregisterReceiver() {
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(mRegistrationBroadcastReceiver);
+        isReceiverRegistered = false;
+    }
+
+    private void registerGcm() {
+        Intent intent = new Intent(this, GcmRegisterService.class);
+        startService(intent);
+    }
+
+    private boolean checkPlayServices() {
+        GoogleApiAvailability apiAvailability = GoogleApiAvailability.getInstance();
+        int resultCode = apiAvailability.isGooglePlayServicesAvailable(this);
+        if (resultCode != ConnectionResult.SUCCESS) {
+            if (apiAvailability.isUserResolvableError(resultCode)) {
+                apiAvailability.getErrorDialog(this, resultCode, PLAY_SERVICES_RESOLUTION_REQUEST).show();
+            }
+            return false;
+        }
+        return true;
+    }
+
+
+    /**************
+    *Listener Zone*
+    ***************/
+    Callback<RegisterResultDao> callbackRegistrationEmail = new Callback<RegisterResultDao>() {
+        @Override
+        public void onResponse(Call<RegisterResultDao> call, Response<RegisterResultDao> response) {
+            if (response.isSuccessful()) {
+                // Save Cache
+                Registration.getInstance().save(response.body());
+                Toast.makeText(MainActivity.this, "ลงทะเบียนเรียบร้อยแล้ว "+response.body().getUserId() +" "+response.body().getShopId(), Toast.LENGTH_LONG).show();
+            } else {
+                Toast.makeText(MainActivity.this, "" + response.errorBody(), Toast.LENGTH_SHORT).show();
+            }
+        }
+
+        @Override
+        public void onFailure(Call<RegisterResultDao> call, Throwable t) {
+            Toast.makeText(MainActivity.this, "" + t.toString(), Toast.LENGTH_SHORT).show();
+        }
+    };
+
+    private BroadcastReceiver mRegistrationBroadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+            boolean sentToken = sharedPreferences.getBoolean(GcmRegisterService.SENT_TOKEN_TO_SERVER, false);
+            // TODO Do something here
+        }
+    };
 }

@@ -6,14 +6,14 @@
     android:orientation="horizontal">
 
     <ImageView
-        android:id="@+id/menu_bottom_tag"
+        android:id="@+id/menu_bottom_follow"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
         android:src="@drawable/ic_tab_follow" />
 
     <ImageView
-        android:id="@+id/menu_bottom_chat"
+        android:id="@+id/menu_bottom_message"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"

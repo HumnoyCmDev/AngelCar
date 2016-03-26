@@ -4,26 +4,34 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.beta.cls.angelcar.Adapter.MessageAdapter;
 import com.beta.cls.angelcar.R;
-import com.beta.cls.angelcar.gao.MessageAdminCollectionGao;
-import com.beta.cls.angelcar.gao.MessageCollectionGao;
-import com.beta.cls.angelcar.gao.MessageGao;
+import com.beta.cls.angelcar.dao.CarIdDao;
+import com.beta.cls.angelcar.dao.MessageAdminCollectionDao;
+import com.beta.cls.angelcar.dao.MessageCollectionDao;
+import com.beta.cls.angelcar.dao.MessageDao;
+import com.beta.cls.angelcar.dao.PostCarCollectionDao;
+import com.beta.cls.angelcar.dao.PostCarDao;
+import com.beta.cls.angelcar.manager.CallbackLoadCarModel;
 import com.beta.cls.angelcar.manager.MessageManager;
-import com.beta.cls.angelcar.manager.http.HttpChatManager;
+import com.beta.cls.angelcar.manager.Registration;
+import com.beta.cls.angelcar.manager.http.HttpManager;
 
 import java.io.IOException;
-import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import retrofit2.Call;
+import retrofit2.Callback;
 import retrofit2.Response;
 
 /**
@@ -34,10 +42,9 @@ public class ChatAllFragment extends Fragment{
     ListView listView;
     private static final String TAG = "ChatAllFragment";
 
-    private List<MessageGao> message;
-
     MessageManager messageManager;
     MessageAdapter adapter;
+    PostCarDao item;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -58,27 +65,37 @@ public class ChatAllFragment extends Fragment{
         super.onActivityCreated(savedInstanceState);
         initInstance();
         initListener();
-        initDataMessage();
+        loadCarId();
+//        initDataMessage();
 
     }
 
-    private void initDataMessage() {
+    private void loadCarId() {
+        Call<CarIdDao> loadCarId =
+                HttpManager.getInstance().getService().loadCarId(
+                        Registration.getInstance().getShopRef());
+        loadCarId.enqueue(carIdDaoCallback);
+
+    }
+
+    private void initDataMessage(final CarIdDao body) {
 
         new AsyncTask<Void,Void,Void>(){
             @Override
             protected Void doInBackground(Void... params) {
 
-                Call<MessageCollectionGao> callClient =
-                        HttpChatManager.getInstance().getService()
-                                .messageClient("2016010700001");
-                Call<MessageAdminCollectionGao> callAdmin =
-                        HttpChatManager.getInstance().getService()
-                                .messageAdmin("26");
+                Call<MessageCollectionDao> callClient =
+                        HttpManager.getInstance().getService()
+                                .messageClient(Registration.getInstance().getUserId());
+
+                Call<MessageAdminCollectionDao> callAdmin =
+                        HttpManager.getInstance().getService()
+                                .messageAdmin(body.getAllCarId());
 
                 try {
-                    Response<MessageCollectionGao> responseClient = callClient.execute();
-                    if (responseClient.isSuccess()){
-                        messageManager.setMessageGao(responseClient.body());
+                    Response<MessageCollectionDao> responseClient = callClient.execute();
+                    if (responseClient.isSuccessful()){
+                        messageManager.setMessageDao(responseClient.body());
                     }else {
 
                     }
@@ -87,8 +104,8 @@ public class ChatAllFragment extends Fragment{
                 }
 
                 try {
-                    Response<MessageAdminCollectionGao> responseAdmin = callAdmin.execute();
-                    if (responseAdmin.isSuccess()){
+                    Response<MessageAdminCollectionDao> responseAdmin = callAdmin.execute();
+                    if (responseAdmin.isSuccessful()){
                         messageManager.updateDataToLastPosition(
                                 responseAdmin.body().getMessageAdminGao()
                                         .convertToMessageCollectionGao());
@@ -104,7 +121,7 @@ public class ChatAllFragment extends Fragment{
             @Override
             protected void onPostExecute(Void aVoid) {
                 super.onPostExecute(aVoid);
-                adapter.setGao(messageManager.getMessageGao().getMessage());
+                adapter.setGao(messageManager.getMessageDao().getMessage());
                 adapter.notifyDataSetChanged();
             }
         }.execute();
@@ -118,14 +135,72 @@ public class ChatAllFragment extends Fragment{
     }
 
     private void initListener() {
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
-            }
-
-        });
+        listView.setOnItemLongClickListener(onItemLongClickListener);
+        listView.setOnItemClickListener(onItemClickListener);
     }
+
+    private void deleteDialog(MessageDao dao) {
+        FragmentTransaction ft = getFragmentManager().beginTransaction();
+        Fragment fragment = getFragmentManager().findFragmentByTag("DeleteChatDialogFragment");
+        if (fragment != null){
+            ft.remove(fragment);
+        }
+        ft.addToBackStack(null);
+        DeleteChatDialogFragment deleteChatDialog =
+                DeleteChatDialogFragment.newInstance(dao.getMessageFromUser());
+        deleteChatDialog.show(getFragmentManager(),"DeleteChatDialogFragment");
+    }
+
+    /**************
+     *Listener Zone*
+     ***************/
+
+    Callback<CarIdDao> carIdDaoCallback = new Callback<CarIdDao>() {
+        @Override
+        public void onResponse(Call<CarIdDao> call, Response<CarIdDao> response) {
+            if (response.isSuccessful()) {
+                initDataMessage(response.body());
+            }else {
+                try {
+                    Log.i(TAG, "onResponse: "+response.errorBody().string());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        @Override
+        public void onFailure(Call<CarIdDao> call, Throwable t) {
+            Log.e(TAG, "onFailure: ", t);
+        }
+    };
+
+    AdapterView.OnItemClickListener onItemClickListener = new AdapterView.OnItemClickListener() {
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            MessageDao dao = messageManager.getMessageDao().getMessage().get(position);
+            Call<PostCarCollectionDao> call =
+                    HttpManager.getInstance().getService().loadCarModel(dao.getMessageCarId());
+            call.enqueue(new CallbackLoadCarModel(getContext(),dao.getMessageFromUser()));
+
+        }
+
+    };
+
+    AdapterView.OnItemLongClickListener onItemLongClickListener = new AdapterView.OnItemLongClickListener() {
+        @Override
+        public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+            Toast.makeText(getContext(), "OnItem Long Click" + position, Toast.LENGTH_LONG).show();
+            MessageDao dao = messageManager.getMessageDao().getMessage().get(position);
+//            deleteDialog(dao);
+            return true;
+        }
+    };
+
+
+    /*****************
+     *Inner Class Zone*
+     ******************/
 
 
 }

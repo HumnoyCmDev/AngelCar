@@ -1,5 +1,6 @@
 package com.beta.cls.angelcar.Adapter;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -7,7 +8,8 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.beta.cls.angelcar.R;
-import com.beta.cls.angelcar.gao.MessageGao;
+import com.beta.cls.angelcar.dao.MessageDao;
+import com.beta.cls.angelcar.manager.Registration;
 import com.github.siyamed.shapeimageview.CircularImageView;
 import com.squareup.picasso.Picasso;
 
@@ -25,25 +27,19 @@ import butterknife.ButterKnife;
 //// TODO: 20/2/59 New Adapter...
 public class MessageAdapter extends BaseAdapter{
 
-    private List<MessageGao> gaos;
+    private List<MessageDao> gaos;
     private SimpleDateFormat sf;
+
 
     public MessageAdapter() {
         sf = new SimpleDateFormat("HH:mm:ss");
-//        this.gaos = gaos;
-//        Collections.sort(gaos, new Comparator<MessageGao>() {
-//            @Override
-//            public int compare(MessageGao lhs, MessageGao rhs) {
-//                return rhs.getMessagesTamp().compareTo(lhs.getMessagesTamp());
-//            }
-//        });
     }
 
-    public void setGao(List<MessageGao> gaos) {
+    public void setGao(List<MessageDao> gaos) {
         this.gaos = gaos;
-        Collections.sort(gaos, new Comparator<MessageGao>() {
+        Collections.sort(gaos, new Comparator<MessageDao>() {
             @Override
-            public int compare(MessageGao lhs, MessageGao rhs) {
+            public int compare(MessageDao lhs, MessageDao rhs) {
                 return rhs.getMessagesTamp().compareTo(lhs.getMessagesTamp());
             }
         });
@@ -56,7 +52,7 @@ public class MessageAdapter extends BaseAdapter{
     }
 
     @Override
-    public MessageGao getItem(int position) {
+    public MessageDao getItem(int position) {
         return gaos.get(position);
     }
 
@@ -75,15 +71,21 @@ public class MessageAdapter extends BaseAdapter{
             holder = new ViewHolder(convertView);
             convertView.setTag(holder);
         }
-        MessageGao message = getItem(position);
+        MessageDao message = getItem(position);
 
         Picasso.with(parent.getContext())
                 .load(message.getUserProfileImage())
                 .error(R.drawable.ic_hndeveloper)
                 .into(holder.icon);
 
+        String msg = message.getMessageText();
+
         holder.txtDisPlayName.setText(message.getDisplayName());
-        holder.txtMessage.setText(message.getMessageText());
+        if (msg.contains("<img>") && msg.contains("</img>")){
+                holder.txtMessage.setText("รูปภาพ 1 รูป");
+        }else {
+            holder.txtMessage.setText(message.getMessageText());
+        }
         holder.txtTime.setText(sf.format(message.getMessagesTamp()));
         return convertView;
     }

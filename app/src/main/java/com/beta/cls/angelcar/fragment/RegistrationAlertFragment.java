@@ -24,7 +24,7 @@ import java.util.regex.Pattern;
 public class RegistrationAlertFragment extends DialogFragment{
     public static final int REGISTRATION_OK = 0;
     public static final int REGISTRATION_CANCEL = 1;
-
+    private int isResult = 1;
     private String EMAIL_ADDRESS = "ไม่พบ Email";
 
 
@@ -39,11 +39,33 @@ public class RegistrationAlertFragment extends DialogFragment{
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         // GET Email // registration
+        //TODO Nexus5 Not Email!
         Pattern emailPattern = Patterns.EMAIL_ADDRESS;
         Account[] accounts = AccountManager.get(getActivity()).getAccounts();
+        for (Account account : accounts) {
+            if (emailPattern.matcher(account.name).matches()) {
+                if (account.name.contains("@gmail.com")) {
+                    EMAIL_ADDRESS = account.name;
+                    isResult = REGISTRATION_OK;
+                    return;
+                }else {
+                    EMAIL_ADDRESS = "ไม่พบบัญชีของ google";
+                    isResult = REGISTRATION_CANCEL;
+                }
+            }else {
+                isResult = REGISTRATION_CANCEL;
+            }
+        }
 
-        if (accounts.length > 0 && emailPattern.matcher(accounts[0].name).matches())
-            EMAIL_ADDRESS = accounts[0].name;
+
+//        try {
+//            Account[] as = AccountManager.get(getContext()).getAccountsByType("com.google");
+//            for (Account account : as) {
+//                Log.i("GET Email", account.type+" : "+account.name);
+//            }
+//        } catch (Exception e) {
+//            Log.i("Exception", "Exception:" + e);
+//        }
 
     }
 
@@ -53,19 +75,12 @@ public class RegistrationAlertFragment extends DialogFragment{
         return new AlertDialog.Builder(getActivity())
                 .setTitle("ระบบลงทะเบียนด้วย Email")
                 .setMessage("ลงทะเบียนด้วยบัญชี Email: "+EMAIL_ADDRESS)
-                // Positive button
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
-                        BusProvider.getInstance().post(new RegistrationResult(0));
+                        BusProvider.getInstance().post(new RegistrationResult(isResult,EMAIL_ADDRESS));
                     }
                 })
 
-                // Negative Button
-//                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-//                    public void onClick(DialogInterface dialog,	int which) {
-//                        BusProvider.getInstance().post(new RegistrationResult(1));
-//                    }
-//                })
                 .create();
     }
 

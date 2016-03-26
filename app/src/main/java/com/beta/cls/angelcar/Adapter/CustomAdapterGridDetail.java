@@ -10,7 +10,7 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.beta.cls.angelcar.R;
-import com.beta.cls.angelcar.gao.CarDetailGao;
+import com.beta.cls.angelcar.dao.CarDetailDao;
 
 import java.util.List;
 
@@ -19,14 +19,14 @@ import java.util.List;
 
 public class CustomAdapterGridDetail extends BaseAdapter {
     private LayoutInflater mInflater;
-    private List<CarDetailGao> mPosts;
+    private List<CarDetailDao> mPosts;
     private ViewHolder mViewHolder;
 
     private Bitmap mBitmap;
-    private CarDetailGao mPost;
+    private CarDetailDao mPost;
     private Activity mActivity;
 
-    public CustomAdapterGridDetail(Activity activity, List<CarDetailGao> posts) {
+    public CustomAdapterGridDetail(Activity activity, List<CarDetailDao> posts) {
         mInflater = (LayoutInflater) activity.getSystemService(
                 Context.LAYOUT_INFLATER_SERVICE);
         mPosts = posts;

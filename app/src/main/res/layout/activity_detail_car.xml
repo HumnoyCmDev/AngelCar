@@ -1,290 +1,129 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:card_view="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/rootLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-
-    <android.support.design.widget.AppBarLayout
-        android:layout_width="match_parent"
-        android:layout_height="256dp"
-        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
-
-        <android.support.design.widget.CollapsingToolbarLayout
-            android:id="@+id/collapsingToolbarLayout"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:layout_scrollFlags="scroll|exitUntilCollapsed">
-
-            <android.support.v4.view.ViewPager
-                android:id="@+id/viewpager"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                app:layout_collapseMode="parallax" />
-
-            <android.support.v7.widget.Toolbar
-                android:id="@+id/toolbar_top"
-                android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"
-                android:minHeight="?attr/actionBarSize"
-                android:visibility="gone"
-                app:layout_collapseMode="pin"
-                app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-                app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar" />
-
-        </android.support.design.widget.CollapsingToolbarLayout>
-
-
-    </android.support.design.widget.AppBarLayout>
-
-    <!-- HN Dev -->
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#EEEEEE"
-        android:orientation="vertical"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+        android:orientation="vertical">
 
-        <!--<android.support.v4.widget.NestedScrollView-->
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="#001938"
+            app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+            app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+        <!--<ScrollView-->
             <!--android:fillViewport="true"-->
             <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="wrap_content">-->
+            <!--android:layout_height="match_parent">-->
 
 
-            <!--<android.support.v7.widget.CardView-->
-                <!--android:layout_width="match_parent"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:layout_margin="5dp"-->
-                <!--card_view:cardCornerRadius="6dp">-->
+        <!--&lt;!&ndash;Main Group&ndash;&gt;-->
+        <!--<LinearLayout-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:orientation="vertical">-->
 
-                <!--<LinearLayout-->
-                    <!--android:id="@+id/main_layout"-->
-                    <!--android:layout_width="match_parent"-->
-                    <!--android:layout_height="wrap_content"-->
-                    <!--android:orientation="vertical">-->
-                    <!--&lt;!&ndash;root&ndash;&gt;-->
-                    <!--<LinearLayout-->
-                        <!--android:layout_width="match_parent"-->
-                        <!--android:layout_height="wrap_content"-->
-                        <!--android:orientation="horizontal"-->
-                        <!--android:padding="7dp">-->
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="256dp"
+                android:layout_margin="10dp">
 
-                        <!--<TextView-->
-                            <!--android:id="@+id/tvTopic"-->
-                            <!--android:layout_width="0dp"-->
-                            <!--android:layout_height="wrap_content"-->
-                            <!--android:layout_weight="1"-->
-                            <!--android:padding="6dp"-->
-                            <!--android:text="@string/sample_test_text_chat"-->
-                            <!--android:textStyle="bold" />-->
+                <android.support.v4.view.ViewPager
+                    android:id="@+id/viewpager"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    app:layout_collapseMode="parallax" />
 
-                        <!--<ToggleButton-->
-                            <!--android:text=""-->
-                            <!--android:textOff=""-->
-                            <!--android:textOn=""-->
-                            <!--android:layout_width="48dp"-->
-                            <!--android:layout_height="48dp"-->
-                            <!--android:background="@drawable/selector_button_start" />-->
+                <com.viewpagerindicator.LinePageIndicator
+                    android:id="@+id/indicator"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    app:selectedColor="#FF0000"
+                    app:unselectedColor="#000000" />
 
-                    <!--</LinearLayout>-->
+            </RelativeLayout>
+            <!--ListView-->
+            <ListView
+                android:id="@+id/list_view"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:cacheColorHint="@android:color/transparent"
+                android:divider="@null"
+                android:footerDividersEnabled="true"
+                android:headerDividersEnabled="true"
+                android:listSelector="@android:color/transparent"
+                android:stackFromBottom="true"
+                android:transcriptMode="alwaysScroll">
 
-                    <!--<LinearLayout-->
-                        <!--android:layout_width="match_parent"-->
-                        <!--android:layout_height="wrap_content"-->
-                        <!--android:orientation="horizontal"-->
-                        <!--android:padding="10dp">-->
-                        <!--&lt;!&ndash;ss&ndash;&gt;-->
-                        <!--<LinearLayout-->
-                            <!--android:layout_width="0dp"-->
-                            <!--android:layout_height="wrap_content"-->
-                            <!--android:layout_weight="1"-->
-                            <!--android:orientation="vertical">-->
+            </ListView>
 
-                            <!--<LinearLayout-->
-                                <!--android:layout_width="match_parent"-->
-                                <!--android:layout_height="match_parent"-->
-                                <!--android:orientation="horizontal">-->
+            <LinearLayout
+                android:id="@+id/group_chat"
+                android:layout_width="match_parent"
+                android:layout_height="5dp"
+                android:layout_weight="0.2"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:padding="5dp">
 
-                                <!--<TextView-->
-                                    <!--android:layout_width="0dp"-->
-                                    <!--android:layout_height="match_parent"-->
-                                    <!--android:layout_weight="0.5"-->
-                                    <!--android:text="ยี่ห้อ :" />-->
+                <Button
+                    android:id="@+id/message_button_personnel"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_marginLeft="5dp"
+                    android:background="@drawable/ic_person_add" />
 
-                                <!--<TextView-->
-                                    <!--android:id="@+id/tvCarType"-->
-                                    <!--android:layout_width="0dp"-->
-                                    <!--android:layout_height="match_parent"-->
-                                    <!--android:layout_weight="1"-->
-                                    <!--android:text="111111" />-->
-                            <!--</LinearLayout>-->
+                <Button
+                    android:id="@+id/message_button_image"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_marginLeft="7dp"
+                    android:background="@drawable/ic_camera" />
 
-                            <!--<LinearLayout-->
-                                <!--android:layout_width="match_parent"-->
-                                <!--android:layout_height="match_parent"-->
-                                <!--android:orientation="horizontal">-->
+                <EditText
+                    android:id="@+id/input_chat"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="5dp"
+                    android:layout_weight="1"
+                    android:background="@null"
+                    android:hint="@string/message_hint"
+                    android:padding="5dp"
+                    android:textColorHint="#BDBDBD"
+                    android:textSize="15sp" />
 
-                                <!--<TextView-->
-                                    <!--android:layout_width="0dp"-->
-                                    <!--android:layout_height="match_parent"-->
-                                    <!--android:layout_weight="0.5"-->
-                                    <!--android:text="รุ่น :" />-->
+                <Button
+                    android:id="@+id/message_button_send"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:background="@drawable/ic_send_message"
+                    android:padding="5dp" />
+            </LinearLayout>
 
-                                <!--<TextView-->
-                                    <!--android:id="@+id/tvBrand"-->
-                                    <!--android:layout_width="0dp"-->
-                                    <!--android:layout_height="match_parent"-->
-                                    <!--android:layout_weight="1"-->
-                                    <!--android:text="111111" />-->
-                            <!--</LinearLayout>-->
+        </LinearLayout>
 
-                            <!--<LinearLayout-->
-                                <!--android:layout_width="match_parent"-->
-                                <!--android:layout_height="match_parent"-->
-                                <!--android:orientation="horizontal">-->
+        <!--</ScrollView>-->
+    <!--</LinearLayout>-->
 
-                                <!--<TextView-->
-                                    <!--android:layout_width="0dp"-->
-                                    <!--android:layout_height="match_parent"-->
-                                    <!--android:layout_weight="0.5"-->
-                                    <!--android:text="รุ่นย่อย :" />-->
+    <ToggleButton
+        android:id="@+id/button_follow"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="14dp"
+        android:layout_marginTop="293dp"
+        android:background="@drawable/selector_button_follow"
+        android:text=""
+        android:textOff=""
+        android:textOn="" />
 
-                                <!--<TextView-->
-                                    <!--android:id="@+id/tvCarSub"-->
-                                    <!--android:layout_width="0dp"-->
-                                    <!--android:layout_height="match_parent"-->
-                                    <!--android:layout_weight="1"-->
-                                    <!--android:text="222222" />-->
-                            <!--</LinearLayout>-->
-
-                            <!--<LinearLayout-->
-                                <!--android:layout_width="match_parent"-->
-                                <!--android:layout_height="match_parent"-->
-                                <!--android:orientation="horizontal">-->
-
-                                <!--<TextView-->
-                                    <!--android:layout_width="0dp"-->
-                                    <!--android:layout_height="match_parent"-->
-                                    <!--android:layout_weight="0.5"-->
-                                    <!--android:text="เกียร์ :" />-->
-
-                                <!--<TextView-->
-                                    <!--android:id="@+id/tvGear"-->
-                                    <!--android:layout_width="0dp"-->
-                                    <!--android:layout_height="match_parent"-->
-                                    <!--android:layout_weight="1"-->
-                                    <!--android:text="222222" />-->
-                            <!--</LinearLayout>-->
-
-                            <!--<LinearLayout-->
-                                <!--android:layout_width="match_parent"-->
-                                <!--android:layout_height="match_parent"-->
-                                <!--android:orientation="horizontal">-->
-
-                                <!--<TextView-->
-                                    <!--android:layout_width="0dp"-->
-                                    <!--android:layout_height="match_parent"-->
-                                    <!--android:layout_weight="0.5"-->
-                                    <!--android:text="ปี :" />-->
-
-                                <!--<TextView-->
-                                    <!--android:id="@+id/tvYear"-->
-                                    <!--android:layout_width="0dp"-->
-                                    <!--android:layout_height="match_parent"-->
-                                    <!--android:layout_weight="1"-->
-                                    <!--android:text="333333" />-->
-                            <!--</LinearLayout>-->
-
-                            <!--<LinearLayout-->
-                                <!--android:layout_width="match_parent"-->
-                                <!--android:layout_height="match_parent"-->
-                                <!--android:orientation="horizontal">-->
-
-                                <!--<TextView-->
-                                    <!--android:layout_width="0dp"-->
-                                    <!--android:layout_height="match_parent"-->
-                                    <!--android:layout_weight="0.5"-->
-                                    <!--android:text="ราคา :" />-->
-
-                                <!--<TextView-->
-                                    <!--android:id="@+id/tvPrice"-->
-                                    <!--android:layout_width="0dp"-->
-                                    <!--android:layout_height="match_parent"-->
-                                    <!--android:layout_weight="1"-->
-                                    <!--android:text="333333" />-->
-                            <!--</LinearLayout>-->
-
-
-                        <!--</LinearLayout>-->
-
-                        <!--<LinearLayout-->
-                            <!--android:layout_width="0dp"-->
-                            <!--android:layout_height="wrap_content"-->
-                            <!--android:layout_weight="1"-->
-                            <!--android:orientation="vertical">-->
-
-                            <!--<LinearLayout-->
-                                <!--android:layout_width="match_parent"-->
-                                <!--android:layout_height="match_parent"-->
-                                <!--android:orientation="horizontal">-->
-
-                                <!--<TextView-->
-                                    <!--android:layout_width="0dp"-->
-                                    <!--android:layout_height="match_parent"-->
-                                    <!--android:layout_weight="0.5"-->
-                                    <!--android:text="โทร :" />-->
-
-                                <!--<TextView-->
-                                    <!--android:id="@+id/tvPhone"-->
-                                    <!--android:layout_width="0dp"-->
-                                    <!--android:layout_height="match_parent"-->
-                                    <!--android:layout_weight="1"-->
-                                    <!--android:text="044-551664" />-->
-                            <!--</LinearLayout>-->
-
-
-                            <!--<LinearLayout-->
-                                <!--android:layout_width="match_parent"-->
-                                <!--android:layout_height="match_parent"-->
-                                <!--android:orientation="horizontal"-->
-                                <!--android:visibility="gone">-->
-
-                                <!--<TextView-->
-                                    <!--android:layout_width="0dp"-->
-                                    <!--android:layout_height="match_parent"-->
-                                    <!--android:layout_weight="0.5"-->
-                                    <!--android:text="444444 :" />-->
-
-                                <!--<TextView-->
-                                    <!--android:layout_width="0dp"-->
-                                    <!--android:layout_height="match_parent"-->
-                                    <!--android:layout_weight="1"-->
-                                    <!--android:text="444444" />-->
-                            <!--</LinearLayout>-->
-
-                            <!--&lt;!&ndash;android:name="com.google.android.gms.maps.SupportMapFragment"&ndash;&gt;-->
-                            <!--<FrameLayout-->
-                                <!--android:layout_width="match_parent"-->
-                                <!--android:layout_height="90dp"-->
-                                <!--android:background="@android:color/darker_gray"></FrameLayout>-->
-<!--+-->
-                        <!--</LinearLayout>-->
-
-                    <!--</LinearLayout>-->
-                <!--</LinearLayout>-->
-            <!--</android.support.v7.widget.CardView>-->
-
-        <!--</android.support.v4.widget.NestedScrollView>-->
-
-
-        <!--Recycle-->
-        <include layout="@layout/recycler_chat_layout" />
-
-    </LinearLayout>
-
-
-
-</android.support.design.widget.CoordinatorLayout>
+</RelativeLayout>
 

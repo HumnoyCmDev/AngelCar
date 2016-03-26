@@ -1,13 +1,13 @@
 package com.beta.cls.angelcar.Adapter;
 
-import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
 import com.beta.cls.angelcar.R;
-import com.beta.cls.angelcar.gao.MessageGao;
+import com.beta.cls.angelcar.dao.MessageDao;
 import com.hndev.library.view.AngelCarMessage;
 
 import java.util.List;
@@ -19,7 +19,7 @@ import butterknife.ButterKnife;
  * Created by humnoy on 22/1/59.
  */
 public class MultipleListViewChatAdapter extends BaseAdapter {
-    private List<MessageGao> messages;
+    private List<MessageDao> messages;
     private String messageBy ;
 
     private static final String TAG = "MultipleListViewChatAdapter";
@@ -29,7 +29,7 @@ public class MultipleListViewChatAdapter extends BaseAdapter {
     }
 
 
-    public void setMessages(List<MessageGao> messages) {
+    public void setMessages(List<MessageDao> messages) {
         this.messages = messages;
     }
 
@@ -40,7 +40,7 @@ public class MultipleListViewChatAdapter extends BaseAdapter {
     }
 
     @Override
-    public MessageGao getItem(int position) {
+    public MessageDao getItem(int position) {
         return messages.get(position);
     }
 
@@ -56,43 +56,26 @@ public class MultipleListViewChatAdapter extends BaseAdapter {
 
     @Override
     public int getItemViewType(int position) {
-        String by = getItem(position).getMessageBy();
-        return byUser(messageBy,by);
+        String messageByGao = getItem(position).getMessageBy();
+        return byUser(messageBy,messageByGao);
     }
 
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        MessageGao message = getItem(position);
+        MessageDao message = getItem(position);
         int msBy = getItemViewType(position);
         switch (msBy){
-            case 0 : convertView = inflatelayoutMyTalk(convertView,parent,message);
+            case 0 : convertView = inflateLayoutChatLeft(convertView,parent,message,position);
                 break;
-            case 1 : convertView = inflatelayoutTalk(convertView,parent,message);
+            case 1 : convertView = inflateLayoutChatRight(convertView,parent,message,position);
                 break;
         }
         return convertView;
     }
 
     //inflate layout
-    private View inflatelayoutTalk(View view, ViewGroup parent, MessageGao message) {
-        TextLeftViewHolder holder;
-        if (view != null) {
-            holder = (TextLeftViewHolder) view.getTag();
-        } else {
-            view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_chat_left, parent, false);
-            holder = new TextLeftViewHolder(view);
-            view.setTag(holder);
-        }
-        //coding
-        holder.angelCarMessage.setMessage(message.getMessageText());
-        holder.angelCarMessage.setIconProfile(message.getUserProfileImage());
-
-
-        return view;
-    }
-
-    private View inflatelayoutMyTalk(View view, ViewGroup parent, MessageGao message) {
+    private View inflateLayoutChatRight(View view, ViewGroup parent, MessageDao message, int position) {
         TextRightViewHolder holder;
         if (view != null) {
             holder = (TextRightViewHolder) view.getTag();
@@ -104,6 +87,32 @@ public class MultipleListViewChatAdapter extends BaseAdapter {
         //coding
         holder.angelCarMessage.setMessage(message.getMessageText());
         holder.angelCarMessage.setIconProfile(message.getUserProfileImage());
+        if (position == 0)
+            holder.angelCarMessage.setBackground(Color.parseColor("#50E3C2"));
+        else if (position == 1)
+            holder.angelCarMessage.setBackground(Color.parseColor("#7ED321"));
+
+
+        return view;
+    }
+
+    private View inflateLayoutChatLeft(View view, ViewGroup parent, MessageDao message, int position) {
+        TextLeftViewHolder holder;
+        if (view != null) {
+            holder = (TextLeftViewHolder) view.getTag();
+        } else {
+            view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_chat_left, parent, false);
+            holder = new TextLeftViewHolder(view);
+            view.setTag(holder);
+        }
+        //coding
+        holder.angelCarMessage.setMessage(message.getMessageText());
+        holder.angelCarMessage.setIconProfile(message.getUserProfileImage());
+        if (position == 0)
+            holder.angelCarMessage.setBackground(Color.parseColor("#50E3C2"));
+        else if (position == 1)
+            holder.angelCarMessage.setBackground(Color.parseColor("#7ED321"));
+
         return view;
     }
 
@@ -124,28 +133,15 @@ public class MultipleListViewChatAdapter extends BaseAdapter {
         }
     }
 
-    private int byUser(String messageBy, String by) {
-        if (messageBy.equals("shop")) {
-            if (by.equals("shop")) {
-                return 0;
-            } else {
-                return 1;
-            }
-        } else {
-            if (by.equals("user")) {
-                return 0;
-            } else {
-                return 1;
-            }
-        }
-    }
+    private int byUser(String messageBy, String messageByGao) {
+        /*0 = ซ้าย || 1 = ขวา*/
+        if (messageBy.equals(messageByGao))
+            return 1;
+        else
+            return 0;
 
-//    private int byUser(String messageBy, String by) {
-//        if (messageBy.equals("shop")) {
-//            return by.equals("shop") ? 0 : 1;
-//        } else {
-//            return by.equals("shop") ? 0 : 1;
-//        }
-//    }
+        /*@ messageBy ได้มาจาก DetailActivity ส่งเข้ามา
+        *ถ้า messageBy ตรงกับใน messageByGao เรียงแชทไว้ขวา*/
+    }
 
 }

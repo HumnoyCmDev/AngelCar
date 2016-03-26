@@ -9,6 +9,10 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.beta.cls.angelcar.R;
+import com.beta.cls.angelcar.dao.PictureAllDao;
+import com.squareup.picasso.Picasso;
+
+import org.parceler.Parcels;
 
 
 /***************************************
@@ -16,17 +20,19 @@ import com.beta.cls.angelcar.R;
  * โดย nuuneoi Android Developer
  * ลงวันที่ 11/16/2014. เวลา 11:42
  ***************************************/
+
 public class PhotoFragment extends Fragment {
 
     ImageView photo;
-
+    PictureAllDao gao;
     public PhotoFragment() {
         super();
     }
 
-    public static PhotoFragment newInstance() {
+    public static PhotoFragment newInstance(PictureAllDao gao) {
         PhotoFragment fragment = new PhotoFragment();
         Bundle args = new Bundle();
+        args.putParcelable("PictureAllDao", Parcels.wrap(gao));
         fragment.setArguments(args);
         return fragment;
     }
@@ -50,13 +56,20 @@ public class PhotoFragment extends Fragment {
 
     private void init(Bundle savedInstanceState) {
         // Init Fragment level's variable(s) here
+        gao = Parcels.unwrap(getArguments().getParcelable("PictureAllDao"));
+
+
     }
 
-    @SuppressWarnings("UnusedParameters")
     private void initInstances(View rootView, Bundle savedInstanceState) {
+       photo = (ImageView) rootView.findViewById(R.id.detail_photo);
        if (savedInstanceState == null){
-           photo = (ImageView) rootView.findViewById(R.id.detail_photo);
-
+           String urlImage = gao.getCarImagePath()
+                   .replace("chatcarimage","thumbnailcarimages");
+           Picasso.with(getContext())
+                   .load("http://angelcar.com/"+urlImage)
+                   .placeholder(R.drawable.loading)
+                   .into(photo);
        }
     }
 
@@ -82,7 +95,6 @@ public class PhotoFragment extends Fragment {
     /*
      * Restore Instance State Here
      */
-    @SuppressWarnings("UnusedParameters")
     private void onRestoreInstanceState(Bundle savedInstanceState) {
         // Restore Instance State here
     }

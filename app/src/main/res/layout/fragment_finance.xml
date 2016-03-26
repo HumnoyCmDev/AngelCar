@@ -20,7 +20,7 @@
                 android:layout_margin="4dp"
                 android:layout_width="95dp"
                 android:layout_height="95dp"
-                android:src="@drawable/profile_car" />
+                android:src="@drawable/bg_img_load" />
 
             <TextView
                 android:textSize="14sp"

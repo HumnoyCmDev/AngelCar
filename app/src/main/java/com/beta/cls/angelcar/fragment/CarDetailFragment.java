@@ -1,43 +1,30 @@
 package com.beta.cls.angelcar.fragment;
 
 
-import android.app.Dialog;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
-import android.widget.NumberPicker;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.beta.cls.angelcar.Adapter.CustomAdapterGridDetail;
 import com.beta.cls.angelcar.R;
 import com.beta.cls.angelcar.activity.PostActivity;
-import com.beta.cls.angelcar.gao.CarDetailGao;
-import com.beta.cls.angelcar.gao.CarDetailCollectionGao;
+import com.beta.cls.angelcar.dao.CarDetailCollectionDao;
 import com.beta.cls.angelcar.interfaces.OnSelectData;
 import com.beta.cls.angelcar.manager.bus.BusProvider;
 import com.beta.cls.angelcar.model.InformationFromUser;
 import com.google.gson.Gson;
-import com.squareup.otto.Produce;
 import com.squareup.otto.Subscribe;
 
 import org.parceler.Parcels;
 
 import java.io.IOException;
-import java.util.Calendar;
-import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -55,7 +42,7 @@ public class CarDetailFragment extends Fragment {
 
     private CustomAdapterGridDetail mAdapter;
 
-    CarDetailCollectionGao gao;
+    CarDetailCollectionDao gao;
     private InformationFromUser user;
 
     private static final String TAG = "CarDetailFragment";
@@ -112,7 +99,7 @@ public class CarDetailFragment extends Fragment {
 
     private void showData(String jsonString) {
         Gson gson = new Gson();
-        gao = gson.fromJson(jsonString, CarDetailCollectionGao.class);
+        gao = gson.fromJson(jsonString, CarDetailCollectionDao.class);
         mAdapter = new CustomAdapterGridDetail(getActivity(), gao.getRows());
         mGridView.setAdapter(mAdapter);
     }

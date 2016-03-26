@@ -7,6 +7,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -26,15 +27,15 @@ import com.beta.cls.angelcar.Adapter.ListViewPostAdapter;
 import com.beta.cls.angelcar.activity.DetailCarActivity;
 import com.beta.cls.angelcar.R;
 import com.beta.cls.angelcar.anim.ResizeHeight;
-import com.beta.cls.angelcar.gao.CountCarCollectionGao;
-import com.beta.cls.angelcar.gao.PostCarCollectionGao;
-import com.beta.cls.angelcar.gao.PostCarGao;
-import com.beta.cls.angelcar.manager.http.HttpChatManager;
+import com.beta.cls.angelcar.dao.CountCarCollectionDao;
+import com.beta.cls.angelcar.dao.PostCarCollectionDao;
+import com.beta.cls.angelcar.dao.PostCarDao;
+import com.beta.cls.angelcar.manager.Registration;
+import com.beta.cls.angelcar.manager.http.HttpManager;
 
 import org.parceler.Parcels;
 
 import java.io.IOException;
-import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -57,7 +58,7 @@ public class HomeFragment extends Fragment {
 
     private static final String TAG = "HomeFragment";
 
-    private PostCarCollectionGao gao;
+    private PostCarCollectionDao gao;
     private ListViewPostAdapter adapter;
 
     public HomeFragment() {
@@ -138,13 +139,13 @@ public class HomeFragment extends Fragment {
 
     private void loadData(){
 
-        Call<PostCarCollectionGao> call =
-                HttpChatManager.getInstance().getService().loadPost();
+        Call<PostCarCollectionDao> call =
+                HttpManager.getInstance().getService().loadPost();
         call.enqueue(callbackLoadPostCar);
 
         // load count car
-        Call<CountCarCollectionGao> callLoadCountCar =
-                HttpChatManager.getInstance().getService().loadCountCar();
+        Call<CountCarCollectionDao> callLoadCountCar =
+                HttpManager.getInstance().getService().loadCountCar();
         callLoadCountCar.enqueue(countCarCallback);
     }
 
@@ -177,22 +178,37 @@ public class HomeFragment extends Fragment {
     AdapterView.OnItemClickListener onItemClickListViewListener = new AdapterView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            PostCarGao item = gao.getRows().get(position);
-            Intent intent = new Intent(getActivity(), DetailCarActivity.class);
-            intent.putExtra("PostCarGao", Parcels.wrap(item));
-            startActivity(intent);
+            if (Registration.getInstance().getUserId() != null) {
+                PostCarDao item = gao.getRows().get(position);
+                Intent intent = new Intent(getActivity(), DetailCarActivity.class);
+                intent.putExtra("PostCarDao", Parcels.wrap(item));
+                intent.putExtra("intentForm", 0);
+                intent.putExtra("messageFromUser",Registration.getInstance().getUserId());
+                startActivity(intent);
+            }else {
+                FragmentTransaction ft = getFragmentManager().beginTransaction();
+                Fragment prev = getFragmentManager().findFragmentByTag("RegistrationAlertFragment");
+                if (prev != null) {
+                    ft.remove(prev);
+                }
+                ft.addToBackStack(null);
+                RegistrationAlertFragment fragment = RegistrationAlertFragment.newInstance();
+                fragment.setCancelable(false);
+                fragment.show(ft, "RegistrationAlertFragment");
+            }
 
         }
     };
 
-    Callback<PostCarCollectionGao> callbackLoadPostCar = new Callback<PostCarCollectionGao>() {
+    Callback<PostCarCollectionDao> callbackLoadPostCar = new Callback<PostCarCollectionDao>() {
         @Override
-        public void onResponse(Call<PostCarCollectionGao> call, Response<PostCarCollectionGao> response) {
+        public void onResponse(Call<PostCarCollectionDao> call, Response<PostCarCollectionDao> response) {
             mSwipeRefresh.setRefreshing(false);
-            if (response.isSuccess()) {
+            if (response.isSuccessful()) {
                 gao = response.body();
                 adapter.setGao(response.body());
                 adapter.notifyDataSetChanged();
+//                adapter.getFilter().filter("toyota");
             } else {
                 Toast.makeText(getActivity(),
                         response.errorBody().toString(),
@@ -201,7 +217,7 @@ public class HomeFragment extends Fragment {
         }
 
         @Override
-        public void onFailure(Call<PostCarCollectionGao> call, Throwable t) {
+        public void onFailure(Call<PostCarCollectionDao> call, Throwable t) {
             mSwipeRefresh.setRefreshing(false);
             Toast.makeText(getActivity(),
                     t.toString(),
@@ -209,11 +225,11 @@ public class HomeFragment extends Fragment {
         }
     };
 
-    Callback<CountCarCollectionGao> countCarCallback = new Callback<CountCarCollectionGao>() {
+    Callback<CountCarCollectionDao> countCarCallback = new Callback<CountCarCollectionDao>() {
         @Override
-        public void onResponse(Call<CountCarCollectionGao> call, Response<CountCarCollectionGao> response) {
-            if (response.isSuccess()) {
-                CountCarCollectionGao.CountCarGao countCarGao = response.body().getRows().get(0);
+        public void onResponse(Call<CountCarCollectionDao> call, Response<CountCarCollectionDao> response) {
+            if (response.isSuccessful()) {
+                CountCarCollectionDao.CountCarGao countCarGao = response.body().getRows().get(0);
                 countCarAll.setText("ทั้งหมด " + countCarGao.getCountAll() + " คัน");
                 countCarMonth.setText("เดือนนี้ " + countCarGao.getCountMonth() + " คัน");
                 countCarDay.setText("วันนี้ " + countCarGao.getCountDay() + " คัน");
@@ -227,7 +243,7 @@ public class HomeFragment extends Fragment {
         }
 
         @Override
-        public void onFailure(Call<CountCarCollectionGao> call, Throwable t) {
+        public void onFailure(Call<CountCarCollectionDao> call, Throwable t) {
             Log.e(TAG, "onFailure: ", t);
         }
     };

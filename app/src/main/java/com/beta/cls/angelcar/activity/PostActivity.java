@@ -4,22 +4,19 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentStatePagerAdapter;
-import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
-import android.widget.Toast;
 
 import com.beta.cls.angelcar.R;
-import com.beta.cls.angelcar.fragment.AllPostFragment;
+import com.beta.cls.angelcar.fragment.PostFragment;
 import com.beta.cls.angelcar.fragment.BrandFragment;
 import com.beta.cls.angelcar.fragment.CarDetailFragment;
 import com.beta.cls.angelcar.fragment.CarTypeFragment;
 import com.beta.cls.angelcar.interfaces.OnSelectData;
-import com.beta.cls.angelcar.model.InformationFromUser;
 import com.beta.cls.angelcar.view.AngelCarViewPager;
+import com.viewpagerindicator.LinePageIndicator;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -40,6 +37,7 @@ public class PostActivity extends AppCompatActivity implements OnSelectData{
     int lastPosition = 3;
 
     @Bind(R.id.post_viewpager) AngelCarViewPager angelCarViewPager;
+    @Bind(R.id.indicator) LinePageIndicator indicator;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -51,7 +49,7 @@ public class PostActivity extends AppCompatActivity implements OnSelectData{
                     new PostAdapterViewpager(getSupportFragmentManager());
             angelCarViewPager.setAdapter(adapter);
             angelCarViewPager.setPagingEnabled(false);
-
+            indicator.setViewPager(angelCarViewPager);
 
 
     }
@@ -78,7 +76,7 @@ public class PostActivity extends AppCompatActivity implements OnSelectData{
 
     }
 
-    class PostAdapterViewpager extends FragmentStatePagerAdapter{
+    private class PostAdapterViewpager extends FragmentStatePagerAdapter{
 
         int numPager = 4;
 
@@ -92,7 +90,7 @@ public class PostActivity extends AppCompatActivity implements OnSelectData{
                 case 0: return new BrandFragment();
                 case 1: return new CarTypeFragment();
                 case 2: return new CarDetailFragment();
-                case 3: return new AllPostFragment();
+                case 3: return new PostFragment();
                 default:return new BrandFragment();
             }
         }

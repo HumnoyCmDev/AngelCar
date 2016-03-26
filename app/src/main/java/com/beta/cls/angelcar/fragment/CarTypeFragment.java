@@ -17,14 +17,13 @@ import android.widget.GridView;
 
 
 import com.beta.cls.angelcar.activity.PostActivity;
-import com.beta.cls.angelcar.gao.CarDataTypeCollectionGao;
+import com.beta.cls.angelcar.dao.CarDataTypeCollectionDao;
 import com.beta.cls.angelcar.Adapter.CustomAdapterGridSub;
 import com.beta.cls.angelcar.R;
 import com.beta.cls.angelcar.interfaces.OnSelectData;
 import com.beta.cls.angelcar.manager.bus.BusProvider;
-import com.beta.cls.angelcar.manager.http.ApiChatService;
-import com.beta.cls.angelcar.manager.http.ApiService;
-import com.beta.cls.angelcar.manager.http.HttpManager;
+import com.beta.cls.angelcar.manager.http.ApiCarService;
+import com.beta.cls.angelcar.manager.http.HttpUsedCarManager;
 import com.beta.cls.angelcar.model.InformationFromUser;
 import com.squareup.otto.Subscribe;
 
@@ -51,7 +50,7 @@ public class CarTypeFragment extends Fragment {
     private CustomAdapterGridSub mAdapter;
     private InformationFromUser user;
 
-    CarDataTypeCollectionGao gao;
+    CarDataTypeCollectionDao gao;
 
     public static CarTypeFragment newInstance() {
         CarTypeFragment fragment = new CarTypeFragment();
@@ -131,8 +130,8 @@ public class CarTypeFragment extends Fragment {
     @Subscribe
     public void getProduceData(InformationFromUser user){
         this.user = user;
-        ApiService server = HttpManager.getInstance().getService();
-        Call<CarDataTypeCollectionGao> call = server.loadCarType(user.getBrand());
+        ApiCarService server = HttpUsedCarManager.getInstance().getService();
+        Call<CarDataTypeCollectionDao> call = server.loadCarType(user.getBrand());
         call.enqueue(carDataTypeCollectionGaoCallback);
     }
 
@@ -140,7 +139,7 @@ public class CarTypeFragment extends Fragment {
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putParcelable(SAVE_INSTANCE_USER_INFO,Parcels.wrap(user));
-        if (gao == null) gao = new CarDataTypeCollectionGao();
+        if (gao == null) gao = new CarDataTypeCollectionDao();
         outState.putParcelable(SAVE_INSTANCE_CAT_TYPE_SUB,Parcels.wrap(gao));
     }
 
@@ -154,10 +153,10 @@ public class CarTypeFragment extends Fragment {
         }
     };
 
-    Callback<CarDataTypeCollectionGao> carDataTypeCollectionGaoCallback = new Callback<CarDataTypeCollectionGao>() {
+    Callback<CarDataTypeCollectionDao> carDataTypeCollectionGaoCallback = new Callback<CarDataTypeCollectionDao>() {
         @Override
-        public void onResponse(Call<CarDataTypeCollectionGao> call, Response<CarDataTypeCollectionGao> response) {
-            if (response.isSuccess()) {
+        public void onResponse(Call<CarDataTypeCollectionDao> call, Response<CarDataTypeCollectionDao> response) {
+            if (response.isSuccessful()) {
                 gao = response.body();
                 mAdapter = new CustomAdapterGridSub(gao.getRows());
                 mGridView.setAdapter(mAdapter);
@@ -171,7 +170,7 @@ public class CarTypeFragment extends Fragment {
         }
 
         @Override
-        public void onFailure(Call<CarDataTypeCollectionGao> call, Throwable t) {
+        public void onFailure(Call<CarDataTypeCollectionDao> call, Throwable t) {
             Log.e(TAG, "onFailure: ", t);
         }
     };

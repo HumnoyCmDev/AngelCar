@@ -1,6 +1,5 @@
 package com.beta.cls.angelcar.fragment;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -13,33 +12,32 @@ import android.widget.ListView;
 
 import com.beta.cls.angelcar.Adapter.MessageAdapter;
 import com.beta.cls.angelcar.R;
-import com.beta.cls.angelcar.activity.ChatActivity;
-import com.beta.cls.angelcar.gao.MessageAdminCollectionGao;
-import com.beta.cls.angelcar.gao.MessageGao;
+import com.beta.cls.angelcar.dao.CarIdDao;
+import com.beta.cls.angelcar.dao.MessageAdminCollectionDao;
+import com.beta.cls.angelcar.dao.MessageDao;
+import com.beta.cls.angelcar.dao.PostCarCollectionDao;
+import com.beta.cls.angelcar.manager.CallbackLoadCarModel;
 import com.beta.cls.angelcar.manager.MessageManager;
-import com.beta.cls.angelcar.manager.http.ApiChatService;
-import com.beta.cls.angelcar.manager.http.HttpChatManager;
+import com.beta.cls.angelcar.manager.Registration;
+import com.beta.cls.angelcar.manager.http.HttpManager;
 
-
-import org.parceler.Parcels;
 
 import java.io.IOException;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import retrofit2.Call;
+import retrofit2.Callback;
 import retrofit2.Response;
 
 /**
  * Created by humnoy on 26/1/59.
  */
 public class ChatBuyFragment extends Fragment {
-    public static final String ARGS_MESSAGE_BY = "shop";
+//    public static final String ARGS_MESSAGE_BY = "shop";
 
-    @Bind(R.id.list_view)
-    ListView listView;
+    @Bind(R.id.list_view) ListView listView;
 
-//    MessageAdminCollectionGao gao;
     MessageAdapter adapter;
     MessageManager messageManager;
 
@@ -74,34 +72,10 @@ public class ChatBuyFragment extends Fragment {
     }
 
     private void loadMessage() {
-        ApiChatService server = HttpChatManager.getInstance().getService();
-        Call<MessageAdminCollectionGao> call = server.messageAdmin("27");
-        call.enqueue(new retrofit2.Callback<MessageAdminCollectionGao>() {
-            @Override
-            public void onResponse(Call<MessageAdminCollectionGao> call, Response<MessageAdminCollectionGao> response) {
-                if (response.isSuccess()){
-
-                    messageManager.setMessageGao(response.body()
-                            .getMessageAdminGao()
-                            .convertToMessageCollectionGao());
-                    adapter.setGao(messageManager.getMessageGao().getMessage());
-                    adapter.notifyDataSetChanged();
-
-                }else {
-                    try {
-                        Log.i(TAG, "onResponse: error"+response.errorBody().string());
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-
-            @Override
-            public void onFailure(Call<MessageAdminCollectionGao> call, Throwable t) {
-                Log.e(TAG, "onFailure: ", t);
-            }
-        });
-
+        Call<CarIdDao> loadCarId =
+                HttpManager.getInstance().getService().loadCarId(
+                        Registration.getInstance().getShopRef());
+        loadCarId.enqueue(carIdDaoCallback);
 
     }
 
@@ -109,14 +83,11 @@ public class ChatBuyFragment extends Fragment {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                MessageGao messageGao =
-                        messageManager.getMessageGao()
-                                .getMessage().get(position);
-
-                Intent intent = new Intent(getActivity(), ChatActivity.class);
-                intent.putExtra("messageBy",ARGS_MESSAGE_BY);
-                intent.putExtra("MessageGao", Parcels.wrap(messageGao));
-                startActivity(intent);
+                MessageDao messageDao =
+                        messageManager.getMessageDao().getMessage().get(position);
+                Call<PostCarCollectionDao> call =
+                        HttpManager.getInstance().getService().loadCarModel(messageDao.getMessageCarId());
+                call.enqueue(new CallbackLoadCarModel(getContext(),messageDao.getMessageFromUser()));
             }
         });
     }
@@ -134,5 +105,61 @@ public class ChatBuyFragment extends Fragment {
         super.onStop();
 //        BusProvider.getInstance().unregister(this);
     }
+
+    /**************
+    *Listener Zone*
+    ***************/
+    Callback<CarIdDao> carIdDaoCallback = new Callback<CarIdDao>() {
+        @Override
+        public void onResponse(Call<CarIdDao> call, Response<CarIdDao> response) {
+            if (response.isSuccessful()) {
+                Call<MessageAdminCollectionDao> callMessageAdmin =
+                        HttpManager.getInstance().getService()
+                                .messageAdmin(response.body().getAllCarId());
+                callMessageAdmin.enqueue(adminCollectionDaoCallback);
+            }else {
+                try {
+                    Log.i(TAG, "onResponse: "+response.errorBody().string());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        @Override
+        public void onFailure(Call<CarIdDao> call, Throwable t) {
+            Log.e(TAG, "onFailure: ", t);
+        }
+    };
+
+    Callback<MessageAdminCollectionDao> adminCollectionDaoCallback = new Callback<MessageAdminCollectionDao>() {
+        @Override
+        public void onResponse(Call<MessageAdminCollectionDao> call, Response<MessageAdminCollectionDao> response) {
+            if (response.isSuccessful()) {
+                messageManager.setMessageDao(response.body()
+                        .getMessageAdminGao()
+                        .convertToMessageCollectionGao());
+                adapter.setGao(messageManager.getMessageDao().getMessage());
+                adapter.notifyDataSetChanged();
+
+            } else {
+                try {
+                    Log.i(TAG, "onResponse: error" + response.errorBody().string());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        @Override
+        public void onFailure(Call<MessageAdminCollectionDao> call, Throwable t) {
+            Log.e(TAG, "onFailure: ", t);
+        }
+    };
+
+    /******************
+     *Inner Class Zone*
+     ******************/
+
 }
 

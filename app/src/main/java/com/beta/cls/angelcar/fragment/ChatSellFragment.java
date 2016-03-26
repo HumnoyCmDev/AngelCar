@@ -1,6 +1,5 @@
 package com.beta.cls.angelcar.fragment;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -13,16 +12,14 @@ import android.widget.ListView;
 
 import com.beta.cls.angelcar.Adapter.MessageAdapter;
 import com.beta.cls.angelcar.R;
-import com.beta.cls.angelcar.activity.ChatActivity;
-import com.beta.cls.angelcar.gao.MessageCollectionGao;
-import com.beta.cls.angelcar.gao.MessageGao;
-import com.beta.cls.angelcar.manager.http.ApiChatService;
-import com.beta.cls.angelcar.manager.http.HttpChatManager;
-
-import org.parceler.Parcels;
+import com.beta.cls.angelcar.dao.MessageCollectionDao;
+import com.beta.cls.angelcar.dao.MessageDao;
+import com.beta.cls.angelcar.dao.PostCarCollectionDao;
+import com.beta.cls.angelcar.manager.CallbackLoadCarModel;
+import com.beta.cls.angelcar.manager.Registration;
+import com.beta.cls.angelcar.manager.http.HttpManager;
 
 import java.io.IOException;
-import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -33,16 +30,12 @@ import retrofit2.Response;
  * Created by humnoy on 26/1/59.
  */
 public class ChatSellFragment extends Fragment {
-    public static final String ARGS_MESSAGE_BY = "user";
-    @Bind(R.id.list_view)
-    ListView listView;
+//    public static final String ARGS_MESSAGE_BY = "user";
+    @Bind(R.id.list_view) ListView listView;
 
-//    private List<BlogMessage> message;
 
     MessageAdapter adapter;
-    MessageCollectionGao gao;
-
-//    MessageManager messageManager;
+    MessageCollectionDao gao;
 
 
     private static final String TAG = "ChatSellFragment";
@@ -70,29 +63,18 @@ public class ChatSellFragment extends Fragment {
         if (savedInstanceState == null) {
             initMessage();
         }
-
-        initListener();
+        listView.setOnItemClickListener(onItemClickListener);
     }
 
-    private void initListener() {
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                MessageGao messageGao = gao.getMessage().get(position);
-                Intent intent = new Intent(getActivity(), ChatActivity.class);
-                intent.putExtra("messageBy",ARGS_MESSAGE_BY);
-                intent.putExtra("MessageGao", Parcels.wrap(messageGao));
-                startActivity(intent);
-            }
-        });
-    }
+
     private void initMessage() {
 
-        ApiChatService call = HttpChatManager.getInstance().getService();
-        call.messageClient("2016010700001").enqueue(new retrofit2.Callback<MessageCollectionGao>() {
+        HttpManager.getInstance().getService()
+                .messageClient(Registration.getInstance().getUserId())
+                .enqueue(new retrofit2.Callback<MessageCollectionDao>() {
             @Override
-            public void onResponse(Call<MessageCollectionGao> call, Response<MessageCollectionGao> response) {
-               if (response.isSuccess()) {
+            public void onResponse(Call<MessageCollectionDao> call, Response<MessageCollectionDao> response) {
+               if (response.isSuccessful()) {
                    gao = response.body();
                    adapter.setGao(gao.getMessage());
                    adapter.notifyDataSetChanged();
@@ -106,7 +88,7 @@ public class ChatSellFragment extends Fragment {
             }
 
             @Override
-            public void onFailure(Call<MessageCollectionGao> call, Throwable t) {
+            public void onFailure(Call<MessageCollectionDao> call, Throwable t) {
                 Log.i(TAG, "onResponse: "+t.toString());
             }
         });
@@ -123,5 +105,22 @@ public class ChatSellFragment extends Fragment {
     public void onPause() {
         super.onPause();
     }
+
+    /***************
+     *Listener Zone*
+     ***************/
+    AdapterView.OnItemClickListener onItemClickListener = new AdapterView.OnItemClickListener() {
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            MessageDao messageDao = gao.getMessage().get(position);
+            Call<PostCarCollectionDao> call =
+                    HttpManager.getInstance().getService().loadCarModel(messageDao.getMessageCarId());
+            call.enqueue(new CallbackLoadCarModel(getContext(),messageDao.getMessageFromUser()));
+        }
+    };
+
+    /*****************
+    *Inner Class Zone*
+    ******************/
 
 }
