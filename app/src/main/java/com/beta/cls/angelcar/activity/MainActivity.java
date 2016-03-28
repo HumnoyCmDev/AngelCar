@@ -1,5 +1,6 @@
 package com.beta.cls.angelcar.activity;
 
+import android.accounts.AccountManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -33,6 +34,8 @@ import com.beta.cls.angelcar.manager.Registration;
 import com.beta.cls.angelcar.manager.bus.BusProvider;
 import com.beta.cls.angelcar.manager.http.HttpManager;
 import com.beta.cls.angelcar.util.RegistrationResult;
+import com.google.android.gms.auth.GoogleAuthUtil;
+import com.google.android.gms.common.AccountPicker;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.squareup.otto.Subscribe;
@@ -47,6 +50,7 @@ import retrofit2.Response;
 public class MainActivity extends AppCompatActivity {
 
     private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
+    private static final int EMAIL_RESOLUTION_REQUEST = 333;
     private boolean isReceiverRegistered;
 
     @Bind(R.id.toolbar_top) Toolbar toolbar;
@@ -77,6 +81,16 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == EMAIL_RESOLUTION_REQUEST && resultCode == RESULT_OK) {
+            String accountName = data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME);
+            Toast.makeText(MainActivity.this,accountName,Toast.LENGTH_LONG).show();
+            Call<RegisterResultDao> call = HttpManager.getInstance().getService().registrationEmail(accountName);
+            call.enqueue(callbackRegistrationEmail);
+        }
+    }
+
     private void initInstance() {
         boolean first = Registration.getInstance().isFirstApp();
         checkRegistrationEmail(first);
@@ -84,15 +98,18 @@ public class MainActivity extends AppCompatActivity {
 
     private void checkRegistrationEmail(boolean first_init) {
         if (!first_init){
-            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-            Fragment prev = getSupportFragmentManager().findFragmentByTag("RegistrationAlertFragment");
-            if (prev != null) {
-                ft.remove(prev);
-            }
-            ft.addToBackStack(null);
-            RegistrationAlertFragment fragment = RegistrationAlertFragment.newInstance();
-            fragment.setCancelable(false);
-            fragment.show(ft, "RegistrationAlertFragment");
+//            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+//            Fragment prev = getSupportFragmentManager().findFragmentByTag("RegistrationAlertFragment");
+//            if (prev != null) {
+//                ft.remove(prev);
+//            }
+//            ft.addToBackStack(null);
+//            RegistrationAlertFragment fragment = RegistrationAlertFragment.newInstance();
+//            fragment.setCancelable(false);
+//            fragment.show(ft, "RegistrationAlertFragment");
+            Intent googlePicker =
+                    AccountPicker.newChooseAccountIntent(null, null, new String[]{GoogleAuthUtil.GOOGLE_ACCOUNT_TYPE}, true, null, null, null, null);
+            startActivityForResult(googlePicker, EMAIL_RESOLUTION_REQUEST);
         }else {
             // กรณีลงทะเบียนแล้วให้ เช็ค cache // หากไม่พบ ให้ Registration Email
             String cache_User = Registration.getInstance().getUserId();
@@ -102,7 +119,8 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    @Subscribe
+
+    @Subscribe //Produce form RegistrationAlertFragment.java
     public void onRegistrationEmail(RegistrationResult result){
         if (result.getResult() == RegistrationAlertFragment.REGISTRATION_OK){
             // ติดต่อ server

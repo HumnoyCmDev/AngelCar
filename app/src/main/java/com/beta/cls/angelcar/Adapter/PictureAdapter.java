@@ -10,6 +10,7 @@ import com.beta.cls.angelcar.dao.PictureAllCollectionDao;
 /**
  * Created by ABaD on 12/2/2015.
  */
+@Deprecated
 public class PictureAdapter extends FragmentPagerAdapter {
     private PictureAllCollectionDao gao;
 

@@ -9,6 +9,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Filter;
+import android.widget.Filterable;
 
 import com.beta.cls.angelcar.R;
 
@@ -19,35 +21,49 @@ public class ShopActivity extends AppCompatActivity {
 
     @Bind(R.id.recycler_car) RecyclerView recyclerCar;
     @Bind(R.id.toolbar) Toolbar toolbar;
+    private GridLayoutManager manager;
+    private ShopItemAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_shop);
         ButterKnife.bind(this);
-        setSupportActionBar(toolbar);
-        if (getSupportActionBar() != null)
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-        final GridLayoutManager manager = new GridLayoutManager(this,3);
-
-
-        recyclerCar.setLayoutManager(manager);
-        final ShopItemAdapter adapter = new ShopItemAdapter();
-        recyclerCar.setAdapter(adapter);
-
-        manager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
-            @Override
-            public int getSpanSize(int position) {
-                //กำหนด จำนวน item ใน grid
-                return adapter.isHeader(position) ? manager.getSpanCount() : 1;
-            }
-        });
+        initToolbar();
+        initInstance();
 
     }
 
+    private void initInstance() {
+       manager = new GridLayoutManager(this,3);
+        recyclerCar.setLayoutManager(manager);
+        adapter = new ShopItemAdapter();
+        recyclerCar.setAdapter(adapter);
+        manager.setSpanSizeLookup(spanSizeLookupManager);
+    }
 
-    public class ShopItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
+    private void initToolbar() {
+        setSupportActionBar(toolbar);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
+    }
+
+    /***************
+     *Listener Zone*
+     ***************/
+    GridLayoutManager.SpanSizeLookup spanSizeLookupManager = new GridLayoutManager.SpanSizeLookup() {
+        @Override
+        public int getSpanSize(int position) {
+            //กำหนด จำนวน item ใน grid
+            return adapter.isHeader(position) ? manager.getSpanCount() : 1;
+        }
+    };
+
+    /*****************
+    *Inner Class Zone*
+    ******************/
+    public class ShopItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements Filterable {
         private static final int ITEM_VIEW_TYPE_HEADER = 0;
         private static final int ITEM_VIEW_TYPE_ITEM = 1;
 
@@ -86,6 +102,11 @@ public class ShopActivity extends AppCompatActivity {
             return 50+1;
         }
 
+        @Override
+        public Filter getFilter() {
+            return null;
+        }
+
         public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
             public ViewHolder(View itemView) {
                 super(itemView);
@@ -104,5 +125,7 @@ public class ShopActivity extends AppCompatActivity {
                 super(itemView);
             }
         }
+
+
     }
 }

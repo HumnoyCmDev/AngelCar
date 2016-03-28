@@ -1,10 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
-    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
@@ -17,38 +13,32 @@
             app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
             app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar" />
 
-        <!--<ScrollView-->
-            <!--android:fillViewport="true"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="match_parent">-->
+        <ScrollView
+            android:fillViewport="true"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
 
-        <!--&lt;!&ndash;Main Group&ndash;&gt;-->
-        <!--<LinearLayout-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="match_parent"-->
-            <!--android:orientation="vertical">-->
+        <!--Main Group-->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
-            <RelativeLayout
+
+            <com.beta.cls.angelcar.banner.DetailImageBanner
+                android:id="@+id/detailImage"
                 android:layout_width="match_parent"
-                android:layout_height="256dp"
-                android:layout_margin="10dp">
+                android:layout_height="207dp"
+                app:bb_barColor="#88000000"
+                app:bb_delay="2"
+                app:bb_period="10"
+                app:bb_scale="0.5625"/>
 
-                <android.support.v4.view.ViewPager
-                    android:id="@+id/viewpager"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    app:layout_collapseMode="parallax" />
-
-                <com.viewpagerindicator.LinePageIndicator
-                    android:id="@+id/indicator"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="10dp"
-                    app:selectedColor="#FF0000"
-                    app:unselectedColor="#000000" />
-
-            </RelativeLayout>
             <!--ListView-->
             <ListView
                 android:id="@+id/list_view"
@@ -68,8 +58,7 @@
             <LinearLayout
                 android:id="@+id/group_chat"
                 android:layout_width="match_parent"
-                android:layout_height="5dp"
-                android:layout_weight="0.2"
+                android:layout_height="wrap_content"
                 android:gravity="center"
                 android:orientation="horizontal"
                 android:padding="5dp">
@@ -107,23 +96,23 @@
                     android:background="@drawable/ic_send_message"
                     android:padding="5dp" />
             </LinearLayout>
-
         </LinearLayout>
 
-        <!--</ScrollView>-->
-    <!--</LinearLayout>-->
+            <ToggleButton
+                android:elevation="5dp"
+                android:id="@+id/button_follow"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="14dp"
+                android:layout_marginTop="170dp"
+                android:background="@drawable/selector_button_follow"
+                android:text=""
+                android:textOff=""
+                android:textOn="" />
 
-    <ToggleButton
-        android:id="@+id/button_follow"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:layout_alignParentRight="true"
-        android:layout_marginRight="14dp"
-        android:layout_marginTop="293dp"
-        android:background="@drawable/selector_button_follow"
-        android:text=""
-        android:textOff=""
-        android:textOn="" />
+        </RelativeLayout>
+        </ScrollView>
 
-</RelativeLayout>
+</LinearLayout>
 

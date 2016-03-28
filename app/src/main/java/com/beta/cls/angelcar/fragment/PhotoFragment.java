@@ -20,7 +20,7 @@ import org.parceler.Parcels;
  * โดย nuuneoi Android Developer
  * ลงวันที่ 11/16/2014. เวลา 11:42
  ***************************************/
-
+@Deprecated
 public class PhotoFragment extends Fragment {
 
     ImageView photo;

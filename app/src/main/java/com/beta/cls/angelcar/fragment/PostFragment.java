@@ -35,6 +35,7 @@ import com.beta.cls.angelcar.manager.http.HttpManager;
 import com.beta.cls.angelcar.model.InformationFromUser;
 import com.beta.cls.angelcar.util.LineUp;
 import com.squareup.otto.Subscribe;
+import com.squareup.picasso.Picasso;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -256,7 +257,7 @@ public class PostFragment extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == RESULT_LOAD_IMAGE && resultCode == -1 && null != data) {
+        if (requestCode == RESULT_LOAD_IMAGE && resultCode == getActivity().RESULT_OK && null != data) {
             Uri selectedImage = data.getData();
             String[] filePathColumn = {MediaStore.Images.Media.DATA};
             Cursor cursor = getActivity().getContentResolver().query(selectedImage, filePathColumn, null, null, null);
@@ -272,7 +273,7 @@ public class PostFragment extends Fragment {
             filesPhotoList.put(id_photo,file);
             photo.get(id_photo).setImageBitmap(
                     decodeFile(filesPhotoList.get(id_photo)));
-
+//            Picasso.with(getContext()).load(file).into(photo.get(id_photo));
         }
 
     }
@@ -345,7 +346,7 @@ public class PostFragment extends Fragment {
             o.inJustDecodeBounds = true;
             BitmapFactory.decodeStream(new FileInputStream(f), null, o);
             // The new size we want to scale to
-            final int REQUIRED_SIZE=50;
+            final int REQUIRED_SIZE = 50;
             // Find the correct scale value. It should be the power of 2.
             int scale = 1;
             while(o.outWidth / scale / 2 >= REQUIRED_SIZE &&

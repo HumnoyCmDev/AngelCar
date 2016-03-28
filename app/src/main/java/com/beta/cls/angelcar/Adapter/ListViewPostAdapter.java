@@ -103,7 +103,7 @@ public class ListViewPostAdapter extends BaseAdapter implements Filterable {
             String topic = LineUp.getInstance().subTopic(postItem.getCarDetail());
             String detail = LineUp.getInstance().subDetail(postItem.getCarDetail());
             String carName = postItem.getCarName();
-            String bast_url_image = postItem.getCarImagePath();
+            String bast_url_image = postItem.getCarImagePath() != null ? postItem.getCarImagePath():"";
             String urlImage = bast_url_image.replaceFirst("chatcarimage","thumbnailcarimages");
             holder.angelCarPost.setPictureProduct("http://angelcar.com/"+urlImage);
             holder.angelCarPost.setTitle(topic);

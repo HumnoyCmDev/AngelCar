@@ -11,7 +11,9 @@ import android.provider.MediaStore;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -22,6 +24,7 @@ import android.widget.ToggleButton;
 import com.beta.cls.angelcar.Adapter.MultipleListViewChatAdapter;
 import com.beta.cls.angelcar.Adapter.PictureAdapter;
 import com.beta.cls.angelcar.R;
+import com.beta.cls.angelcar.banner.DetailImageBanner;
 import com.beta.cls.angelcar.dao.FollowCollectionDao;
 import com.beta.cls.angelcar.dao.FollowDao;
 import com.beta.cls.angelcar.dao.LogFromServerDao;
@@ -37,6 +40,13 @@ import com.beta.cls.angelcar.manager.WaitMessageSynchronous;
 import com.beta.cls.angelcar.manager.bus.BusProvider;
 import com.beta.cls.angelcar.manager.http.HttpManager;
 import com.beta.cls.angelcar.manager.http.OkHttpManager;
+import com.beta.cls.angelcar.utils.ViewFindUtils;
+import com.flyco.banner.anim.select.RotateEnter;
+import com.flyco.banner.anim.select.ZoomInEnter;
+import com.flyco.banner.anim.unselect.NoAnimExist;
+import com.flyco.banner.transform.DepthTransformer;
+import com.flyco.banner.transform.ZoomOutSlideTransformer;
+import com.flyco.banner.widget.Banner.base.BaseBanner;
 import com.squareup.otto.Subscribe;
 import com.viewpagerindicator.LinePageIndicator;
 
@@ -57,23 +67,21 @@ import retrofit2.Response;
 public class DetailCarActivity extends AppCompatActivity {
     private static final int RESULT_LOAD_IMAGE = 988;
 
-//    @Bind(R.id.recycler_view) RecyclerView recyclerView;
     @Bind(R.id.list_view) ListView listView;
-    @Bind(R.id.viewpager) ViewPager viewPager;
     @Bind(R.id.input_chat) EditText input_chat;
-    @Bind(R.id.indicator) LinePageIndicator indicator;
     @Bind(R.id.group_chat) LinearLayout groupChat;
     @Bind(R.id.button_follow) ToggleButton buttonFollow;
+    @Bind(R.id.toolbar) Toolbar toolbar;
+
+    private View decorView;
     private String MESSAGE_BY = "shop";// shop & user
 
-//    MultipleChatAdapter adapter;
     MultipleListViewChatAdapter adapter;
 
     MessageManager messageManager ;
     WaitMessageSynchronous synchronous;
 
-    PictureAllCollectionDao gao;
-    PictureAdapter pictureAdapter;
+    PictureAllCollectionDao PictureDao;
     PostCarDao postItem;
 
     int intentForm; // 0 = form homeFragment , 1 = ChatAll,ChatBuy,ChatSell
@@ -86,8 +94,8 @@ public class DetailCarActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail_car);
         ButterKnife.bind(this);
-
-//        initToolbar();
+        decorView = getWindow().getDecorView();
+        initToolbar();
         initMessage();
         loadDataMessage();
         loadFollow();
@@ -152,8 +160,8 @@ public class DetailCarActivity extends AppCompatActivity {
     }
 
     private void initToolbar() {
+        setSupportActionBar(toolbar);
         if (getSupportActionBar() != null) {
-//        setSupportActionBar(toolbar);
             getSupportActionBar().setHomeButtonEnabled(true);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
@@ -168,12 +176,6 @@ public class DetailCarActivity extends AppCompatActivity {
                                 input_chat.getText().toString() + "||"+
                                 MESSAGE_BY).build();
                 okHttpManager.putMessage();
-//                okHttpManager.callEnqueue(new CallBackMainThread() {
-//                    @Override
-//                    public void onResponse(okhttp3.Response response) {
-//                        Toast.makeText(DetailCarActivity.this,"success",Toast.LENGTH_SHORT).show();
-//                    }
-//                });
                 input_chat.setText("");
 
             break;
@@ -282,6 +284,32 @@ public class DetailCarActivity extends AppCompatActivity {
         }
     }
 
+    private void pictureCarDetail(PictureAllCollectionDao dao) {
+        DetailImageBanner sib = ViewFindUtils.find(decorView, R.id.detailImage);
+
+        sib
+                .setTransformerClass(DepthTransformer.class)
+                .setSelectAnimClass(ZoomInEnter.class)
+                .setSource(dao.getRows())
+                .startScroll();
+
+        sib.setOnItemClickL(new BaseBanner.OnItemClickL() {
+            @Override
+            public void onItemClick(int position) {
+
+            }
+        });
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home){
+            onBackPressed();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
     /*********************
      *Listener Class Zone
      *********************/
@@ -316,15 +344,10 @@ public class DetailCarActivity extends AppCompatActivity {
         @Override
         public void onResponse(Call<PictureAllCollectionDao> call, Response<PictureAllCollectionDao> response) {
             if (response.isSuccessful()) {
-                gao = response.body();
-                pictureAdapter = new PictureAdapter(getSupportFragmentManager());
-                pictureAdapter.setGao(gao);
-                viewPager.setAdapter(pictureAdapter);
-                indicator.setViewPager(viewPager);
+                PictureDao = response.body();
+                //Picture banner
+                pictureCarDetail(response.body());
 
-                for (PictureAllDao s : response.body().getRows()) {
-                    Log.i(TAG, "onResponse: " + s.getCarImagePath());
-                }
             } else {
                 try {
                     Log.i(TAG, "onResponse: " + response.errorBody().string());

@@ -37,6 +37,7 @@ import retrofit2.Response;
 /**
  * Created by humnoy on 26/1/59.
  */
+// TODO แก้ไขการโหลดข้อมูล แชท Sell Buy ให้ดึงข้อมูลจากที่นี้เลย
 public class ChatAllFragment extends Fragment{
     @Bind(R.id.list_view)
     ListView listView;
@@ -44,7 +45,7 @@ public class ChatAllFragment extends Fragment{
 
     MessageManager messageManager;
     MessageAdapter adapter;
-    PostCarDao item;
+//    PostCarDao item;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
