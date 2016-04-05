@@ -1,4 +1,4 @@
-package com.beta.cls.angelcar.fragment;
+package com.beta.cls.angelcar.dialog;
 
 import android.app.Activity;
 import android.app.Dialog;
@@ -31,7 +31,7 @@ import butterknife.ButterKnife;
 /**
  * Created by humnoy on 24/2/59.
  */
-public class YearFragmentDialog extends DialogFragment{
+public class YearDialog extends DialogFragment{
     public static final String ARG_YEAR = "TAG_YEAR";
     @Bind(R.id.grid) GridView gridLayout;
 

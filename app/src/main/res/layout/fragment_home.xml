@@ -57,30 +57,33 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1.2"
-
             android:src="@drawable/fil_ter"
             />
     </LinearLayout>
-    <RelativeLayout
-        android:id="@+id/ctFilter"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:visibility="gone"
-        android:layout_weight="1"
-        android:animateLayoutChanges="false"
-        android:background="@color/colorPrimary"
-        >
-        <GridView
-            android:id="@+id/gridFilter"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:columnWidth="100dp"
-            android:numColumns="auto_fit"
-            android:stretchMode="columnWidth"
-            android:gravity="center"
-            />
 
-    </RelativeLayout>
+    <!--<RelativeLayout-->
+        <!--android:id="@+id/ctFilter"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="0dp"-->
+        <!--android:visibility="gone"-->
+        <!--android:layout_weight="1"-->
+        <!--android:animateLayoutChanges="false"-->
+        <!--android:background="@color/colorPrimary"-->
+        <!--&gt;-->
+        <!--<GridView-->
+            <!--android:id="@+id/gridFilter"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:columnWidth="100dp"-->
+            <!--android:numColumns="auto_fit"-->
+            <!--android:stretchMode="columnWidth"-->
+            <!--android:gravity="center"-->
+            <!--/>-->
+
+    <!--</RelativeLayout>-->
+
+    <include layout="@layout/filter_layout"/>
+
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/swipe_container"
         android:layout_width="match_parent"

@@ -1,14 +1,25 @@
 package com.beta.cls.angelcar.fragment;
 
+import android.Manifest;
+import android.annotation.TargetApi;
+import android.app.Activity;
+import android.content.ClipData;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -35,7 +46,6 @@ import com.beta.cls.angelcar.manager.http.HttpManager;
 import com.beta.cls.angelcar.model.InformationFromUser;
 import com.beta.cls.angelcar.util.LineUp;
 import com.squareup.otto.Subscribe;
-import com.squareup.picasso.Picasso;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -64,6 +74,8 @@ import retrofit2.Response;
  * ลงวันที่ 5/2/59. เวลา 10:41
  ***************************************/
 public class PostFragment extends Fragment {
+    private static final int REQUEST_CODE_ASK_PERMISSIONS = 1;
+    private static final int REQUEST_CODE_LOAD_IMAGE = 191;
     @Bind({
             R.id.post_photo_1,R.id.post_photo_2,
             R.id.post_photo_3,R.id.post_photo_4,
@@ -87,7 +99,6 @@ public class PostFragment extends Fragment {
     private static String ARG_InformationFromUser = "ARG_InformationFromUser";
     private static final MediaType MEDIA_TYPE_PNG = MediaType.parse("image/png");
 
-    int RESULT_LOAD_IMAGE = 191;
     int id_photo = 0;
     int id_province = 1;
     HashMap<Integer, File> filesPhotoList;
@@ -219,6 +230,7 @@ public class PostFragment extends Fragment {
        String name = editTextName.getText().toString(); // ชื่อ นามสกุล
 
         Call<LogFromServerDao> call = HttpManager.getInstance().getService().postCar(
+                "insert",
                 shopPref, carName, carDetail, carYear,
                 carPrice, carStatus, province, gear, plate, name);
         call.enqueue(postCallback);
@@ -257,26 +269,50 @@ public class PostFragment extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == RESULT_LOAD_IMAGE && resultCode == getActivity().RESULT_OK && null != data) {
-            Uri selectedImage = data.getData();
+        if (requestCode == REQUEST_CODE_LOAD_IMAGE && resultCode == Activity.RESULT_OK && null != data) {
             String[] filePathColumn = {MediaStore.Images.Media.DATA};
-            Cursor cursor = getActivity().getContentResolver().query(selectedImage, filePathColumn, null, null, null);
-            cursor.moveToFirst();
-            int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-            String picturePath = cursor.getString(columnIndex);
-            cursor.close();
-
-            File file = new File(picturePath);
-//            photo.get(id_photo).setImageBitmap(decodeFile(file));
-
-            // list photo
-            filesPhotoList.put(id_photo,file);
-            photo.get(id_photo).setImageBitmap(
-                    decodeFile(filesPhotoList.get(id_photo)));
-//            Picasso.with(getContext()).load(file).into(photo.get(id_photo));
+            if (Build.VERSION.SDK_INT >= 16){
+                ClipData clipData = data.getClipData();
+                for (int i = id_photo; i < clipData.getItemCount(); i++) {
+                    if (i < 8) {
+                        Uri uri = clipData.getItemAt(i).getUri();
+                        Cursor cursor = getActivity().getContentResolver().query(uri, filePathColumn, null, null, null);
+                        // Move to first row
+                        assert cursor != null;
+                        cursor.moveToFirst();
+                        int id = cursor.getColumnIndex(filePathColumn[0]);
+                        String picturePath = cursor.getString(id);
+                        cursor.close();
+                        // add path
+                        addFilesPhotoList(i,picturePath);
+                    }
+                }
+            }else {
+                Uri selectedImage = data.getData();
+                Cursor cursor = getActivity().getContentResolver().query(selectedImage, filePathColumn, null, null, null);
+                assert cursor != null;
+                cursor.moveToFirst();
+                int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+                String picturePath = cursor.getString(columnIndex);
+                cursor.close();
+                // add path
+                addFilesPhotoList(id_photo,picturePath);
+            }
         }
 
     }
+
+    private void addFilesPhotoList(int id_photo,String picturePath){
+        this.id_photo = id_photo;
+        File file = new File(picturePath);
+        // list photo
+        filesPhotoList.put(id_photo,file);
+        photo.get(id_photo).setImageBitmap(
+                decodeFile(filesPhotoList.get(id_photo)));
+    }
+
+
+
 
     @Override
     public void onDestroyView() {
@@ -301,20 +337,89 @@ public class PostFragment extends Fragment {
             case R.id.post_photo_7 : id_photo = 6 ; break ;
             case R.id.post_photo_8 : id_photo = 7 ; break ;
         }
-        addAndRemovePhotoList(id_photo);
+        addOrRemovePhotoList(id_photo);
     }
 
-    private void addAndRemovePhotoList(int id_photo){
+    private void addOrRemovePhotoList(int id_photo){
         // เช็คกรณี หากมีรูปอยู่แล้ว กดอีกครั้งให้ลบออก
         if (filesPhotoList.containsKey(id_photo)){
             filesPhotoList.remove(id_photo);
             photo.get(id_photo).setImageResource(R.drawable.photo);
         }else{
-            Intent i = new Intent(Intent.ACTION_PICK,
-                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-            startActivityForResult(i, RESULT_LOAD_IMAGE);
+            if (!checkPermissionApi23()){ //ต่ำกว่า Android 23
+                intentLoadPictureExternalStore();
+            }
         }
     }
+
+    /*Permission*/
+    private boolean checkPermissionApi23(){
+        if (Build.VERSION.SDK_INT >=
+                Build.VERSION_CODES.M) {
+            if (ContextCompat.checkSelfPermission(getActivity(),
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                    != PackageManager.PERMISSION_GRANTED) {
+                if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(),
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                    //กรณีไม่ให้สิทธิ์// แสดงรายการคำขอ ผลหากไม่ให้สิท ขอ Permission ผ่าน Dialog
+                    showMessageOKCancel("AngelCar ต้องการสิทธิ์ในการเข้าถึงรูปภาพ", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            ActivityCompat.requestPermissions(getActivity(),
+                                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                                    REQUEST_CODE_ASK_PERMISSIONS);
+                        }
+                    });
+
+                } else {
+                    // ขอสิทธิ์เข้าถึง
+                    ActivityCompat.requestPermissions(getActivity(),
+                            new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                            REQUEST_CODE_ASK_PERMISSIONS);
+
+                }
+            }else {
+                intentLoadPictureExternalStore();
+            }
+            return true;
+        }
+            return false;
+    }
+
+    private void intentLoadPictureExternalStore(){
+        Intent i = new Intent(Intent.ACTION_PICK,
+                android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        i.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+        startActivityForResult(i, REQUEST_CODE_LOAD_IMAGE);
+    }
+
+    private void showMessageOKCancel(String message, DialogInterface.OnClickListener okListener) {
+        new AlertDialog.Builder(getActivity())
+                .setMessage(message)
+                .setPositiveButton("OK", okListener)
+                .setNegativeButton("Cancel", null)
+                .create()
+                .show();
+    }
+
+   /* //TODO Method ไม่ทำงาน
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        Log.i(TAG, "onRequestPermissionsResult: "+requestCode);
+        switch (requestCode) {
+            case REQUEST_CODE_ASK_PERMISSIONS:
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    intentLoadPictureExternalStore();
+                    Log.i(TAG, "onRequestPermissionsResult: true");
+
+                }
+                break;
+                default:
+                    super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
+    }*/
 
     @Override
     public void onResume() {
@@ -332,11 +437,6 @@ public class PostFragment extends Fragment {
     public void getProduceData(InformationFromUser user){
         this.user = user;
         initData();
-        Log.i(TAG, "getProduceData3: "+user.getBrand());
-        Log.i(TAG, "getProduceData3: "+user.getTypeSub());
-        Log.i(TAG, "getProduceData3: "+user.getTypeSubDetail());
-        Log.i(TAG, "getProduceData3: "+user.getYear());
-
     }
 
     private Bitmap decodeFile(File f) {

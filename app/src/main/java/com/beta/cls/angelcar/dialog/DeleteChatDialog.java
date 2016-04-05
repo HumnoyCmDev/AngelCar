@@ -1,4 +1,4 @@
-package com.beta.cls.angelcar.fragment;
+package com.beta.cls.angelcar.dialog;
 
 import android.app.Dialog;
 import android.content.DialogInterface;
@@ -21,13 +21,13 @@ import retrofit2.Response;
 /**
  * Created by humnoyDeveloper on 25/3/59. 10:07
  */
-public class DeleteChatDialogFragment extends DialogFragment {
+public class DeleteChatDialog extends DialogFragment {
     private static final String ARG_MESSAGE_FROM_USER = "ARG_MESSAGE_FROM_USER";
     String messageFromUser;
 
-    public static DeleteChatDialogFragment newInstance(String messageFromUser) {
+    public static DeleteChatDialog newInstance(String messageFromUser) {
         Bundle args = new Bundle();
-        DeleteChatDialogFragment fragment = new DeleteChatDialogFragment();
+        DeleteChatDialog fragment = new DeleteChatDialog();
         args.putString(ARG_MESSAGE_FROM_USER,messageFromUser);
         fragment.setArguments(args);
         return fragment;

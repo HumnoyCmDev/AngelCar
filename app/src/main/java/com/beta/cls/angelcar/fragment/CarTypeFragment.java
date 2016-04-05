@@ -20,6 +20,7 @@ import com.beta.cls.angelcar.activity.PostActivity;
 import com.beta.cls.angelcar.dao.CarDataTypeCollectionDao;
 import com.beta.cls.angelcar.Adapter.CustomAdapterGridSub;
 import com.beta.cls.angelcar.R;
+import com.beta.cls.angelcar.dialog.YearDialog;
 import com.beta.cls.angelcar.interfaces.OnSelectData;
 import com.beta.cls.angelcar.manager.bus.BusProvider;
 import com.beta.cls.angelcar.manager.http.ApiCarService;
@@ -68,7 +69,6 @@ public class CarTypeFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_car_type, container, false);
         ButterKnife.bind(this,rootView);
         return rootView;
-
     }
 
 
@@ -91,14 +91,14 @@ public class CarTypeFragment extends Fragment {
 
     private void dialogSelectYear() {
         FragmentTransaction ft = getFragmentManager().beginTransaction();
-        Fragment fragment = getFragmentManager().findFragmentByTag("YearFragmentDialog");
+        Fragment fragment = getFragmentManager().findFragmentByTag("YearDialog");
         if (fragment != null){
             ft.remove(fragment);
         }
         ft.addToBackStack(null);
-        YearFragmentDialog dialog = new YearFragmentDialog();
+        YearDialog dialog = new YearDialog();
         dialog.setTargetFragment(this,DIALOG_YEAR);
-        dialog.show(getFragmentManager(),"YearFragmentDialog");
+        dialog.show(getFragmentManager(),"YearDialog");
     }
 
     @Override
@@ -106,7 +106,7 @@ public class CarTypeFragment extends Fragment {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == DIALOG_YEAR && resultCode == Activity.RESULT_OK && data != null){
-            user.setYear(data.getIntExtra(YearFragmentDialog.ARG_YEAR,2016));
+            user.setYear(data.getIntExtra(YearDialog.ARG_YEAR,2016));
             BusProvider.getInstance().post(user);
             OnSelectData onSelectData = (OnSelectData) getActivity();
             onSelectData.onSelectedCallback(PostActivity.CALLBACK_CAR_TYPE);

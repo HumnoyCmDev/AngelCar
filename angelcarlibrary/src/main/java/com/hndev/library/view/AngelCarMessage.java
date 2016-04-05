@@ -98,15 +98,15 @@ public class AngelCarMessage extends BaseCustomViewGroup {
                 defStyleAttr, defStyleRes);
 
         try {
-            position = a.getInt(R.styleable.AngelCarMessage_cls_position,0) == 0 ? Position.left : Position.right;
+            position = a.getInt(R.styleable.AngelCarMessage_cls_msg_position,0) == 0 ? Position.left : Position.right;
             colorBackground = a.getColor(
-                    R.styleable.AngelCarMessage_cls_colorBackground,
+                    R.styleable.AngelCarMessage_cls_msg_colorBackground,
                     Color.parseColor("#ffa600"));
             colorMessage = a.getColor(
-                    R.styleable.AngelCarMessage_cls_colorMessage
+                    R.styleable.AngelCarMessage_cls_msg_colorMessage
                     ,Color.WHITE);
-            radius = a.getDimensionPixelSize(R.styleable.AngelCarMessage_cls_radius,35);
-            msg = a.getString(R.styleable.AngelCarMessage_cls_message);
+            radius = a.getDimensionPixelSize(R.styleable.AngelCarMessage_cls_msg_radius,35);
+            msg = a.getString(R.styleable.AngelCarMessage_cls_msg_message);
         } finally {
             a.recycle();
         }

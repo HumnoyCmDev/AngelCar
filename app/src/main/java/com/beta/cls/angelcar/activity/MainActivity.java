@@ -1,21 +1,28 @@
 package com.beta.cls.angelcar.activity;
 
+import android.Manifest;
 import android.accounts.AccountManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.Typeface;
+import android.os.Build;
 import android.preference.PreferenceManager;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -24,6 +31,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 import com.beta.cls.angelcar.R;
 import com.beta.cls.angelcar.Adapter.MainViewPagerAdapter;
@@ -51,6 +59,7 @@ public class MainActivity extends AppCompatActivity {
 
     private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
     private static final int EMAIL_RESOLUTION_REQUEST = 333;
+    private static final int REQUEST_CODE_ASK_PERMISSIONS = 123;
     private boolean isReceiverRegistered;
 
     @Bind(R.id.toolbar_top) Toolbar toolbar;
@@ -69,7 +78,6 @@ public class MainActivity extends AppCompatActivity {
         ButterKnife.bind(this);
 
         registerReceiver();
-
         if (checkPlayServices()) {
             registerGcm();
         }
@@ -79,8 +87,10 @@ public class MainActivity extends AppCompatActivity {
         initViewPager();
         initTabIcons(); //ตั้งค่า tab
 
+
     }
 
+//  googlePicker
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == EMAIL_RESOLUTION_REQUEST && resultCode == RESULT_OK) {
@@ -91,6 +101,22 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+//    @Override
+//    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+//        switch (requestCode) {
+//            case REQUEST_CODE_ASK_PERMISSIONS:
+//                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+//                    // Permission Granted
+//                    dialogConfirmFragment();
+//                } else {
+//                    // Permission Denied
+//                }
+//                break;
+//            default:
+//                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+//        }
+//    }
+
     private void initInstance() {
         boolean first = Registration.getInstance().isFirstApp();
         checkRegistrationEmail(first);
@@ -98,18 +124,14 @@ public class MainActivity extends AppCompatActivity {
 
     private void checkRegistrationEmail(boolean first_init) {
         if (!first_init){
-//            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-//            Fragment prev = getSupportFragmentManager().findFragmentByTag("RegistrationAlertFragment");
-//            if (prev != null) {
-//                ft.remove(prev);
+//            if (!checkPermissionAccountApi23()){
+//                dialogConfirmFragment();
 //            }
-//            ft.addToBackStack(null);
-//            RegistrationAlertFragment fragment = RegistrationAlertFragment.newInstance();
-//            fragment.setCancelable(false);
-//            fragment.show(ft, "RegistrationAlertFragment");
             Intent googlePicker =
-                    AccountPicker.newChooseAccountIntent(null, null, new String[]{GoogleAuthUtil.GOOGLE_ACCOUNT_TYPE}, true, null, null, null, null);
+                    AccountPicker.newChooseAccountIntent(null, null,
+                            new String[]{GoogleAuthUtil.GOOGLE_ACCOUNT_TYPE}, true, null, null, null, null);
             startActivityForResult(googlePicker, EMAIL_RESOLUTION_REQUEST);
+
         }else {
             // กรณีลงทะเบียนแล้วให้ เช็ค cache // หากไม่พบ ให้ Registration Email
             String cache_User = Registration.getInstance().getUserId();
@@ -117,6 +139,58 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(MainActivity.this,cache_User,Toast.LENGTH_LONG).show();
             }
         }
+    }
+
+    private void dialogConfirmFragment() {
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        Fragment prev = getSupportFragmentManager().findFragmentByTag("RegistrationAlertFragment");
+        if (prev != null) {
+            ft.remove(prev);
+        }
+        ft.addToBackStack(null);
+        RegistrationAlertFragment fragment = RegistrationAlertFragment.newInstance();
+        fragment.setCancelable(false);
+        fragment.show(ft, "RegistrationAlertFragment");
+    }
+
+    private boolean checkPermissionAccountApi23(){
+        if (Build.VERSION.SDK_INT >=
+                Build.VERSION_CODES.M) {
+            if (ContextCompat.checkSelfPermission(this,
+                    Manifest.permission.GET_ACCOUNTS)
+                    != PackageManager.PERMISSION_GRANTED) {
+                if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                        Manifest.permission.GET_ACCOUNTS)) {
+                    showMessageOKCancel("AngelCar ต้องการสิทธิ์ในการเข้าถึงบัญชี", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            ActivityCompat.requestPermissions(MainActivity.this,
+                                    new String[]{Manifest.permission.GET_ACCOUNTS},
+                                    REQUEST_CODE_ASK_PERMISSIONS);
+                        }
+                    });
+
+                }else {
+                    ActivityCompat.requestPermissions(MainActivity.this,
+                            new String[]{Manifest.permission.GET_ACCOUNTS},
+                            REQUEST_CODE_ASK_PERMISSIONS);
+                }
+
+            }else {
+                dialogConfirmFragment();
+            }
+        return true;
+        }
+        return false;
+    }
+
+    private void showMessageOKCancel(String message, DialogInterface.OnClickListener okListener) {
+        new AlertDialog.Builder(this)
+                .setMessage(message)
+                .setPositiveButton("OK", okListener)
+                .setNegativeButton("Cancel", null)
+                .create()
+                .show();
     }
 
 
@@ -167,7 +241,7 @@ public class MainActivity extends AppCompatActivity {
         tabLayout.getTabAt(1).setCustomView(inflaterCustomTabLayout("ประกาศ",R.drawable.ic_tab_notice,tf));
         tabLayout.getTabAt(2).setCustomView(inflaterCustomTabLayout("ไฟแนนซ์",R.drawable.ic_tab_finance,tf));
         tabLayout.getTabAt(3).setCustomView(inflaterCustomTabLayout("ตัวกรอง",R.drawable.ic_tab_filter,tf));
-        tabLayout.getTabAt(4).setCustomView(inflaterCustomTabLayout("ช่วยเหลือ",R.drawable.ic_tab_help,tf));
+        tabLayout.getTabAt(4).setCustomView(inflaterCustomTabLayout("โปรไฟล์",R.drawable.ic_tab_profile,tf));
     }
 
     private View inflaterCustomTabLayout(String title,int drawble,Typeface tf){
@@ -180,26 +254,26 @@ public class MainActivity extends AppCompatActivity {
 
     private void initToolbars() {
         setSupportActionBar(toolbar);
-        getSupportActionBar().setHomeButtonEnabled(true);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        Toolbar toolbarTop = (Toolbar) findViewById(R.id.toolbar_top);
-        setSupportActionBar(toolbarTop);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setHomeButtonEnabled(true);
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
         drawerToggle = new ActionBarDrawerToggle(MainActivity.this, drawerLayout, R.string.hello_world, R.string.hello_world);
         drawerLayout.setDrawerListener(drawerToggle);
 
-        toolbarTop.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                switch (item.getItemId()) {
-                    case R.id.action_settings:
-                        break;
-
-                }
-                return true;
-            }
-        });
-        // Inflate a menu to be displayed in the toolbar
-        toolbarTop.inflateMenu(R.menu.menu_carline);
+//        toolbarTop.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+//            @Override
+//            public boolean onMenuItemClick(MenuItem item) {
+//                switch (item.getItemId()) {
+//                    case R.id.action_settings:
+//                        break;
+//
+//                }
+//                return true;
+//            }
+//        });
+//        // Inflate a menu to be displayed in the toolbar
+//        toolbarTop.inflateMenu(R.menu.menu_carline);
     }
     public void onPostCreate(Bundle savedInstanceState) { //ตัว fix Hamburger
         super.onPostCreate(savedInstanceState);
@@ -220,9 +294,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @OnClick({R.id.menu_bottom_follow,R.id.menu_bottom_message,
-            R.id.menu_bottom_list_shop,R.id.menu_bottom_profile,
+            R.id.menu_bottom_list_shop,R.id.menu_bottom_help,
             R.id.menu_bottom_feedback,})
-    public void menuBottom(View view){
+    public void bottomMenu(View view){
         if (Registration.getInstance().getUserId() != null) {
             switch (view.getId()) {
                 case R.id.menu_bottom_follow:
@@ -234,7 +308,8 @@ public class MainActivity extends AppCompatActivity {
                 case R.id.menu_bottom_list_shop:
                     startActivity(initIntent(ShopActivity.class));
                     break;
-                case R.id.menu_bottom_profile:
+                case R.id.menu_bottom_help:
+                    startActivity(initIntent(GuideLineActivity.class));
                     break;
                 case R.id.menu_bottom_feedback:
                     break;

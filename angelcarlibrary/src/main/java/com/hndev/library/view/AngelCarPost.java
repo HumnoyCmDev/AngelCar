@@ -113,14 +113,14 @@ public class AngelCarPost extends BaseCustomViewGroup {
                 defStyleRes);
 
         try {
-            colorBackground = a.getColor(R.styleable.AngelCarPost_colorBackground, Color.rgb(248, 204, 20));
-            position = a.getInt(R.styleable.AngelCarPost_position, 0);
-            colorTextTiele = a.getColor(R.styleable.AngelCarPost_colorTitle, Color.BLACK);
-            colorTextDetail = a.getColor(R.styleable.AngelCarPost_colorDetail, Color.BLACK);
-            strTitle = a.getString(R.styleable.AngelCarPost_textTitle);
-            strDetails = a.getString(R.styleable.AngelCarPost_textDetails);
+            colorBackground = a.getColor(R.styleable.AngelCarPost_cls_post_colorBackground, Color.rgb(248, 204, 20));
+            position = a.getInt(R.styleable.AngelCarPost_cls_post_position, 0);
+            colorTextTiele = a.getColor(R.styleable.AngelCarPost_cls_post_colorTitle, Color.BLACK);
+            colorTextDetail = a.getColor(R.styleable.AngelCarPost_cls_post_colorDetail, Color.BLACK);
+            strTitle = a.getString(R.styleable.AngelCarPost_cls_post_textTitle);
+            strDetails = a.getString(R.styleable.AngelCarPost_cls_post_textDetails);
 
-            radius = a.getDimensionPixelSize(R.styleable.AngelCarPost_radius, 0);
+            radius = a.getDimensionPixelSize(R.styleable.AngelCarPost_cls_post_radius, 0);
 
         } finally {
             a.recycle();

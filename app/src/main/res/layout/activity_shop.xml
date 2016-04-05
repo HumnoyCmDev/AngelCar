@@ -34,6 +34,7 @@
 
 
                 <Button
+                    android:id="@+id/buttonBack"
                     android:layout_marginTop="12dp"
                     android:background="@drawable/ic_back"
                     android:layout_width="32dp"
@@ -70,17 +71,17 @@
                     android:layout_marginTop="13dp"
                     android:layout_centerHorizontal="true"
                     android:src="@drawable/ic_hndeveloper"
-                    android:id="@+id/image_profile_shop"
+                    android:id="@+id/shopProfilePicture"
                     android:layout_width="65dp"
                     android:layout_height="65dp"/>
 
                 <TextView
                     android:layout_marginTop="3dp"
-                    android:layout_below="@id/image_profile_shop"
+                    android:layout_below="@id/shopProfilePicture"
                     android:layout_centerHorizontal="true"
                     android:textSize="15sp"
                     android:textStyle="bold"
-                    android:id="@+id/tvName_shop"
+                    android:id="@+id/tvShopName"
                     android:textColor="#FDC82D"
                     android:text="CEO CLS Development"
                     android:layout_width="wrap_content"
@@ -90,11 +91,11 @@
                     android:gravity="center"
                     android:background="@drawable/shape_bg_user_id"
                     android:layout_marginTop="5dp"
-                    android:layout_below="@id/tvName_shop"
+                    android:layout_below="@id/tvShopName"
                     android:layout_centerHorizontal="true"
                     android:textSize="13sp"
                     android:textStyle="bold"
-                    android:id="@+id/tvDetail_shop"
+                    android:id="@+id/tvShopNumber"
                     android:textColor="@android:color/white"
                     android:text="581 - 959 - 004"
                     android:layout_width="147dp"
@@ -102,11 +103,11 @@
 
                 <TextView
                     android:layout_marginTop="8dp"
-                    android:layout_below="@id/tvDetail_shop"
+                    android:layout_below="@id/tvShopNumber"
                     android:layout_centerHorizontal="true"
                     android:textSize="15sp"
                     android:textStyle="bold"
-                    android:id="@+id/tvTopic_shop"
+                    android:id="@+id/tvShopDescription"
                     android:textColor="#4A4A4A"
                     android:text="รถมือสองสสสส"
                     android:layout_width="wrap_content"

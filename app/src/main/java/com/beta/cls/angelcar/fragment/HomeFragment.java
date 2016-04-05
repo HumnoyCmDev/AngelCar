@@ -2,6 +2,7 @@ package com.beta.cls.angelcar.fragment;
 
 
 
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -17,10 +18,12 @@ import android.view.animation.BounceInterpolator;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 
 import com.beta.cls.angelcar.Adapter.ListViewPostAdapter;
@@ -30,15 +33,21 @@ import com.beta.cls.angelcar.anim.ResizeHeight;
 import com.beta.cls.angelcar.dao.CountCarCollectionDao;
 import com.beta.cls.angelcar.dao.PostCarCollectionDao;
 import com.beta.cls.angelcar.dao.PostCarDao;
+import com.beta.cls.angelcar.dialog.FilterBrandDialog;
+import com.beta.cls.angelcar.dialog.FilterSubDetailDialog;
+import com.beta.cls.angelcar.dialog.FilterSubDialog;
+import com.beta.cls.angelcar.dialog.YearDialog;
 import com.beta.cls.angelcar.manager.Registration;
 import com.beta.cls.angelcar.manager.http.HttpManager;
 
 import org.parceler.Parcels;
 
 import java.io.IOException;
+import java.util.HashMap;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -46,13 +55,28 @@ import retrofit2.Response;
 
 public class HomeFragment extends Fragment {
     public static final String SAVE_STATE_GAO = "SAVE_STATE_GAO";
+    public static final int REQUEST_CODE_BRAND = 1;
+    public static final int REQUEST_CODE_SUB = 2;
+    public static final int REQUEST_CODE_SUB_DETAIL = 3;
+    public static final int REQUEST_CODE_YEAR = 4;
+
+
     @Bind(R.id.list_view) ListView listView;
     @Bind(R.id.swipe_container) SwipeRefreshLayout mSwipeRefresh;
-    @Bind(R.id.ctFilter) RelativeLayout ctFilter;
+    @Bind(R.id.ctFilter) ScrollView ctFilter;
     @Bind(R.id.btFilter) ImageView btFilter;
     @Bind(R.id.countCarAll) TextView countCarAll;
     @Bind(R.id.countCarDay) TextView countCarDay;
     @Bind(R.id.countCarMonth) TextView countCarMonth;
+
+    //Filter
+    @Bind(R.id.filterBrand) TextView tvBrand;
+    @Bind(R.id.filterSub) TextView tvSub;
+    @Bind(R.id.filterSubDetail) TextView tvSubDetail;
+    @Bind(R.id.filterYear) TextView tvYear;
+    @Bind(R.id.filterToggleGear) ToggleButton toggleGear;
+    HashMap<String,String> hashMapFilter;
+
 
 //    Animation animDown,animUp;
 
@@ -75,6 +99,8 @@ public class HomeFragment extends Fragment {
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        hashMapFilter = new HashMap<>();
     }
 
     @Override
@@ -94,7 +120,7 @@ public class HomeFragment extends Fragment {
             loadData();
         }else { // Restore
             gao = Parcels.unwrap(savedInstanceState.getParcelable(SAVE_STATE_GAO));
-            adapter.setGao(gao);
+            adapter.setDao(gao);
             adapter.notifyDataSetChanged();
         }
 
@@ -156,6 +182,102 @@ public class HomeFragment extends Fragment {
 
     }
 
+    @OnClick({R.id.filterBrand,R.id.filterSub,R.id.filterSubDetail,R.id.filterYear,R.id.buttonSearch})
+    public void OnclickFilter(View v){
+
+        FragmentTransaction ft = getFragmentManager().beginTransaction();
+        switch (v.getId()){
+            case R.id.filterBrand:
+                Fragment fragment = getFragmentManager().findFragmentByTag("FilterBrandDialog");
+                if (fragment != null){
+                    ft.remove(fragment);
+                }
+                ft.addToBackStack(null);
+                FilterBrandDialog dialog = new FilterBrandDialog();
+                dialog.setTargetFragment(this,REQUEST_CODE_BRAND);
+                dialog.show(getFragmentManager(),"FilterBrandDialog");
+                break;
+            case R.id.filterSub:
+                if (hashMapFilter.containsKey("BRAND")) {
+                    Fragment fragmentSub = getFragmentManager().findFragmentByTag("FilterSubDialog");
+                    if (fragmentSub != null) {
+                        ft.remove(fragmentSub);
+                    }
+                    ft.addToBackStack(null);
+                    FilterSubDialog dialogSub = FilterSubDialog.newInstance(hashMapFilter.get("BRAND"));
+                    dialogSub.setTargetFragment(this, REQUEST_CODE_SUB);
+                    dialogSub.show(getFragmentManager(), "FilterSubDialog");
+                }
+                break;
+            case R.id.filterSubDetail:
+                if (hashMapFilter.containsKey("BRAND") &&
+                        hashMapFilter.containsKey("SUB")){
+                    Fragment fragmentSubDetail = getFragmentManager().findFragmentByTag("FilterSubDialog");
+                    if (fragmentSubDetail != null) {
+                        ft.remove(fragmentSubDetail);
+                    }
+                    ft.addToBackStack(null);
+                    FilterSubDetailDialog dialogSub = FilterSubDetailDialog.newInstance(hashMapFilter.get("BRAND"),hashMapFilter.get("SUB"));
+                    dialogSub.setTargetFragment(this, REQUEST_CODE_SUB_DETAIL);
+                    dialogSub.show(getFragmentManager(), "FilterSubDialog");
+                }
+                break;
+            case R.id.filterYear:
+                Fragment fragmentYear = getFragmentManager().findFragmentByTag("YearDialog");
+                if (fragmentYear != null){
+                    ft.remove(fragmentYear);
+                }
+                ft.addToBackStack(null);
+                YearDialog dialogYear = new YearDialog();
+                dialogYear.setTargetFragment(this,REQUEST_CODE_YEAR);
+                dialogYear.show(getFragmentManager(),"YearDialog");
+                break;
+            default: // button Search
+                break;
+        }
+
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == Activity.RESULT_OK) {
+            switch (requestCode) {
+                case REQUEST_CODE_BRAND: // brand
+                    String result = data.getStringExtra("BRAND");
+                    tvBrand.setText(result);
+                    filterChecked("BRAND",result);
+                    tvSub.setText("All");
+                    tvSubDetail.setText("All");
+                    if (hashMapFilter.containsKey("SUB")) hashMapFilter.remove("SUB");
+                    if (hashMapFilter.containsKey("SUB_DETAIL")) hashMapFilter.remove("SUB_DETAIL");
+                    break;
+                case REQUEST_CODE_SUB: // sub
+                    String resultSub = data.getStringExtra("SUB");
+                    tvSub.setText(resultSub);
+                    filterChecked("SUB",resultSub);
+                    tvSubDetail.setText("All");
+                    if (hashMapFilter.containsKey("SUB_DETAIL")) hashMapFilter.remove("SUB_DETAIL");
+                    break;
+                case REQUEST_CODE_SUB_DETAIL: // sub detail
+                    String resultSubDetail = data.getStringExtra("SUB_DETAIL");
+                    tvSubDetail.setText(resultSubDetail);
+                    filterChecked("SUB_DETAIL",resultSubDetail);
+                    break;
+                case REQUEST_CODE_YEAR: // year
+                    int resultYear = data.getIntExtra("TAG_YEAR",2016);
+                    tvYear.setText(String.valueOf(resultYear));
+                    filterChecked("TAG_YEAR",String.valueOf(resultYear));
+                    break;
+            }
+        }
+
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    private void filterChecked(String key,String values ){
+            hashMapFilter.put(key,values);
+    }
+
     /**************
     *Listener Zone*
     ***************/
@@ -206,7 +328,7 @@ public class HomeFragment extends Fragment {
             mSwipeRefresh.setRefreshing(false);
             if (response.isSuccessful()) {
                 gao = response.body();
-                adapter.setGao(response.body());
+                adapter.setDao(response.body());
                 adapter.notifyDataSetChanged();
 //                adapter.getFilter().filter("toyota");
             } else {

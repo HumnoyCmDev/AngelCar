@@ -79,7 +79,6 @@ public class SampleUploadFileFragment extends Fragment {
     public int getCurrentCursorLine(EditText editText){
         int selectionStart = Selection.getSelectionStart(editText.getText());
         Layout layout = editText.getLayout();
-
         if (!(selectionStart == -1)) {
             return layout.getLineForOffset(selectionStart);
         }

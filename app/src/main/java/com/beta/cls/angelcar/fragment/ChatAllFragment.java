@@ -20,7 +20,7 @@ import com.beta.cls.angelcar.dao.MessageAdminCollectionDao;
 import com.beta.cls.angelcar.dao.MessageCollectionDao;
 import com.beta.cls.angelcar.dao.MessageDao;
 import com.beta.cls.angelcar.dao.PostCarCollectionDao;
-import com.beta.cls.angelcar.dao.PostCarDao;
+import com.beta.cls.angelcar.dialog.DeleteChatDialog;
 import com.beta.cls.angelcar.manager.CallbackLoadCarModel;
 import com.beta.cls.angelcar.manager.MessageManager;
 import com.beta.cls.angelcar.manager.Registration;
@@ -142,14 +142,14 @@ public class ChatAllFragment extends Fragment{
 
     private void deleteDialog(MessageDao dao) {
         FragmentTransaction ft = getFragmentManager().beginTransaction();
-        Fragment fragment = getFragmentManager().findFragmentByTag("DeleteChatDialogFragment");
+        Fragment fragment = getFragmentManager().findFragmentByTag("DeleteChatDialog");
         if (fragment != null){
             ft.remove(fragment);
         }
         ft.addToBackStack(null);
-        DeleteChatDialogFragment deleteChatDialog =
-                DeleteChatDialogFragment.newInstance(dao.getMessageFromUser());
-        deleteChatDialog.show(getFragmentManager(),"DeleteChatDialogFragment");
+        DeleteChatDialog deleteChatDialog =
+                DeleteChatDialog.newInstance(dao.getMessageFromUser());
+        deleteChatDialog.show(getFragmentManager(),"DeleteChatDialog");
     }
 
     /**************

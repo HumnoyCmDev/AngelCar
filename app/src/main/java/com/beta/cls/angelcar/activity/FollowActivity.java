@@ -9,7 +9,6 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -90,7 +89,7 @@ public class FollowActivity extends AppCompatActivity{
         public void onResponse(Call<PostCarCollectionDao> call, Response<PostCarCollectionDao> response) {
             if (response.isSuccessful()) {
                 dao = response.body();
-                adapter.setGao(dao);
+                adapter.setDao(dao);
                 adapter.notifyDataSetChanged();
 
             } else {

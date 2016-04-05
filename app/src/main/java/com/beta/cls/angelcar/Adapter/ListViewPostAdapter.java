@@ -24,26 +24,22 @@ import butterknife.ButterKnife;
 
 public class ListViewPostAdapter extends BaseAdapter implements Filterable {
 
-    private PostCarCollectionDao gao;
-    private List<PostCarDao> gaoFilter;
+    private PostCarCollectionDao dao;
+    private List<PostCarDao> daoFilter;
     private Filter planetFilter;
 
-    public void setGao(PostCarCollectionDao gao) {
-        this.gao = gao;
-        gaoFilter = gao.getRows();
+    public void setDao(PostCarCollectionDao dao) {
+        this.dao = dao;
+        daoFilter = dao.getRows();
     }
 
     public int getCount() {
-//        if(gao == null) return 0;
-//        if(gao.getRows() == null) return 0;
-//        return gao.getRows().size();
-
-        if (gaoFilter == null) return 0;
-        return gaoFilter.size();
+        if (daoFilter == null) return 0;
+        return daoFilter.size();
     }
 
     public PostCarDao getItem(int position) {
-        return gaoFilter.get(position);
+        return daoFilter.get(position);
     }
 
     public long getItemId(int position) {
@@ -147,11 +143,11 @@ public class ListViewPostAdapter extends BaseAdapter implements Filterable {
         protected FilterResults performFiltering(CharSequence constraint) {
             FilterResults results = new FilterResults();
             if (constraint == null || constraint.length() == 0) {
-                results.values = gao.getRows();
-                results.count = gao.getRows().size();
+                results.values = dao.getRows();
+                results.count = dao.getRows().size();
             }else {
                 List<PostCarDao> nGao = new ArrayList<>();
-                for (PostCarDao g : gaoFilter){
+                for (PostCarDao g : daoFilter){
                     if(g.getCarName().toUpperCase().startsWith(constraint.toString().toUpperCase())){
                         nGao.add(g);
                     }
@@ -169,7 +165,7 @@ public class ListViewPostAdapter extends BaseAdapter implements Filterable {
             if (results.count == 0)
                 notifyDataSetInvalidated();
             else {
-                gaoFilter = (List<PostCarDao>) results.values;
+                daoFilter = (List<PostCarDao>) results.values;
                 notifyDataSetChanged();
             }
         }

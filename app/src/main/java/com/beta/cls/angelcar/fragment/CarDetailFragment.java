@@ -63,7 +63,7 @@ public class CarDetailFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
 
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_three_post, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_car_detail, container, false);
         ButterKnife.bind(this,rootView);
         return rootView;
 

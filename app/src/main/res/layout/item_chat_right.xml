@@ -8,9 +8,9 @@
 
     <com.hndev.library.view.AngelCarMessage xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/item_chat_right"
-        app:cls_message="HiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHi"
-        app:cls_position="right"
-        app:cls_colorBackground="#f8cc14"
+        app:cls_msg_message="HiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHi"
+        app:cls_msg_position="right"
+        app:cls_msg_colorBackground="#f8cc14"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
 

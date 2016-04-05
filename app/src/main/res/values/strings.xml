@@ -11,6 +11,7 @@
     <string name="sample_test_text_chat2">Mr Sukphisit\'s passion is authentic Thai food, the way it has been...</string>
     <string name="message_hint">เขียนข้อความ...</string>
     <string name="post_notice">การลงประกาศรถมือสองสมาชิกทั่วไป สามารถลงประกาศได้ไม่เกิน 3 คัน หากผู้ใช้งานต้องการลงมากกว่าที่กำหนด ท่านสามารถลงทะเบียนเป็นสถานะ “เต้นท์รถ” ได้โดยไม่มีค่าใช้จ่ายครับ</string>
+    <string name="all">All</string>
 
     <string-array name="province">
         <item>ราชบุรี</item>

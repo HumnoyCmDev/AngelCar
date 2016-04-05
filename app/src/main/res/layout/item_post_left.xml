@@ -7,13 +7,13 @@
     <com.hndev.library.view.AngelCarPost
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/item_post"
-        app:position="Left"
-        app:textTitle="Title Title Title Title Title Title Title Title Title Title"
-        app:textDetails="DetailssssssssssssDetailssssssssssssDetailssssssssssssDetailssssssssssssDetailssssssssssssDetailss"
-        app:colorBackground="#f8cc14"
-        app:colorTitle="@android:color/white"
-        app:colorDetail="@android:color/white"
-        app:radius="30dp"
+        app:cls_post_position="Left"
+        app:cls_post_textTitle="Title Title Title Title Title Title Title Title Title Title"
+        app:cls_post_textDetails="DetailssssssssssssDetailssssssssssssDetailssssssssssssDetailssssssssssssDetailssssssssssssDetailss"
+        app:cls_post_colorBackground="#f8cc14"
+        app:cls_post_colorTitle="@android:color/white"
+        app:cls_post_colorDetail="@android:color/white"
+        app:cls_post_radius="30dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 

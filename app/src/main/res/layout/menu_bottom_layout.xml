@@ -29,11 +29,11 @@
 
 
     <ImageView
-        android:id="@+id/menu_bottom_profile"
+        android:id="@+id/menu_bottom_help"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
-        android:src="@drawable/ic_tab_profile" />
+        android:src="@drawable/ic_tab_help" />
 
 
     <ImageView

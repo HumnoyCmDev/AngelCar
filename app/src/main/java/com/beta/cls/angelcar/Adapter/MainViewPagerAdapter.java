@@ -6,7 +6,6 @@ import android.support.v4.app.FragmentPagerAdapter;
 
 import com.beta.cls.angelcar.fragment.FilterFragment;
 import com.beta.cls.angelcar.fragment.FinanceFragment;
-import com.beta.cls.angelcar.fragment.HelpFragment;
 import com.beta.cls.angelcar.fragment.SampleUploadFileFragment;
 import com.beta.cls.angelcar.fragment.HomeFragment;
 import com.beta.cls.angelcar.fragment.NoticeFragment;
@@ -27,7 +26,6 @@ public class MainViewPagerAdapter extends FragmentPagerAdapter {
             case 1: return NoticeFragment.newInstance();
             case 2: return FinanceFragment.newInstance();
             case 3: return FilterFragment.newInstance();
-//            case 4: return HelpFragment.newInstance();
             case 4: return new SampleUploadFileFragment();
             default: return HomeFragment.newInstance();
         }

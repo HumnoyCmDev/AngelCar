@@ -6,23 +6,41 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Filter;
-import android.widget.Filterable;
+import android.view.MenuItem;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.TextView;
 
+import com.beta.cls.angelcar.Adapter.ShopAdapter;
 import com.beta.cls.angelcar.R;
+import com.beta.cls.angelcar.dao.PostCarCollectionDao;
+import com.beta.cls.angelcar.dao.ProfileDao;
+import com.beta.cls.angelcar.dao.ShopCollectionDao;
+import com.beta.cls.angelcar.manager.Registration;
+import com.beta.cls.angelcar.manager.http.HttpManager;
+import com.squareup.picasso.Picasso;
+
+import java.io.IOException;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class ShopActivity extends AppCompatActivity {
+    private static final String TAG = "ShopActivity";
 
     @Bind(R.id.recycler_car) RecyclerView recyclerCar;
     @Bind(R.id.toolbar) Toolbar toolbar;
+    @Bind(R.id.shopProfilePicture) ImageView shopProfilePicture;
+    @Bind(R.id.tvShopName) TextView shopName;
+    @Bind(R.id.tvShopNumber) TextView shopNumber;
+    @Bind(R.id.tvShopDescription) TextView shopDescription;
+
     private GridLayoutManager manager;
-    private ShopItemAdapter adapter;
+    private ShopAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,13 +49,55 @@ public class ShopActivity extends AppCompatActivity {
         ButterKnife.bind(this);
         initToolbar();
         initInstance();
+        loadData();
 
     }
+
+    private void loadData() {
+        String userRef = Registration.getInstance().getUserId();
+        String shopRef = Registration.getInstance().getShopRef();
+        Call<ShopCollectionDao> call = HttpManager.getInstance()
+                .getService().loadDataShop(userRef, shopRef);
+        call.enqueue(new Callback<ShopCollectionDao>() {
+            @Override
+            public void onResponse(Call<ShopCollectionDao> call, Response<ShopCollectionDao> response) {
+                if (response.isSuccessful()){
+                    initProfile(response.body().getProfileDao());
+                    PostCarCollectionDao dao = new PostCarCollectionDao();
+                    dao.setRows(response.body().getPostCarDao());
+                    adapter.setDao(dao);
+                }else {
+                    try {
+                        Log.e(TAG, "onResponse:"+response.errorBody().string());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ShopCollectionDao> call, Throwable t) {
+                Log.e(TAG, "onFailure: ", t);
+            }
+        });
+
+    }
+
+    private void initProfile(ProfileDao profileDao){
+        Picasso.with(ShopActivity.this)
+                .load(""+profileDao.getShopLogo())
+                .placeholder(R.drawable.loading)
+                .into(shopProfilePicture);
+        shopName.setText(profileDao.getShopName());
+        shopDescription.setText(profileDao.getShopDescription());
+        shopNumber.setText(profileDao.getShopNumber());
+    }
+
 
     private void initInstance() {
        manager = new GridLayoutManager(this,3);
         recyclerCar.setLayoutManager(manager);
-        adapter = new ShopItemAdapter();
+        adapter = new ShopAdapter();
         recyclerCar.setAdapter(adapter);
         manager.setSpanSizeLookup(spanSizeLookupManager);
     }
@@ -47,6 +107,20 @@ public class ShopActivity extends AppCompatActivity {
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
+    }
+
+    @OnClick(R.id.buttonBack)
+    public void onClickBackHome() {
+        finish();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home){
+            onBackPressed();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     /***************
@@ -63,69 +137,5 @@ public class ShopActivity extends AppCompatActivity {
     /*****************
     *Inner Class Zone*
     ******************/
-    public class ShopItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements Filterable {
-        private static final int ITEM_VIEW_TYPE_HEADER = 0;
-        private static final int ITEM_VIEW_TYPE_ITEM = 1;
 
-        public boolean isHeader(int position) {
-            return position == 0 || position == 5;
-        }
-
-        @Override
-        public int getItemViewType(int position) {
-            return isHeader(position) ? ITEM_VIEW_TYPE_HEADER : ITEM_VIEW_TYPE_ITEM;
-        }
-
-        @Override
-        public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            if (viewType == ITEM_VIEW_TYPE_HEADER){
-                View v = LayoutInflater.from(parent.getContext())
-                        .inflate(R.layout.item_line_brand,parent,false);
-
-                HeaderViewHolder headerViewHolder = new HeaderViewHolder(v);
-                return headerViewHolder;
-            }
-
-            View v = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.item_shop,parent,false);
-            ViewHolder vh = new ViewHolder(v);
-            return vh;
-        }
-
-        @Override
-        public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-            // coding
-        }
-
-        @Override
-        public int getItemCount() {
-            return 50+1;
-        }
-
-        @Override
-        public Filter getFilter() {
-            return null;
-        }
-
-        public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
-            public ViewHolder(View itemView) {
-                super(itemView);
-//                ButterKnife.bind(this,itemView);
-                itemView.setOnClickListener(this);
-            }
-
-            @Override
-            public void onClick(View v) {
-                Log.i("Shop", "onClick: "+getAdapterPosition());
-            }
-        }
-
-        public class HeaderViewHolder extends RecyclerView.ViewHolder{
-            public HeaderViewHolder(View itemView) {
-                super(itemView);
-            }
-        }
-
-
-    }
 }
