@@ -56,6 +56,7 @@ public class FilterBrandDialog extends DialogFragment{
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent intent = getActivity().getIntent();
                 intent.putExtra("BRAND",getBrand().get(position));
+                intent.putExtra("LOGO",getImageBrand()[position]);
                 getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK,intent);
                 dismiss();
             }
@@ -85,6 +86,22 @@ public class FilterBrandDialog extends DialogFragment{
         brand.add("tata");
 
         return brand;
+    }
+
+    private int[] getImageBrand() {
+        return new int[]{R.drawable.toyota
+                , R.drawable.honda, R.drawable.nissan
+                , R.drawable.isuzu, R.drawable.mitsubishi
+                , R.drawable.chevrolet, R.drawable.ford
+                , R.drawable.mazda, R.drawable.benz
+                , R.drawable.audi, R.drawable.bmw
+                , R.drawable.hyundai, R.drawable.kia
+                , R.drawable.landrover, R.drawable.mini
+                , R.drawable.suzuki, R.drawable.volkswagen
+                , R.drawable.volvo, R.drawable.tata
+                , R.drawable.foton, R.drawable.hino
+                , R.drawable.holden, R.drawable.honda
+                , R.drawable.hummer, R.drawable.hyundai};
     }
 
     /******************
@@ -144,21 +161,7 @@ public class FilterBrandDialog extends DialogFragment{
             }
         }
 
-        private int[] getImageBrand() {
-            return new int[]{R.drawable.toyota
-                    , R.drawable.honda, R.drawable.nissan
-                    , R.drawable.isuzu, R.drawable.mitsubishi
-                    , R.drawable.chevrolet, R.drawable.ford
-                    , R.drawable.mazda, R.drawable.benz
-                    , R.drawable.audi, R.drawable.bmw
-                    , R.drawable.hyundai, R.drawable.kia
-                    , R.drawable.landrover, R.drawable.mini
-                    , R.drawable.suzuki, R.drawable.volkswagen
-                    , R.drawable.volvo, R.drawable.tata
-                    , R.drawable.foton, R.drawable.hino
-                    , R.drawable.holden, R.drawable.honda
-                    , R.drawable.hummer, R.drawable.hyundai};
-        }
+
 
     }
 

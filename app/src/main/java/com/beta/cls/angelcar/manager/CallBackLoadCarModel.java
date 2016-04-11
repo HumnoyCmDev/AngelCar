@@ -29,7 +29,7 @@ public class CallbackLoadCarModel implements Callback<PostCarCollectionDao> {
     public void onResponse(Call<PostCarCollectionDao> call, Response<PostCarCollectionDao> response) {
 
         if (response.isSuccessful()) {
-            PostCarDao item = response.body().getRows().get(0);
+            PostCarDao item = response.body().getListCar().get(0);
             Intent intent = new Intent(context, DetailCarActivity.class);
             intent.putExtra("PostCarDao", Parcels.wrap(item));
             intent.putExtra("intentForm", 1);

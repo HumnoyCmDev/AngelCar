@@ -75,8 +75,8 @@ public class HomeFragment extends Fragment {
     @Bind(R.id.filterSubDetail) TextView tvSubDetail;
     @Bind(R.id.filterYear) TextView tvYear;
     @Bind(R.id.filterToggleGear) ToggleButton toggleGear;
-    HashMap<String,String> hashMapFilter;
-
+    private HashMap<String,String> hashMapFilter;
+    private int resourceBrand;
 
 //    Animation animDown,animUp;
 
@@ -184,7 +184,6 @@ public class HomeFragment extends Fragment {
 
     @OnClick({R.id.filterBrand,R.id.filterSub,R.id.filterSubDetail,R.id.filterYear,R.id.buttonSearch})
     public void OnclickFilter(View v){
-
         FragmentTransaction ft = getFragmentManager().beginTransaction();
         switch (v.getId()){
             case R.id.filterBrand:
@@ -204,7 +203,7 @@ public class HomeFragment extends Fragment {
                         ft.remove(fragmentSub);
                     }
                     ft.addToBackStack(null);
-                    FilterSubDialog dialogSub = FilterSubDialog.newInstance(hashMapFilter.get("BRAND"));
+                    FilterSubDialog dialogSub = FilterSubDialog.newInstance(resourceBrand,hashMapFilter.get("BRAND"));
                     dialogSub.setTargetFragment(this, REQUEST_CODE_SUB);
                     dialogSub.show(getFragmentManager(), "FilterSubDialog");
                 }
@@ -217,7 +216,7 @@ public class HomeFragment extends Fragment {
                         ft.remove(fragmentSubDetail);
                     }
                     ft.addToBackStack(null);
-                    FilterSubDetailDialog dialogSub = FilterSubDetailDialog.newInstance(hashMapFilter.get("BRAND"),hashMapFilter.get("SUB"));
+                    FilterSubDetailDialog dialogSub = FilterSubDetailDialog.newInstance(resourceBrand,hashMapFilter.get("BRAND"),hashMapFilter.get("SUB"));
                     dialogSub.setTargetFragment(this, REQUEST_CODE_SUB_DETAIL);
                     dialogSub.show(getFragmentManager(), "FilterSubDialog");
                 }
@@ -244,6 +243,7 @@ public class HomeFragment extends Fragment {
             switch (requestCode) {
                 case REQUEST_CODE_BRAND: // brand
                     String result = data.getStringExtra("BRAND");
+                    resourceBrand = data.getIntExtra("LOGO",R.drawable.toyota);
                     tvBrand.setText(result);
                     filterChecked("BRAND",result);
                     tvSub.setText("All");
@@ -301,7 +301,7 @@ public class HomeFragment extends Fragment {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             if (Registration.getInstance().getUserId() != null) {
-                PostCarDao item = gao.getRows().get(position);
+                PostCarDao item = gao.getListCar().get(position);
                 Intent intent = new Intent(getActivity(), DetailCarActivity.class);
                 intent.putExtra("PostCarDao", Parcels.wrap(item));
                 intent.putExtra("intentForm", 0);

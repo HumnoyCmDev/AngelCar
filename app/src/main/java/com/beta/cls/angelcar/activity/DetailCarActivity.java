@@ -8,13 +8,15 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.provider.MediaStore;
-import android.support.v4.view.ViewPager;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -22,17 +24,17 @@ import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.beta.cls.angelcar.Adapter.MultipleListViewChatAdapter;
-import com.beta.cls.angelcar.Adapter.PictureAdapter;
 import com.beta.cls.angelcar.R;
-import com.beta.cls.angelcar.banner.DetailImageBanner;
+import com.beta.cls.angelcar.banner.ImageBanner;
 import com.beta.cls.angelcar.dao.FollowCollectionDao;
 import com.beta.cls.angelcar.dao.FollowDao;
 import com.beta.cls.angelcar.dao.LogFromServerDao;
 import com.beta.cls.angelcar.dao.MessageCollectionDao;
 import com.beta.cls.angelcar.dao.MessageDao;
-import com.beta.cls.angelcar.dao.PictureAllCollectionDao;
-import com.beta.cls.angelcar.dao.PictureAllDao;
+import com.beta.cls.angelcar.dao.PictureCollectionDao;
+import com.beta.cls.angelcar.dao.PictureDao;
 import com.beta.cls.angelcar.dao.PostCarDao;
+import com.beta.cls.angelcar.dialog.DetailAlertDialog;
 import com.beta.cls.angelcar.interfaces.WaitMessageOnBackground;
 import com.beta.cls.angelcar.manager.MessageManager;
 import com.beta.cls.angelcar.manager.Registration;
@@ -41,14 +43,10 @@ import com.beta.cls.angelcar.manager.bus.BusProvider;
 import com.beta.cls.angelcar.manager.http.HttpManager;
 import com.beta.cls.angelcar.manager.http.OkHttpManager;
 import com.beta.cls.angelcar.utils.ViewFindUtils;
-import com.flyco.banner.anim.select.RotateEnter;
 import com.flyco.banner.anim.select.ZoomInEnter;
-import com.flyco.banner.anim.unselect.NoAnimExist;
 import com.flyco.banner.transform.DepthTransformer;
-import com.flyco.banner.transform.ZoomOutSlideTransformer;
 import com.flyco.banner.widget.Banner.base.BaseBanner;
 import com.squareup.otto.Subscribe;
-import com.viewpagerindicator.LinePageIndicator;
 
 import org.parceler.Parcels;
 
@@ -81,7 +79,7 @@ public class DetailCarActivity extends AppCompatActivity {
     MessageManager messageManager ;
     WaitMessageSynchronous synchronous;
 
-    PictureAllCollectionDao PictureDao;
+    PictureCollectionDao pictureCollectionDao;
     PostCarDao postItem;
 
     int intentForm; // 0 = form homeFragment , 1 = ChatAll,ChatBuy,ChatSell
@@ -128,7 +126,7 @@ public class DetailCarActivity extends AppCompatActivity {
             groupChat.setVisibility(View.GONE);
 
         /*load image*/
-        Call<PictureAllCollectionDao> callLoadPictureAll =
+        Call<PictureCollectionDao> callLoadPictureAll =
                 HttpManager.getInstance().getService().loadAllPicture(String.valueOf(postItem.getCarId()));
         callLoadPictureAll.enqueue(loadPictureCallback);
 
@@ -154,7 +152,7 @@ public class DetailCarActivity extends AppCompatActivity {
                 "<p>............................</p><p><b>ราคา.</b>1x,xxx,xxx$</p></header");
         messageDao.add(mGaoAdmin);
 
-        gao.setMessage(messageDao);
+        gao.setListMessage(messageDao);
         messageManager.setMessageDao(gao);
         /*****************/
     }
@@ -229,6 +227,31 @@ public class DetailCarActivity extends AppCompatActivity {
         adapter = new MultipleListViewChatAdapter(MESSAGE_BY);
         listView.setAdapter(adapter);
 
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                // Intent View Image
+                if (messageManager != null &&
+                        messageManager.getMessageDao() != null &&
+                        messageManager.getMessageDao().getListMessage() != null){
+
+                    MessageDao item = messageManager.getMessageDao().getListMessage().get(position);
+                    if (item.getMessageText().contains("<img>") &&
+                            item.getMessageText().contains("</img>")) {
+                        String url = item.getMessageText().substring("<img>".length(),item.getMessageText().lastIndexOf("</img>"));
+
+                        Intent intent = new Intent(DetailCarActivity.this, SingleViewImageActivity.class);
+                        intent.putExtra(SingleViewImageActivity.ARGS_PICTURE,url);
+                        startActivity(intent);
+                    }
+
+
+                }
+
+            }
+        });
+
+
         Call<MessageCollectionDao> call =
                 HttpManager.getInstance().getService()
                         .viewMessage(postItem.getCarId()+"||"+ messageFromUser +"||0");
@@ -250,10 +273,11 @@ public class DetailCarActivity extends AppCompatActivity {
 
     @Subscribe
     public void produceMessage(MessageCollectionDao messageGa){ //รับภายในคลาส
-        if (messageGa.getMessage().size() > 0) {
-            messageManager.updateDataToLastPosition(messageGa);
+        Log.i(TAG, "produceMessage: mainthread");
+        if (messageGa.getListMessage().size() > 0) {
+            messageManager.appendDataToBottomPosition(messageGa);
             // คอมเม้นไว้ หาก list เด้งลงมา Last Position
-            adapter.setMessages(messageManager.getMessageDao().getMessage());
+            adapter.setMessages(messageManager.getMessageDao().getListMessage());
             adapter.notifyDataSetChanged();
         }
     }
@@ -284,19 +308,22 @@ public class DetailCarActivity extends AppCompatActivity {
         }
     }
 
-    private void pictureCarDetail(PictureAllCollectionDao dao) {
-        DetailImageBanner sib = ViewFindUtils.find(decorView, R.id.detailImage);
+    private void pictureCarDetail(final PictureCollectionDao dao) {
+        ImageBanner sib = ViewFindUtils.find(decorView, R.id.detailImage);
 
         sib
                 .setTransformerClass(DepthTransformer.class)
                 .setSelectAnimClass(ZoomInEnter.class)
-                .setSource(dao.getRows())
+                .setSource(dao.getListPicture())
                 .startScroll();
 
         sib.setOnItemClickL(new BaseBanner.OnItemClickL() {
             @Override
             public void onItemClick(int position) {
-
+                Intent intent = new Intent(DetailCarActivity.this, ViewPictureActivity.class);
+                intent.putExtra("PICTURE_DAO", Parcels.wrap(dao));
+                intent.putExtra("POSITION",position);
+                startActivity(intent);
             }
         });
     }
@@ -340,11 +367,11 @@ public class DetailCarActivity extends AppCompatActivity {
         }
     };
 
-    Callback<PictureAllCollectionDao> loadPictureCallback = new Callback<PictureAllCollectionDao>() {
+    Callback<PictureCollectionDao> loadPictureCallback = new Callback<PictureCollectionDao>() {
         @Override
-        public void onResponse(Call<PictureAllCollectionDao> call, Response<PictureAllCollectionDao> response) {
+        public void onResponse(Call<PictureCollectionDao> call, Response<PictureCollectionDao> response) {
             if (response.isSuccessful()) {
-                PictureDao = response.body();
+                pictureCollectionDao = response.body();
                 //Picture banner
                 pictureCarDetail(response.body());
 
@@ -358,7 +385,7 @@ public class DetailCarActivity extends AppCompatActivity {
         }
 
         @Override
-        public void onFailure(Call<PictureAllCollectionDao> call, Throwable t) {
+        public void onFailure(Call<PictureCollectionDao> call, Throwable t) {
             Log.e(TAG, "onFailure: ", t);
         }
     };
@@ -420,8 +447,8 @@ public class DetailCarActivity extends AppCompatActivity {
         public void onResponse(Call<MessageCollectionDao> call, Response<MessageCollectionDao> response) {
             if (response.isSuccessful()){
 
-                messageManager.updateDataToLastPosition(response.body());
-                adapter.setMessages(messageManager.getMessageDao().getMessage());
+                messageManager.appendDataToBottomPosition(response.body());
+                adapter.setMessages(messageManager.getMessageDao().getListMessage());
                 adapter.notifyDataSetChanged();
 
                     /*start Time Out 1000L wait message */
@@ -455,7 +482,7 @@ public class DetailCarActivity extends AppCompatActivity {
 
         @Override
         public void onBackground() {
-            Log.i(TAG, "doInBackground: loop");
+//            Log.i(TAG, "doInBackground: loop");
             int maxId = manager.getMaximumId();
             Call<MessageCollectionDao> call =
                     HttpManager.getInstance()
@@ -470,13 +497,11 @@ public class DetailCarActivity extends AppCompatActivity {
 
         @Override
         public void onMainThread() {
-            Log.i(TAG, "onMainThread: ");
             if (response.isSuccessful()){
-                Log.i(TAG, "onMainThread: success");
                 MessageCollectionDao messageGa = response.body();
                 BusProvider.getInstance().post(messageGa);
             }else {
-                Log.i(TAG, "doInBackground --- : "+response.errorBody());
+                Log.i(TAG, "doInBackground: "+response.errorBody());
             }
         }
     }

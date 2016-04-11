@@ -9,12 +9,10 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
-import android.util.Log;
 import android.util.Patterns;
 
-import com.beta.cls.angelcar.R;
 import com.beta.cls.angelcar.manager.bus.BusProvider;
-import com.beta.cls.angelcar.util.RegistrationResult;
+import com.beta.cls.angelcar.utils.RegistrationResult;
 
 import java.util.regex.Pattern;
 

@@ -11,12 +11,17 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.text.Html;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.bitmap_recycle.BitmapPool;
+import com.bumptech.glide.load.resource.bitmap.BitmapTransformation;
 import com.github.siyamed.shapeimageview.CircularImageView;
 import com.github.siyamed.shapeimageview.RoundedImageView;
 import com.hndev.library.R;
+import com.hndev.library.view.Transformtion.ResizeTransformation;
 import com.hndev.library.view.sate.BundleSavedState;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Transformation;
@@ -156,6 +161,13 @@ public class AngelCarMessage extends BaseCustomViewGroup {
                     .transform(new PictureReSize())
                     .placeholder(R.drawable.loading)
                     .into(image);
+
+//            Glide.with(getContext())
+//                    .load(rulImage)
+//                    .transform(new ResizeTransformation(getContext()))
+//                    .placeholder(R.drawable.loading)
+//                    .into(image);
+
         }
     }
 
@@ -214,9 +226,21 @@ public class AngelCarMessage extends BaseCustomViewGroup {
     class PictureReSize implements Transformation{
         @Override
         public Bitmap transform(Bitmap source) {
-            int width = source.getWidth() / 4;
-            int height = source.getHeight() / 4;
-            Bitmap result =  Bitmap.createScaledBitmap(source,width,height,false);
+//            int width = source.getWidth() / 4;
+//            int height = source.getHeight() / 4;
+
+
+            Bitmap result = null;
+            int width;
+            int height;
+            if(source.getWidth() < source.getHeight()) {
+                width = (int) (source.getHeight()/2 * 360 * 1.0f / 640);
+                height = (int) (source.getHeight()/2 * 360 * 1.0f / 640);
+            }else {
+                    width = source.getWidth();
+                    height = (int) (source.getWidth() * 360 * 1.0f / 640);
+            }
+            result =  Bitmap.createScaledBitmap(source,width,height,false);
             if (result != source) {
                 source.recycle();
             }
@@ -228,7 +252,5 @@ public class AngelCarMessage extends BaseCustomViewGroup {
             return "scaledBitmap";
         }
     }
-
-
 
 }

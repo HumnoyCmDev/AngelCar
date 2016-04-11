@@ -14,14 +14,14 @@ import java.util.List;
 public class PostCarCollectionDao {
     @SerializedName("rows")
     @Expose
-    List<PostCarDao> rows;
+    List<PostCarDao> listCar;
 
-    public List<PostCarDao> getRows() {
-        return rows;
+    public List<PostCarDao> getListCar() {
+        return listCar;
     }
 
-    public void setRows(List<PostCarDao> rows) {
-        this.rows = rows;
+    public void setListCar(List<PostCarDao> rows) {
+        this.listCar = rows;
     }
 
 }

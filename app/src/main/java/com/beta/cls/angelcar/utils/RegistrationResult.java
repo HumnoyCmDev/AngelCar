@@ -1,4 +1,4 @@
-package com.beta.cls.angelcar.util;
+package com.beta.cls.angelcar.utils;
 
 /**
  * Created by humnoyDeveloper on 3/18/2016 AD. 14:50

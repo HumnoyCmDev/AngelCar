@@ -8,6 +8,7 @@ import android.widget.TextView;
 
 import com.beta.cls.angelcar.R;
 import com.beta.cls.angelcar.utils.ViewFindUtils;
+import com.bumptech.glide.Glide;
 import com.flyco.banner.widget.Banner.BaseIndicatorBanner;
 import com.squareup.picasso.Picasso;
 
@@ -34,7 +35,7 @@ public class SimpleGuideBanner extends BaseIndicatorBanner<Integer, SimpleGuideB
         final Integer resId = mDatas.get(position);
         tv_jump.setVisibility(position == mDatas.size() - 1 ? VISIBLE : GONE);
 
-        Picasso.with(mContext)
+        Glide.with(mContext)
                 .load(resId)
                 .into(iv);
 

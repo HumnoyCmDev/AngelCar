@@ -35,18 +35,21 @@ public class FilterSubDetailDialog extends DialogFragment{
     @Bind(R.id.list_view) ListView listView;
     private static final String ARGS_BRAND = "ARGS_BRAND";
     private static final String ARGS_SUB = "ARGS_SUB";
+    private static final String ARGS_LOGO = "ARGS_LOGO";
     private static final String TAG = "FilterSubDialogFragment";
 
     private String brand;
     private String sub;
     private CarDetailCollectionDao dao;
     private ListViewAdapter viewAdapter;
+    private int resourceBrand;
 
-    public static FilterSubDetailDialog newInstance(String brand, String sub) {
+    public static FilterSubDetailDialog newInstance(int resourceBrand, String brand, String sub) {
         Bundle args = new Bundle();
         FilterSubDetailDialog fragment = new FilterSubDetailDialog();
         args.putString(ARGS_BRAND,brand);
         args.putString(ARGS_SUB,sub);
+        args.putInt(ARGS_LOGO,resourceBrand);
         fragment.setArguments(args);
         return fragment;
     }
@@ -69,6 +72,7 @@ public class FilterSubDetailDialog extends DialogFragment{
     private void initInstance(Bundle savedInstanceState) {
         brand = getArguments().getString(ARGS_BRAND);
         sub = getArguments().getString(ARGS_SUB);
+        resourceBrand = getArguments().getInt(ARGS_LOGO);
 
         Call<CarDetailCollectionDao> call = HttpUsedCarManager.getInstance()
                 .getService().loadCarSubDetail(brand,sub);
@@ -156,7 +160,7 @@ public class FilterSubDetailDialog extends DialogFragment{
                holder = new ViewHolder(convertView);
                convertView.setTag(holder);
             }
-//            holder.iconFilter.setImageResource(getImageBrand()[position]);
+            holder.iconFilter.setImageResource(resourceBrand);
             holder.tvFilter.setText(getItem(position).getCarDetailSub());
 
             return convertView;

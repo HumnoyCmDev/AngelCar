@@ -35,16 +35,19 @@ import retrofit2.Response;
 public class FilterSubDialog extends DialogFragment{
     @Bind(R.id.list_view) ListView listView;
     private static final String ARGS_BRAND = "ARGS_BRAND";
+    private static final String ARGS_LOGO = "ARGS_LOGO";
     private static final String TAG = "FilterSubDialogFragment";
 
     private String brand;
+    private int resourceBrand;
     private CarDataTypeCollectionDao dao;
     private ListViewAdapter viewAdapter;
 
-    public static FilterSubDialog newInstance(String brand) {
+    public static FilterSubDialog newInstance(int resourceBrand, String brand) {
         Bundle args = new Bundle();
         FilterSubDialog fragment = new FilterSubDialog();
         args.putString(ARGS_BRAND,brand);
+        args.putInt(ARGS_LOGO,resourceBrand);
         fragment.setArguments(args);
         return fragment;
     }
@@ -66,6 +69,7 @@ public class FilterSubDialog extends DialogFragment{
 
     private void initInstance(Bundle savedInstanceState) {
         brand = getArguments().getString(ARGS_BRAND);
+        resourceBrand = getArguments().getInt(ARGS_LOGO);
         ApiCarService server = HttpUsedCarManager.getInstance().getService();
         Call<CarDataTypeCollectionDao> call = server.loadCarType(brand);
         call.enqueue(carDataTypeCollectionGaoCallback);
@@ -151,36 +155,22 @@ public class FilterSubDialog extends DialogFragment{
                holder = new ViewHolder(convertView);
                convertView.setTag(holder);
             }
-//            holder.iconFilter.setImageResource(getImageBrand()[position]);
+            holder.iconFilter.setImageResource(resourceBrand);
             holder.tvFilter.setText(getItem(position).getCarTypeSub());
 
             return convertView;
         }
 
         public class ViewHolder {
-            @Bind(R.id.filter_icon) ImageView iconFilter;
-            @Bind(R.id.filter_name) TextView tvFilter;
+            @Bind(R.id.filter_icon)
+            ImageView iconFilter;
+            @Bind(R.id.filter_name)
+            TextView tvFilter;
+
             public ViewHolder(View view) {
-                ButterKnife.bind(this,view);
+                ButterKnife.bind(this, view);
             }
         }
-
-        private int[] getImageBrand() {
-            return new int[]{R.drawable.toyota
-                    , R.drawable.honda, R.drawable.nissan
-                    , R.drawable.isuzu, R.drawable.mitsubishi
-                    , R.drawable.chevrolet, R.drawable.ford
-                    , R.drawable.mazda, R.drawable.benz
-                    , R.drawable.audi, R.drawable.bmw
-                    , R.drawable.hyundai, R.drawable.kia
-                    , R.drawable.landrover, R.drawable.mini
-                    , R.drawable.suzuki, R.drawable.volkswagen
-                    , R.drawable.volvo, R.drawable.tata
-                    , R.drawable.foton, R.drawable.hino
-                    , R.drawable.holden, R.drawable.honda
-                    , R.drawable.hummer, R.drawable.hyundai};
-        }
-
     }
 
 }

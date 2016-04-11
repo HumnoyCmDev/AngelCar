@@ -1,4 +1,4 @@
-package com.beta.cls.angelcar.util;
+package com.beta.cls.angelcar.utils;
 
 import android.support.annotation.NonNull;
 

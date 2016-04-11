@@ -110,7 +110,7 @@ public class FollowActivity extends AppCompatActivity{
     AdapterView.OnItemClickListener onItemClickListener = new AdapterView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            PostCarDao item = dao.getRows().get(position);
+            PostCarDao item = dao.getListCar().get(position);
             Intent intent = new Intent(FollowActivity.this, DetailCarActivity.class);
             intent.putExtra("PostCarDao", Parcels.wrap(item));
             intent.putExtra("intentForm", 0);
@@ -129,12 +129,12 @@ public class FollowActivity extends AppCompatActivity{
                         public void onClick(DialogInterface dialog, int which) {
                             //Delete Follow -server
                             Call<LogFromServerDao> callDelete = HttpManager.getInstance().getService()
-                                    .follow("delete",String.valueOf(dao.getRows().get(position).getCarId()),
+                                    .follow("delete",String.valueOf(dao.getListCar().get(position).getCarId()),
                                             Registration.getInstance().getShopRef());
                             callDelete.enqueue(callbackAddOrRemoveFollow);
 
                             //Delete Follow -Model
-                            dao.getRows().remove(position);
+                            dao.getListCar().remove(position);
                             adapter.notifyDataSetChanged();
                         }
                     })

@@ -1,6 +1,6 @@
 package com.beta.cls.angelcar;
 
-import com.beta.cls.angelcar.util.LineUp;
+import com.beta.cls.angelcar.utils.LineUp;
 
 import org.junit.Test;
 

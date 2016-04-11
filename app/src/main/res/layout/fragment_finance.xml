@@ -107,6 +107,7 @@
                         android:layout_width="296dp"
                         android:layout_height="55dp"
                         android:background="@drawable/button_chat_admin" />
+
                     <TextView
                         android:layout_marginTop="8dp"
                         android:textColor="@android:color/white"
@@ -116,6 +117,7 @@
                         android:layout_width="296dp"
                         android:layout_height="55dp"
                         android:background="@drawable/button_chat_admin" />
+
                     <TextView
                         android:layout_marginTop="8dp"
                         android:textColor="@android:color/white"
@@ -125,6 +127,7 @@
                         android:layout_width="296dp"
                         android:layout_height="55dp"
                         android:background="@drawable/button_chat_admin" />
+
                     <TextView
                         android:layout_marginTop="8dp"
                         android:textColor="@android:color/white"
@@ -134,6 +137,7 @@
                         android:layout_width="296dp"
                         android:layout_height="55dp"
                         android:background="@drawable/button_chat_admin" />
+
                     <TextView
                         android:layout_marginTop="8dp"
                         android:textColor="@android:color/white"

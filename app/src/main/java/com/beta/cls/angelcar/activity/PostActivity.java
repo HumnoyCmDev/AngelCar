@@ -5,9 +5,11 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 
 import com.beta.cls.angelcar.R;
 import com.beta.cls.angelcar.fragment.PostFragment;
@@ -28,16 +30,18 @@ import butterknife.OnClick;
  * ลงวันที่ 26/2/59. เวลา 10:43
  ***************************************/
 public class PostActivity extends AppCompatActivity implements OnSelectData{
-
+    private static final String TAG = "PostActivity";
     public static final int CALLBACK_BRAND = 1;
     public static final int CALLBACK_CAR_TYPE = 2;
     public static final int CALLBACK_CAR_TYPE_DETAIL = 3;
     public static final int CALLBACK_ALL_POST = 4;
 
-    int lastPosition = 3;
+    private int lastPosition = 0;
 
-    @Bind(R.id.post_viewpager) AngelCarViewPager angelCarViewPager;
+    @Bind(R.id.post_viewpager) AngelCarViewPager pager;
     @Bind(R.id.indicator) LinePageIndicator indicator;
+    @Bind(R.id.btnNext) Button next;
+    @Bind(R.id.btnPrevious) Button previous;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -47,33 +51,53 @@ public class PostActivity extends AppCompatActivity implements OnSelectData{
 
             PostAdapterViewpager adapter =
                     new PostAdapterViewpager(getSupportFragmentManager());
-            angelCarViewPager.setAdapter(adapter);
-            angelCarViewPager.setPagingEnabled(false);
-            indicator.setViewPager(angelCarViewPager);
+            pager.setAdapter(adapter);
+            indicator.setViewPager(pager);
 
+            pager.setPagingEnabled(false);
+            previous.setEnabled(false);
+            next.setEnabled(false);
 
-    }
-
-    @OnClick({R.id.btnNext,R.id.btnReturn})
-    public void next(View v){
-            if (v.getId() == R.id.btnNext){
-                if (angelCarViewPager.getCurrentItem() + 1 <= lastPosition){
-                    angelCarViewPager.setCurrentItem(angelCarViewPager.getCurrentItem()+1);
-                }
-            }else {
-                angelCarViewPager.setCurrentItem(angelCarViewPager.getCurrentItem()-1);
+        pager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
             }
-        Log.i("click", "next: "+lastPosition);
+
+            @Override
+            public void onPageSelected(int position) {
+                enabledButton(position,lastPosition);
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+            }
+        });
     }
 
+    @OnClick({R.id.btnNext,R.id.btnPrevious})
+    public void next(View v){
+        if (v.getId() == R.id.btnNext)
+            pager.setCurrentItem(pager.getCurrentItem()+1);
+        else
+            pager.setCurrentItem(pager.getCurrentItem()-1);
+        enabledButton(pager.getCurrentItem(),lastPosition);
+    }
+
+    private void enabledButton(int position,int lastPosition) {
+        previous.setEnabled(position > 0);
+        next.setEnabled(lastPosition > position);
+        pager.setPagingEnabled(lastPosition > position);
+    }
     @Override
     public void onSelectedCallback(int callback) {
         if (callback == CALLBACK_ALL_POST){
             finish();
+            return;
         }
-            angelCarViewPager.setCurrentItem(angelCarViewPager.getCurrentItem()+1);
-            lastPosition = angelCarViewPager.getCurrentItem();
 
+            pager.setCurrentItem(pager.getCurrentItem()+1);
+            lastPosition = pager.getCurrentItem();
+            enabledButton(pager.getCurrentItem(),lastPosition);
     }
 
     private class PostAdapterViewpager extends FragmentStatePagerAdapter{

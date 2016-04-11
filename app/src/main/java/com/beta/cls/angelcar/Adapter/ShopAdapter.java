@@ -14,6 +14,7 @@ import android.widget.TextView;
 import com.beta.cls.angelcar.R;
 import com.beta.cls.angelcar.dao.PostCarCollectionDao;
 import com.beta.cls.angelcar.dao.PostCarDao;
+import com.bumptech.glide.Glide;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -32,12 +33,18 @@ public class ShopAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
     private PostCarCollectionDao dao;
     private Filter planetFilter;
     private Context context;
+    private RecyclerOnItemClickListener recyclerOnItemClickListener;
+
     public boolean isHeader(int position) {
-        return position == -1;
+        return position == -1;// +
     }
 
     public void setDao(PostCarCollectionDao dao) {
         this.dao = dao;
+    }
+
+    public void setOnclickListener(RecyclerOnItemClickListener recyclerOnItemClickListener){
+        this.recyclerOnItemClickListener = recyclerOnItemClickListener;
     }
 
     @Override
@@ -65,24 +72,29 @@ public class ShopAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         // coding
         ViewHolder viewHolder = (ViewHolder) holder;
-        PostCarDao item = dao.getRows().get(position);
+        PostCarDao item = dao.getListCar().get(position);
         String bast_url_image = item.getCarImagePath() != null ? item.getCarImagePath():"";
         String urlImage = bast_url_image.replaceFirst("chatcarimage","thumbnailcarimages");
-        Picasso.with(context).load("http://angelcar.com/"+urlImage).into(viewHolder.shopImage);
+
+        Glide.with(context)
+                .load("http://angelcar.com/"+urlImage)
+                .placeholder(R.drawable.loading)
+                .into(viewHolder.shopImage);
+
         viewHolder.carName.setText(item.getCarName());
     }
 
     @Override
     public int getItemCount() {
         if (dao == null) return 0;
-        if (dao.getRows() == null) return 0;
-        return dao.getRows().size();
+        if (dao.getListCar() == null) return 0;
+        return dao.getListCar().size();
     }
 
     @Override
     public Filter getFilter() {
         if (planetFilter == null)
-            planetFilter = new PlanetFilter(this,dao.getRows());
+            planetFilter = new PlanetFilter(this,dao.getListCar());
         return planetFilter;
     }
 
@@ -94,11 +106,20 @@ public class ShopAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
             super(itemView);
             ButterKnife.bind(this,itemView);
             shopSetting.setOnClickListener(this);
+            itemView.setOnClickListener(this);
         }
 
         @Override
         public void onClick(View v) {
-            Log.i("Shop", "onClick: "+getAdapterPosition());
+            if (recyclerOnItemClickListener != null) {
+                if (v instanceof ImageView) { // setting
+                    recyclerOnItemClickListener
+                            .OnClickSettingListener(v, getAdapterPosition());
+                } else { // item
+                    recyclerOnItemClickListener
+                            .OnClickItemListener(v,getAdapterPosition());
+                }
+            }
         }
     }
 
@@ -143,12 +164,17 @@ public class ShopAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
 
         @Override
         protected void publishResults(CharSequence constraint, FilterResults results) {
-            shopAdapter.dao.getRows().clear();
+            shopAdapter.dao.getListCar().clear();
             PostCarCollectionDao dao = new PostCarCollectionDao();
-            dao.setRows((List<PostCarDao>) results.values);
+            dao.setListCar((List<PostCarDao>) results.values);
             shopAdapter.setDao(dao);
             shopAdapter.notifyDataSetChanged();
         }
+    }
+
+    public interface RecyclerOnItemClickListener{
+        void OnClickItemListener(View v, int position);
+        void OnClickSettingListener(View v, int position);
     }
 
 }

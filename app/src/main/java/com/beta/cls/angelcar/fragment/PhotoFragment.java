@@ -9,7 +9,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.beta.cls.angelcar.R;
-import com.beta.cls.angelcar.dao.PictureAllDao;
+import com.beta.cls.angelcar.dao.PictureDao;
 import com.squareup.picasso.Picasso;
 
 import org.parceler.Parcels;
@@ -24,15 +24,15 @@ import org.parceler.Parcels;
 public class PhotoFragment extends Fragment {
 
     ImageView photo;
-    PictureAllDao gao;
+    PictureDao gao;
     public PhotoFragment() {
         super();
     }
 
-    public static PhotoFragment newInstance(PictureAllDao gao) {
+    public static PhotoFragment newInstance(PictureDao gao) {
         PhotoFragment fragment = new PhotoFragment();
         Bundle args = new Bundle();
-        args.putParcelable("PictureAllDao", Parcels.wrap(gao));
+        args.putParcelable("PictureDao", Parcels.wrap(gao));
         fragment.setArguments(args);
         return fragment;
     }
@@ -56,7 +56,7 @@ public class PhotoFragment extends Fragment {
 
     private void init(Bundle savedInstanceState) {
         // Init Fragment level's variable(s) here
-        gao = Parcels.unwrap(getArguments().getParcelable("PictureAllDao"));
+        gao = Parcels.unwrap(getArguments().getParcelable("PictureDao"));
 
 
     }

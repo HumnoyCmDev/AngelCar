@@ -42,7 +42,7 @@ public class CarDetailFragment extends Fragment {
 
     private CustomAdapterGridDetail mAdapter;
 
-    CarDetailCollectionDao gao;
+    CarDetailCollectionDao dao;
     private InformationFromUser user;
 
     private static final String TAG = "CarDetailFragment";
@@ -72,7 +72,7 @@ public class CarDetailFragment extends Fragment {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putParcelable(SAVE_INSTANCE_CAT_DETAIL,Parcels.wrap(gao));
+        outState.putParcelable(SAVE_INSTANCE_CAT_DETAIL,Parcels.wrap(dao));
     }
 
     @Override
@@ -80,14 +80,16 @@ public class CarDetailFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
 
         if (savedInstanceState != null){
-            gao = Parcels.unwrap(savedInstanceState.getParcelable(SAVE_INSTANCE_CAT_DETAIL));
-            mAdapter = new CustomAdapterGridDetail(getActivity(), gao.getRows());
+            dao = Parcels.unwrap(savedInstanceState.getParcelable(SAVE_INSTANCE_CAT_DETAIL));
+            if (dao == null) return;
+            if (dao.getRows() == null) return;
+            mAdapter = new CustomAdapterGridDetail(getActivity(), dao.getRows());
             mGridView.setAdapter(mAdapter);
         }
 
         mGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
-                user.setTypeSubDetail(gao.getRows().get(position).getCarDetailSub());
+                user.setTypeSubDetail(dao.getRows().get(position).getCarDetailSub());
                 BusProvider.getInstance().post(user);
                 OnSelectData onSelectData = (OnSelectData) getActivity();
                 onSelectData.onSelectedCallback(PostActivity.CALLBACK_CAR_TYPE_DETAIL);
@@ -99,8 +101,8 @@ public class CarDetailFragment extends Fragment {
 
     private void showData(String jsonString) {
         Gson gson = new Gson();
-        gao = gson.fromJson(jsonString, CarDetailCollectionDao.class);
-        mAdapter = new CustomAdapterGridDetail(getActivity(), gao.getRows());
+        dao = gson.fromJson(jsonString, CarDetailCollectionDao.class);
+        mAdapter = new CustomAdapterGridDetail(getActivity(), dao.getRows());
         mGridView.setAdapter(mAdapter);
     }
 

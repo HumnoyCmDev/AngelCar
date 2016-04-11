@@ -26,7 +26,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.beta.cls.angelcar.R;
-import com.beta.cls.angelcar.util.LineUp;
+import com.beta.cls.angelcar.utils.LineUp;
 
 
 import java.io.ByteArrayOutputStream;

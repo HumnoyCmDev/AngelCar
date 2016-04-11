@@ -31,7 +31,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.ToggleButton;
 
 import com.beta.cls.angelcar.R;
 import com.beta.cls.angelcar.Adapter.MainViewPagerAdapter;
@@ -41,7 +40,7 @@ import com.beta.cls.angelcar.gcm.GcmRegisterService;
 import com.beta.cls.angelcar.manager.Registration;
 import com.beta.cls.angelcar.manager.bus.BusProvider;
 import com.beta.cls.angelcar.manager.http.HttpManager;
-import com.beta.cls.angelcar.util.RegistrationResult;
+import com.beta.cls.angelcar.utils.RegistrationResult;
 import com.google.android.gms.auth.GoogleAuthUtil;
 import com.google.android.gms.common.AccountPicker;
 import com.google.android.gms.common.ConnectionResult;

@@ -1,6 +1,5 @@
 package com.beta.cls.angelcar.Adapter;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,7 +8,6 @@ import android.widget.TextView;
 
 import com.beta.cls.angelcar.R;
 import com.beta.cls.angelcar.dao.MessageDao;
-import com.beta.cls.angelcar.manager.Registration;
 import com.github.siyamed.shapeimageview.CircularImageView;
 import com.squareup.picasso.Picasso;
 
@@ -27,7 +25,7 @@ import butterknife.ButterKnife;
 //// TODO: 20/2/59 New Adapter...
 public class MessageAdapter extends BaseAdapter{
 
-    private List<MessageDao> gaos;
+    private List<MessageDao> dao;
     private SimpleDateFormat sf;
 
 
@@ -35,9 +33,9 @@ public class MessageAdapter extends BaseAdapter{
         sf = new SimpleDateFormat("HH:mm:ss");
     }
 
-    public void setGao(List<MessageDao> gaos) {
-        this.gaos = gaos;
-        Collections.sort(gaos, new Comparator<MessageDao>() {
+    public void setDao(List<MessageDao> dao) {
+        this.dao = dao;
+        Collections.sort(dao, new Comparator<MessageDao>() {
             @Override
             public int compare(MessageDao lhs, MessageDao rhs) {
                 return rhs.getMessagesTamp().compareTo(lhs.getMessagesTamp());
@@ -47,13 +45,13 @@ public class MessageAdapter extends BaseAdapter{
 
     @Override
     public int getCount() {
-        if (gaos == null) return 0;
-        return gaos.size();
+        if (dao == null) return 0;
+        return dao.size();
     }
 
     @Override
     public MessageDao getItem(int position) {
-        return gaos.get(position);
+        return dao.get(position);
     }
 
     @Override

@@ -3,6 +3,7 @@ package com.beta.cls.angelcar.fragment;
 import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.ClipData;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -14,7 +15,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
@@ -44,8 +44,10 @@ import com.beta.cls.angelcar.manager.Registration;
 import com.beta.cls.angelcar.manager.bus.BusProvider;
 import com.beta.cls.angelcar.manager.http.HttpManager;
 import com.beta.cls.angelcar.model.InformationFromUser;
-import com.beta.cls.angelcar.util.LineUp;
+import com.beta.cls.angelcar.utils.LineUp;
 import com.squareup.otto.Subscribe;
+
+import org.parceler.apache.commons.lang.StringUtils;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -99,11 +101,12 @@ public class PostFragment extends Fragment {
     private static String ARG_InformationFromUser = "ARG_InformationFromUser";
     private static final MediaType MEDIA_TYPE_PNG = MediaType.parse("image/png");
 
-    int id_photo = 0;
+    int idPhoto = 0;
     int id_province = 1;
     HashMap<Integer, File> filesPhotoList;
 
     private InformationFromUser user;
+//    ProgressDialog progress;
 
     public PostFragment() {
         super();
@@ -118,6 +121,9 @@ public class PostFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         filesPhotoList = new HashMap<>();
+//        progress = new ProgressDialog(getActivity());
+//        progress.setMessage("UpLoad...");
+//        progress.setCancelable(false);
     }
 
     @Override
@@ -156,13 +162,13 @@ public class PostFragment extends Fragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        if (savedInstanceState == null) {
+//        if (savedInstanceState == null) {
 //            initData();
             initInstance();
             initDataProvince();
-            
-        }
 
+//        }
+//
     }
 
     private void initDataProvince() {
@@ -205,8 +211,6 @@ public class PostFragment extends Fragment {
     }
 
     private void initData() {
-
-
         detailPostCar.setText(
                         user.getBrand().toUpperCase()+" "+
                         user.getTypeSub()+" "+
@@ -220,25 +224,37 @@ public class PostFragment extends Fragment {
        String shopPref = Registration.getInstance().getShopRef(); // 1
        String carName = user.getBrand().toUpperCase() ; // toyota
        String carDetail = LineUp.getInstance().append(editTextTopic.getText().toString(),
-               editTextDescription.getText().toString()); // ชื่อสั้นๆ
+               editTextDescription.getText().toString()).trim(); // ชื่อสั้นๆ
        int carYear = user.getYear(); // ปีรถ
-       String carPrice = editTextPrice.getText().toString();// ราคารถ
+       String carPrice = editTextPrice.getText().toString().trim();// ราคารถ
        String carStatus = "wait";//wait,online,offline
-       String province = String.valueOf(id_province); // 1 - 77
+       String province = String.valueOf(id_province).trim(); // 1 - 77
        String gear = tgGear.isChecked() ? "1":"2"; // 0 or 1
-       String plate = editTextRegister.getText().toString(); // text ทะเบียนน
-       String name = editTextName.getText().toString(); // ชื่อ นามสกุล
-
-        Call<LogFromServerDao> call = HttpManager.getInstance().getService().postCar(
-                "insert",
-                shopPref, carName, carDetail, carYear,
-                carPrice, carStatus, province, gear, plate, name);
-        call.enqueue(postCallback);
+       String plate = editTextRegister.getText().toString().trim(); // text ทะเบียนน
+       String name = editTextName.getText().toString().trim(); // ชื่อ นามสกุล
 
 
-        OnSelectData onSelectData = (OnSelectData) getActivity();
-        onSelectData.onSelectedCallback(PostActivity.CALLBACK_ALL_POST);
-        Toast.makeText(getActivity(),"Post",Toast.LENGTH_SHORT).show();
+        //isEmpty = true หากมีค่าว่าง
+
+        if (filesPhotoList.size() < 3) {
+            Toast.makeText(getContext(), "กรุณาใส่รูปมากกว่า 3", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if (shopPref.isEmpty() || carName.isEmpty()
+                || carDetail.isEmpty() || carPrice.isEmpty()
+                || province.isEmpty() || gear.isEmpty()
+                || plate.isEmpty() || name.isEmpty()){
+                Toast.makeText(getContext(),"กรุณากรอกข้อมูลให้ครบ!",Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+
+            Call<LogFromServerDao> call = HttpManager.getInstance().getService().postCar(
+            "insert", shopPref, carName, carDetail, carYear, carPrice, carStatus, province, gear, plate, name);
+            call.enqueue(postCallback);
+            OnSelectData onSelectData = (OnSelectData) getActivity();
+            onSelectData.onSelectedCallback(PostActivity.CALLBACK_ALL_POST);
 
     }
 
@@ -271,12 +287,14 @@ public class PostFragment extends Fragment {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_CODE_LOAD_IMAGE && resultCode == Activity.RESULT_OK && null != data) {
             String[] filePathColumn = {MediaStore.Images.Media.DATA};
-            if (Build.VERSION.SDK_INT >= 16){
+
+            if (Build.VERSION.SDK_INT >= 18){
                 ClipData clipData = data.getClipData();
-                for (int i = id_photo; i < clipData.getItemCount(); i++) {
+                for (int i = 0; i < clipData.getItemCount(); i++) {
                     if (i < 8) {
                         Uri uri = clipData.getItemAt(i).getUri();
-                        Cursor cursor = getActivity().getContentResolver().query(uri, filePathColumn, null, null, null);
+                        Cursor cursor = getActivity().getContentResolver()
+                                .query(uri, filePathColumn, null, null, null);
                         // Move to first row
                         assert cursor != null;
                         cursor.moveToFirst();
@@ -289,26 +307,25 @@ public class PostFragment extends Fragment {
                 }
             }else {
                 Uri selectedImage = data.getData();
-                Cursor cursor = getActivity().getContentResolver().query(selectedImage, filePathColumn, null, null, null);
+                Cursor cursor = getActivity().getContentResolver()
+                        .query(selectedImage, filePathColumn, null, null, null);
                 assert cursor != null;
                 cursor.moveToFirst();
                 int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
                 String picturePath = cursor.getString(columnIndex);
                 cursor.close();
                 // add path
-                addFilesPhotoList(id_photo,picturePath);
+                addFilesPhotoList(idPhoto,picturePath);
             }
         }
 
     }
 
-    private void addFilesPhotoList(int id_photo,String picturePath){
-        this.id_photo = id_photo;
-        File file = new File(picturePath);
+    private void addFilesPhotoList(int newIdPhoto,String picturePath){
         // list photo
-        filesPhotoList.put(id_photo,file);
-        photo.get(id_photo).setImageBitmap(
-                decodeFile(filesPhotoList.get(id_photo)));
+        filesPhotoList.put(idPhoto+newIdPhoto,new File(picturePath));
+        photo.get(idPhoto+newIdPhoto).setImageBitmap(
+                decodeFile(filesPhotoList.get(idPhoto+newIdPhoto)));
     }
 
 
@@ -328,16 +345,16 @@ public class PostFragment extends Fragment {
     })
     public void onClick(View v) {
         switch (v.getId()){
-            case R.id.post_photo_1 : id_photo = 0 ; break ;
-            case R.id.post_photo_2 : id_photo = 1 ; break ;
-            case R.id.post_photo_3 : id_photo = 2 ; break ;
-            case R.id.post_photo_4 : id_photo = 3 ; break ;
-            case R.id.post_photo_5 : id_photo = 4 ; break ;
-            case R.id.post_photo_6 : id_photo = 5 ; break ;
-            case R.id.post_photo_7 : id_photo = 6 ; break ;
-            case R.id.post_photo_8 : id_photo = 7 ; break ;
+            case R.id.post_photo_1 : idPhoto = 0 ; break ;
+            case R.id.post_photo_2 : idPhoto = 1 ; break ;
+            case R.id.post_photo_3 : idPhoto = 2 ; break ;
+            case R.id.post_photo_4 : idPhoto = 3 ; break ;
+            case R.id.post_photo_5 : idPhoto = 4 ; break ;
+            case R.id.post_photo_6 : idPhoto = 5 ; break ;
+            case R.id.post_photo_7 : idPhoto = 6 ; break ;
+            case R.id.post_photo_8 : idPhoto = 7 ; break ;
         }
-        addOrRemovePhotoList(id_photo);
+        addOrRemovePhotoList(idPhoto);
     }
 
     private void addOrRemovePhotoList(int id_photo){
@@ -362,7 +379,7 @@ public class PostFragment extends Fragment {
                 if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(),
                         Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
                     //กรณีไม่ให้สิทธิ์// แสดงรายการคำขอ ผลหากไม่ให้สิท ขอ Permission ผ่าน Dialog
-                    showMessageOKCancel("AngelCar ต้องการสิทธิ์ในการเข้าถึงรูปภาพ", new DialogInterface.OnClickListener() {
+                    showMessageOKCancel("AngelCar ต้องการขอสิทธิ์ในการเข้าถึงรูปภาพ", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             ActivityCompat.requestPermissions(getActivity(),
@@ -389,7 +406,9 @@ public class PostFragment extends Fragment {
     private void intentLoadPictureExternalStore(){
         Intent i = new Intent(Intent.ACTION_PICK,
                 android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        i.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+        if (Build.VERSION.SDK_INT >= 18)
+            i.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+
         startActivityForResult(i, REQUEST_CODE_LOAD_IMAGE);
     }
 

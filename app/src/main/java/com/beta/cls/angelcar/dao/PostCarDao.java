@@ -1,6 +1,6 @@
 package com.beta.cls.angelcar.dao;
 
-import com.beta.cls.angelcar.util.LineUp;
+import com.beta.cls.angelcar.utils.LineUp;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 

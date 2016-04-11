@@ -85,7 +85,7 @@ public class ChatActivity extends AppCompatActivity {
                     if (response.isSuccessful()){
 
                         messageManager.setMessageDao(response.body());
-                        chatAdapter.setMessages(messageManager.getMessageDao().getMessage());
+                        chatAdapter.setMessages(messageManager.getMessageDao().getListMessage());
                         chatAdapter.notifyDataSetChanged();
 
                         synchronous
@@ -112,7 +112,6 @@ public class ChatActivity extends AppCompatActivity {
 
     @OnClick(R.id.message_button_send)
     public void buttonSendMessage(){
-
         sendMessage(messageText.getText().toString().trim());
     }
 
@@ -144,7 +143,7 @@ public class ChatActivity extends AppCompatActivity {
 
     @Subscribe
     public void produceMessage(MessageManager message){
-        chatAdapter.setMessages(messageManager.getMessageDao().getMessage());
+        chatAdapter.setMessages(messageManager.getMessageDao().getListMessage());
         chatAdapter.notifyDataSetChanged();
     }
 
@@ -177,12 +176,12 @@ public class ChatActivity extends AppCompatActivity {
         @Override
         public void onMainThread() {
             if (response.isSuccessful()) {
-                messageManager.updateDataToLastPosition(response.body());
+                messageManager.appendDataToBottomPosition(response.body());
                 BusProvider.getInstance().post(messageManager);
-                for (MessageDao g : response.body().getMessage()) {
-                    Log.i(TAG, "doInBackground: " + g.getMessageId());
-                    Log.i(TAG, "doInBackground: " + g.getMessageText());
-                }
+//                for (MessageDao g : response.body().getListMessage()) {
+//                    Log.i(TAG, "doInBackground: " + g.getMessageId());
+//                    Log.i(TAG, "doInBackground: " + g.getMessageText());
+//                }
             }
         }
     };

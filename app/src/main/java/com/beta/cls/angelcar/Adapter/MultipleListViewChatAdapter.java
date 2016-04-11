@@ -1,6 +1,7 @@
 package com.beta.cls.angelcar.Adapter;
 
 import android.graphics.Color;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,6 +9,7 @@ import android.widget.BaseAdapter;
 
 import com.beta.cls.angelcar.R;
 import com.beta.cls.angelcar.dao.MessageDao;
+import com.beta.cls.angelcar.listener.OnClickChatListener;
 import com.hndev.library.view.AngelCarMessage;
 
 import java.util.List;
@@ -21,8 +23,11 @@ import butterknife.ButterKnife;
 public class MultipleListViewChatAdapter extends BaseAdapter {
     private List<MessageDao> messages;
     private String messageBy ;
-
-    private static final String TAG = "MultipleListViewChatAdapter";
+//    private OnClickChatListener onClickChatListener;
+//
+//    public void setOnClickChatListener(OnClickChatListener onClickChatListener) {
+//        this.onClickChatListener = onClickChatListener;
+//    }
 
     public MultipleListViewChatAdapter(String messageBy) {
         this.messageBy = messageBy;
@@ -87,11 +92,10 @@ public class MultipleListViewChatAdapter extends BaseAdapter {
         //coding
         holder.angelCarMessage.setMessage(message.getMessageText());
         holder.angelCarMessage.setIconProfile(message.getUserProfileImage());
-        if (position == 0)
-            holder.angelCarMessage.setBackground(Color.parseColor("#50E3C2"));
-        else if (position == 1)
-            holder.angelCarMessage.setBackground(Color.parseColor("#7ED321"));
-
+//        if (position == 0)
+//            holder.angelCarMessage.setBackground(Color.parseColor("#50E3C2"));
+//        else if (position == 1)
+//            holder.angelCarMessage.setBackground(Color.parseColor("#7ED321"));
 
         return view;
     }
@@ -108,10 +112,10 @@ public class MultipleListViewChatAdapter extends BaseAdapter {
         //coding
         holder.angelCarMessage.setMessage(message.getMessageText());
         holder.angelCarMessage.setIconProfile(message.getUserProfileImage());
-        if (position == 0)
-            holder.angelCarMessage.setBackground(Color.parseColor("#50E3C2"));
-        else if (position == 1)
-            holder.angelCarMessage.setBackground(Color.parseColor("#7ED321"));
+//        if (position == 0)
+//            holder.angelCarMessage.setBackground(Color.parseColor("#50E3C2"));
+//        else if (position == 1)
+//            holder.angelCarMessage.setBackground(Color.parseColor("#7ED321"));
 
         return view;
     }

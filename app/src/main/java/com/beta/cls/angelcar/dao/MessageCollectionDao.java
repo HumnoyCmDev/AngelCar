@@ -6,15 +6,18 @@ import java.util.List;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import org.parceler.Parcel;
+
+@Parcel
 public class MessageCollectionDao {
     @SerializedName("message")
     @Expose
-    private List<MessageDao> message = new ArrayList<MessageDao>();
-    public List<MessageDao> getMessage() {
-        return message;
+    public List<MessageDao> listMessage = new ArrayList<MessageDao>();
+    public List<MessageDao> getListMessage() {
+        return listMessage;
     }
-    public void setMessage(List<MessageDao> message) {
-        this.message = message;
+    public void setListMessage(List<MessageDao> listMessage) {
+        this.listMessage = listMessage;
     }
 
 }

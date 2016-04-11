@@ -1,9 +1,8 @@
-package com.beta.cls.angelcar.util;
+package com.beta.cls.angelcar.utils;
 
 import android.content.Context;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
-import android.widget.Toast;
 
 import com.beta.cls.angelcar.manager.Contextor;
 

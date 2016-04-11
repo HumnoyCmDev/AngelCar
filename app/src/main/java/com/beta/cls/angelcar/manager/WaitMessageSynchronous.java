@@ -7,6 +7,7 @@ import android.util.Log;
 
 import com.beta.cls.angelcar.interfaces.WaitMessageOnBackground;
 import com.beta.cls.angelcar.manager.bus.BusProvider;
+import com.beta.cls.angelcar.manager.bus.MainThreadBus;
 
 /***************************************
  * สร้างสรรค์ผลงานดีๆ
@@ -30,6 +31,7 @@ public class WaitMessageSynchronous extends AsyncTask<Void,Void,Void>{
                 Thread.sleep(waitMessageOnBackground.getTimeSleep());
                 waitMessageOnBackground.onBackground();
                 Log.i("Synchronous", "doInBackground: run..");
+                MainThreadBus.getInstance().post("TEST");
                 Handler refresh = new Handler(Looper.getMainLooper());
                 refresh.post(new Runnable() {
                     public void run()

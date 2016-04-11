@@ -84,7 +84,7 @@ public class ChatBuyFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 MessageDao messageDao =
-                        messageManager.getMessageDao().getMessage().get(position);
+                        messageManager.getMessageDao().getListMessage().get(position);
                 Call<PostCarCollectionDao> call =
                         HttpManager.getInstance().getService().loadCarModel(messageDao.getMessageCarId());
                 call.enqueue(new CallbackLoadCarModel(getContext(),messageDao.getMessageFromUser()));
@@ -138,8 +138,8 @@ public class ChatBuyFragment extends Fragment {
             if (response.isSuccessful()) {
                 messageManager.setMessageDao(response.body()
                         .getMessageAdminGao()
-                        .convertToMessageCollectionGao());
-                adapter.setGao(messageManager.getMessageDao().getMessage());
+                        .convertToMessageCollectionDao());
+                adapter.setDao(messageManager.getMessageDao().getListMessage());
                 adapter.notifyDataSetChanged();
 
             } else {

@@ -33,6 +33,11 @@ import butterknife.ButterKnife;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import rx.Observable;
+import rx.Subscriber;
+import rx.functions.Func1;
+import rx.functions.Func2;
+import rx.schedulers.Schedulers;
 
 /**
  * Created by humnoy on 26/1/59.
@@ -45,7 +50,6 @@ public class ChatAllFragment extends Fragment{
 
     MessageManager messageManager;
     MessageAdapter adapter;
-//    PostCarDao item;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -67,8 +71,6 @@ public class ChatAllFragment extends Fragment{
         initInstance();
         initListener();
         loadCarId();
-//        initDataMessage();
-
     }
 
     private void loadCarId() {
@@ -76,11 +78,9 @@ public class ChatAllFragment extends Fragment{
                 HttpManager.getInstance().getService().loadCarId(
                         Registration.getInstance().getShopRef());
         loadCarId.enqueue(carIdDaoCallback);
-
     }
 
     private void initDataMessage(final CarIdDao body) {
-
         new AsyncTask<Void,Void,Void>(){
             @Override
             protected Void doInBackground(Void... params) {
@@ -98,7 +98,7 @@ public class ChatAllFragment extends Fragment{
                     if (responseClient.isSuccessful()){
                         messageManager.setMessageDao(responseClient.body());
                     }else {
-
+                        Log.e(TAG, "doInBackground: "+responseClient.errorBody().string());
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -107,14 +107,15 @@ public class ChatAllFragment extends Fragment{
                 try {
                     Response<MessageAdminCollectionDao> responseAdmin = callAdmin.execute();
                     if (responseAdmin.isSuccessful()){
-                        messageManager.updateDataToLastPosition(
+                        messageManager.appendDataToBottomPosition(
                                 responseAdmin.body().getMessageAdminGao()
-                                        .convertToMessageCollectionGao());
+                                        .convertToMessageCollectionDao());
+                    }else {
+                        Log.e(TAG, "doInBackground: "+responseAdmin.errorBody().string());
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-
 
                 return null;
             }
@@ -122,12 +123,10 @@ public class ChatAllFragment extends Fragment{
             @Override
             protected void onPostExecute(Void aVoid) {
                 super.onPostExecute(aVoid);
-                adapter.setGao(messageManager.getMessageDao().getMessage());
+                adapter.setDao(messageManager.getMessageDao().getListMessage());
                 adapter.notifyDataSetChanged();
             }
         }.execute();
-
-
     }
 
     private void initInstance() {
@@ -163,7 +162,7 @@ public class ChatAllFragment extends Fragment{
                 initDataMessage(response.body());
             }else {
                 try {
-                    Log.i(TAG, "onResponse: "+response.errorBody().string());
+                    Log.e(TAG, "onResponse: "+response.errorBody().string());
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -179,7 +178,7 @@ public class ChatAllFragment extends Fragment{
     AdapterView.OnItemClickListener onItemClickListener = new AdapterView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            MessageDao dao = messageManager.getMessageDao().getMessage().get(position);
+            MessageDao dao = messageManager.getMessageDao().getListMessage().get(position);
             Call<PostCarCollectionDao> call =
                     HttpManager.getInstance().getService().loadCarModel(dao.getMessageCarId());
             call.enqueue(new CallbackLoadCarModel(getContext(),dao.getMessageFromUser()));
@@ -192,7 +191,7 @@ public class ChatAllFragment extends Fragment{
         @Override
         public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
             Toast.makeText(getContext(), "OnItem Long Click" + position, Toast.LENGTH_LONG).show();
-            MessageDao dao = messageManager.getMessageDao().getMessage().get(position);
+            MessageDao dao = messageManager.getMessageDao().getListMessage().get(position);
 //            deleteDialog(dao);
             return true;
         }

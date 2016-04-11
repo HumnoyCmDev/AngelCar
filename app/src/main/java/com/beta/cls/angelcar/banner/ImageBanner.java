@@ -1,6 +1,7 @@
 package com.beta.cls.angelcar.banner;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.text.TextUtils;
@@ -11,30 +12,33 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.beta.cls.angelcar.R;
-import com.beta.cls.angelcar.dao.PictureAllDao;
+import com.beta.cls.angelcar.dao.PictureDao;
 import com.beta.cls.angelcar.utils.ViewFindUtils;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.bitmap_recycle.BitmapPool;
+import com.bumptech.glide.load.resource.bitmap.BitmapTransformation;
 import com.flyco.banner.widget.Banner.BaseIndicatorBanner;
 import com.squareup.picasso.Picasso;
 
-public class DetailImageBanner extends BaseIndicatorBanner<PictureAllDao, DetailImageBanner> {
+public class ImageBanner extends BaseIndicatorBanner<PictureDao, ImageBanner> {
     private ColorDrawable colorDrawable;
 
-    public DetailImageBanner(Context context) {
+    public ImageBanner(Context context) {
         this(context, null, 0);
     }
 
-    public DetailImageBanner(Context context, AttributeSet attrs) {
+    public ImageBanner(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
     }
 
-    public DetailImageBanner(Context context, AttributeSet attrs, int defStyle) {
+    public ImageBanner(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         colorDrawable = new ColorDrawable(Color.parseColor("#555555"));
     }
 
     @Override
     public void onTitleSlect(TextView tv, int position) {
-//        final PictureAllDao item = mDatas.get(position);
+//        final PictureDao item = mDatas.get(position)
 //        tv.setText(item.getTopic());
     }
 
@@ -43,7 +47,7 @@ public class DetailImageBanner extends BaseIndicatorBanner<PictureAllDao, Detail
         View inflate = View.inflate(mContext, R.layout.adapter_simple_image, null);
         ImageView iv = ViewFindUtils.find(inflate, R.id.iv);
 
-        final PictureAllDao item = mDatas.get(position);
+        final PictureDao item = mDatas.get(position);
         int itemWidth = mDisplayMetrics.widthPixels;
         int itemHeight = (int) (itemWidth * 360 * 1.0f / 640);
         iv.setScaleType(ImageView.ScaleType.CENTER_CROP);
@@ -54,9 +58,9 @@ public class DetailImageBanner extends BaseIndicatorBanner<PictureAllDao, Detail
                 .replace("chatcarimage","thumbnailcarimages");
 
         if (!TextUtils.isEmpty(urlImage)) {
-            Picasso.with(mContext)
+            Glide.with(mContext)
                     .load(urlImage)
-                    .resize(itemWidth,itemHeight)
+                    .override(itemWidth, itemHeight)
                     .centerCrop()
                     .placeholder(colorDrawable)
                     .into(iv);
@@ -66,4 +70,6 @@ public class DetailImageBanner extends BaseIndicatorBanner<PictureAllDao, Detail
 
         return inflate;
     }
+
+
 }

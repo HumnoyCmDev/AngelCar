@@ -13,7 +13,7 @@ import android.widget.Filterable;
 import com.beta.cls.angelcar.R;
 import com.beta.cls.angelcar.dao.PostCarCollectionDao;
 import com.beta.cls.angelcar.dao.PostCarDao;
-import com.beta.cls.angelcar.util.LineUp;
+import com.beta.cls.angelcar.utils.LineUp;
 import com.hndev.library.view.AngelCarPost;
 
 import java.util.ArrayList;
@@ -30,7 +30,7 @@ public class ListViewPostAdapter extends BaseAdapter implements Filterable {
 
     public void setDao(PostCarCollectionDao dao) {
         this.dao = dao;
-        daoFilter = dao.getRows();
+        daoFilter = dao.getListCar();
     }
 
     public int getCount() {
@@ -143,8 +143,8 @@ public class ListViewPostAdapter extends BaseAdapter implements Filterable {
         protected FilterResults performFiltering(CharSequence constraint) {
             FilterResults results = new FilterResults();
             if (constraint == null || constraint.length() == 0) {
-                results.values = dao.getRows();
-                results.count = dao.getRows().size();
+                results.values = dao.getListCar();
+                results.count = dao.getListCar().size();
             }else {
                 List<PostCarDao> nGao = new ArrayList<>();
                 for (PostCarDao g : daoFilter){

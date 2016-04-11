@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:background="#FFFFFF"
-    android:gravity="center_vertical"
-    android:orientation="horizontal" >
+    android:background="#FFFFFF" >
+
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -23,10 +22,6 @@
             android:text="Toyota"
             android:gravity="center"/>
 
-
     </LinearLayout>
 
-
-
-
-</LinearLayout>
+</RelativeLayout>

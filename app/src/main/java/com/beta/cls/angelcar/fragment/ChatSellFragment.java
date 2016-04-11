@@ -76,7 +76,7 @@ public class ChatSellFragment extends Fragment {
             public void onResponse(Call<MessageCollectionDao> call, Response<MessageCollectionDao> response) {
                if (response.isSuccessful()) {
                    gao = response.body();
-                   adapter.setGao(gao.getMessage());
+                   adapter.setDao(gao.getListMessage());
                    adapter.notifyDataSetChanged();
                }else {
                    try {
@@ -112,7 +112,7 @@ public class ChatSellFragment extends Fragment {
     AdapterView.OnItemClickListener onItemClickListener = new AdapterView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            MessageDao messageDao = gao.getMessage().get(position);
+            MessageDao messageDao = gao.getListMessage().get(position);
             Call<PostCarCollectionDao> call =
                     HttpManager.getInstance().getService().loadCarModel(messageDao.getMessageCarId());
             call.enqueue(new CallbackLoadCarModel(getContext(),messageDao.getMessageFromUser()));
