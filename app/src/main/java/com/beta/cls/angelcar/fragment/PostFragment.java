@@ -19,7 +19,10 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.util.LruCache;
 import android.support.v7.app.AlertDialog;
+import android.telephony.PhoneNumberFormattingTextWatcher;
+import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -124,14 +127,21 @@ public class PostFragment extends Fragment {
 //        progress = new ProgressDialog(getActivity());
 //        progress.setMessage("UpLoad...");
 //        progress.setCancelable(false);
+
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_post, container, false);
-        ButterKnife.bind(this,rootView);
+        initInstances(rootView, savedInstanceState);
         return rootView;
+    }
+
+    private void initInstances(View rootView, Bundle savedInstanceState) {
+        ButterKnife.bind(this,rootView);
+        // Text Format
+        editTextTelephone.addTextChangedListener(new PhoneNumberFormattingTextWatcher());
     }
 
     @Override
@@ -223,8 +233,9 @@ public class PostFragment extends Fragment {
 
        String shopPref = Registration.getInstance().getShopRef(); // 1
        String carName = user.getBrand().toUpperCase() ; // toyota
-       String carDetail = LineUp.getInstance().append(editTextTopic.getText().toString(),
-               editTextDescription.getText().toString()).trim(); // ชื่อสั้นๆ
+       String topic = editTextTopic.getText().toString();
+       String detail = editTextDescription.getText().toString().trim();
+       String appendCarTopDetail = LineUp.getInstance().append(topic,detail); // ชื่อสั้นๆ
        int carYear = user.getYear(); // ปีรถ
        String carPrice = editTextPrice.getText().toString().trim();// ราคารถ
        String carStatus = "wait";//wait,online,offline
@@ -232,7 +243,7 @@ public class PostFragment extends Fragment {
        String gear = tgGear.isChecked() ? "1":"2"; // 0 or 1
        String plate = editTextRegister.getText().toString().trim(); // text ทะเบียนน
        String name = editTextName.getText().toString().trim(); // ชื่อ นามสกุล
-
+       String phone = editTextTelephone.getText().toString().trim();
 
         //isEmpty = true หากมีค่าว่าง
 
@@ -241,22 +252,32 @@ public class PostFragment extends Fragment {
             return;
         }
 
-        if (shopPref.isEmpty() || carName.isEmpty()
-                || carDetail.isEmpty() || carPrice.isEmpty()
-                || province.isEmpty() || gear.isEmpty()
-                || plate.isEmpty() || name.isEmpty()){
-                Toast.makeText(getContext(),"กรุณากรอกข้อมูลให้ครบ!",Toast.LENGTH_SHORT).show();
+        if (isEmpty(shopPref)   ||  isEmpty(carName)    ||
+            isEmpty(topic)      ||  isEmpty(carPrice)   ||
+            isEmpty(detail)     ||  isEmpty(phone)      ||
+            isEmpty(province)   ||  isEmpty(gear)       ||
+            isEmpty(plate)      ||  isEmpty(name)){
+            Toast.makeText(getContext(),"กรุณากรอกข้อมูลให้ครบ!",Toast.LENGTH_SHORT).show();
             return;
         }
 
-
             Call<LogFromServerDao> call = HttpManager.getInstance().getService().postCar(
-            "insert", shopPref, carName, carDetail, carYear, carPrice, carStatus, province, gear, plate, name);
+            "insert", shopPref, carName, appendCarTopDetail, carYear, carPrice, carStatus, province, gear, plate, name);
             call.enqueue(postCallback);
             OnSelectData onSelectData = (OnSelectData) getActivity();
             onSelectData.onSelectedCallback(PostActivity.CALLBACK_ALL_POST);
 
+
     }
+
+    private boolean isEmpty(String str){
+        if (str.isEmpty())
+            return true;
+        if (str.equals(""))
+            return true;
+        return false;
+    }
+
 
     private static void uploadPicture(String id,HashMap<Integer, File> filesPhotoList, okhttp3.Callback responseCallbackUpFile) {
         //post picture
@@ -274,7 +295,8 @@ public class PostFragment extends Fragment {
                         RequestBody.create(MEDIA_TYPE_PNG, filesPhotoList.get(i))).build();
 
                 Request request = new Request.Builder()
-                        .url("http://www.angelcar.com/imgupload.php")
+//                        .url("http://www.angelcar.com/imgupload.php")
+                        .url("http://www.angelcar.com/ios/data/gadata/gacarupload.php")
                         .post(requestBody)
                         .build();
                 client.newCall(request).enqueue(responseCallbackUpFile);
@@ -288,7 +310,7 @@ public class PostFragment extends Fragment {
         if (requestCode == REQUEST_CODE_LOAD_IMAGE && resultCode == Activity.RESULT_OK && null != data) {
             String[] filePathColumn = {MediaStore.Images.Media.DATA};
 
-            if (Build.VERSION.SDK_INT >= 18){
+            /*if (Build.VERSION.SDK_INT >= 18){
                 ClipData clipData = data.getClipData();
                 for (int i = 0; i < clipData.getItemCount(); i++) {
                     if (i < 8) {
@@ -305,7 +327,7 @@ public class PostFragment extends Fragment {
                         addFilesPhotoList(i,picturePath);
                     }
                 }
-            }else {
+            }else {*/
                 Uri selectedImage = data.getData();
                 Cursor cursor = getActivity().getContentResolver()
                         .query(selectedImage, filePathColumn, null, null, null);
@@ -316,16 +338,17 @@ public class PostFragment extends Fragment {
                 cursor.close();
                 // add path
                 addFilesPhotoList(idPhoto,picturePath);
-            }
+            /*}*/
         }
 
     }
 
-    private void addFilesPhotoList(int newIdPhoto,String picturePath){
+    private void addFilesPhotoList(int idPhoto,String picturePath){
         // list photo
-        filesPhotoList.put(idPhoto+newIdPhoto,new File(picturePath));
-        photo.get(idPhoto+newIdPhoto).setImageBitmap(
-                decodeFile(filesPhotoList.get(idPhoto+newIdPhoto)));
+        filesPhotoList.put(idPhoto,new File(picturePath));
+        photo.get(idPhoto).setImageBitmap(
+                decodeFile(filesPhotoList.get(idPhoto)));
+
     }
 
 
@@ -406,9 +429,8 @@ public class PostFragment extends Fragment {
     private void intentLoadPictureExternalStore(){
         Intent i = new Intent(Intent.ACTION_PICK,
                 android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        if (Build.VERSION.SDK_INT >= 18)
-            i.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
-
+//        if (Build.VERSION.SDK_INT >= 18)
+//            i.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
         startActivityForResult(i, REQUEST_CODE_LOAD_IMAGE);
     }
 
@@ -451,6 +473,8 @@ public class PostFragment extends Fragment {
         super.onPause();
         BusProvider.getInstance().unregister(this);
     }
+
+
 
     @Subscribe
     public void getProduceData(InformationFromUser user){

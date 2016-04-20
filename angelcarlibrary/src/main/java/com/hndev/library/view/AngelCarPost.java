@@ -170,7 +170,7 @@ public class AngelCarPost extends BaseCustomViewGroup {
     }
 
 
-    private float convertTodp(float size) {
+    private float convertToDP(float size) {
         Resources resources = getResources();
         DisplayMetrics metrics = resources.getDisplayMetrics();
         float dp = size / (metrics.densityDpi / 160f);

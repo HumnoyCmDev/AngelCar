@@ -35,7 +35,7 @@ public class ChatSellFragment extends Fragment {
 
 
     MessageAdapter adapter;
-    MessageCollectionDao gao;
+    MessageCollectionDao dao;
 
 
     private static final String TAG = "ChatSellFragment";
@@ -43,31 +43,63 @@ public class ChatSellFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        init(savedInstanceState);
+
+        if (savedInstanceState != null)
+            onRestoreInstanceState(savedInstanceState);
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.list_view_layout, container, false);
-        ButterKnife.bind(this, v);
+        initInstances(v,savedInstanceState);
         return v;
     }
 
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
+    private void init(Bundle savedInstanceState) {
+        // Init Fragment level's variable(s) here
+        dao = new MessageCollectionDao();
+    }
 
+    @SuppressWarnings("UnusedParameters")
+    private void initInstances(View rootView, Bundle savedInstanceState) {
+        // Init 'View' instance(s) with rootView.findViewById here
+        ButterKnife.bind(this, rootView);
         adapter = new MessageAdapter();
         listView.setAdapter(adapter);
 
-        if (savedInstanceState == null) {
-            initMessage();
-        }
+        loadMessage();
         listView.setOnItemClickListener(onItemClickListener);
     }
 
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        // Save Instance State here
+    }
 
-    private void initMessage() {
+
+    @SuppressWarnings("UnusedParameters")
+    private void onRestoreInstanceState(Bundle savedInstanceState) {
+        // Restore Instance State here
+    }
+
+//    @Override
+//    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+//        super.onActivityCreated(savedInstanceState);
+//
+//        adapter = new MessageAdapter();
+//        listView.setAdapter(adapter);
+//
+////        if (savedInstanceState == null) {
+//            loadMessage();
+////        }
+//        listView.setOnItemClickListener(onItemClickListener);
+//    }
+
+
+    private void loadMessage() {
 
         HttpManager.getInstance().getService()
                 .messageClient(Registration.getInstance().getUserId())
@@ -75,8 +107,9 @@ public class ChatSellFragment extends Fragment {
             @Override
             public void onResponse(Call<MessageCollectionDao> call, Response<MessageCollectionDao> response) {
                if (response.isSuccessful()) {
-                   gao = response.body();
-                   adapter.setDao(gao.getListMessage());
+//                   dao = response.body();
+                   dao.setListMessage(response.body().getListMessage());
+                   adapter.setDao(dao.getListMessage());
                    adapter.notifyDataSetChanged();
                }else {
                    try {
@@ -98,12 +131,18 @@ public class ChatSellFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        initMessage();
+//        loadMessage();
     }
 
     @Override
     public void onPause() {
         super.onPause();
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        ButterKnife.unbind(this);
     }
 
     /***************
@@ -112,7 +151,7 @@ public class ChatSellFragment extends Fragment {
     AdapterView.OnItemClickListener onItemClickListener = new AdapterView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            MessageDao messageDao = gao.getListMessage().get(position);
+            MessageDao messageDao = dao.getListMessage().get(position);
             Call<PostCarCollectionDao> call =
                     HttpManager.getInstance().getService().loadCarModel(messageDao.getMessageCarId());
             call.enqueue(new CallbackLoadCarModel(getContext(),messageDao.getMessageFromUser()));

@@ -16,6 +16,7 @@ import org.parceler.Parcel;
 import java.util.List;
 
 @Parcel
+@Deprecated
 public class CarDetailCollectionDao {
 
     @SerializedName("rows") @Expose

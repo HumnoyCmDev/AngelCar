@@ -2,11 +2,13 @@ package com.beta.cls.angelcar.fragment;
 
 
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.res.TypedArray;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -18,8 +20,8 @@ import android.view.animation.BounceInterpolator;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RadioButton;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -30,6 +32,8 @@ import com.beta.cls.angelcar.Adapter.ListViewPostAdapter;
 import com.beta.cls.angelcar.activity.DetailCarActivity;
 import com.beta.cls.angelcar.R;
 import com.beta.cls.angelcar.anim.ResizeHeight;
+import com.beta.cls.angelcar.dao.CarBrandDao;
+import com.beta.cls.angelcar.dao.CarSubDao;
 import com.beta.cls.angelcar.dao.CountCarCollectionDao;
 import com.beta.cls.angelcar.dao.PostCarCollectionDao;
 import com.beta.cls.angelcar.dao.PostCarDao;
@@ -39,11 +43,11 @@ import com.beta.cls.angelcar.dialog.FilterSubDialog;
 import com.beta.cls.angelcar.dialog.YearDialog;
 import com.beta.cls.angelcar.manager.Registration;
 import com.beta.cls.angelcar.manager.http.HttpManager;
+import com.beta.cls.angelcar.model.FilterCarModel;
 
 import org.parceler.Parcels;
 
 import java.io.IOException;
-import java.util.HashMap;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -60,6 +64,11 @@ public class HomeFragment extends Fragment {
     public static final int REQUEST_CODE_SUB_DETAIL = 3;
     public static final int REQUEST_CODE_YEAR = 4;
 
+//    public static final String ARG_DRAWABLE_LOGO = "logo";
+    public static final String ARG_BRAND = "brand";
+    public static final String ARG_SUB = "sub";
+    public static final String ARG_SUB_DETAIL = "subDetail";
+
 
     @Bind(R.id.list_view) ListView listView;
     @Bind(R.id.swipe_container) SwipeRefreshLayout mSwipeRefresh;
@@ -74,15 +83,14 @@ public class HomeFragment extends Fragment {
     @Bind(R.id.filterSub) TextView tvSub;
     @Bind(R.id.filterSubDetail) TextView tvSubDetail;
     @Bind(R.id.filterYear) TextView tvYear;
-    @Bind(R.id.filterToggleGear) ToggleButton toggleGear;
-    private HashMap<String,String> hashMapFilter;
-    private int resourceBrand;
+//    @Bind(R.id.filterToggleGear) ToggleButton toggleGear;
 
-//    Animation animDown,animUp;
+//    private HashMap<String,String> hashMapFilter;
+    FilterCarModel filterCarModel;
 
     private static final String TAG = "HomeFragment";
 
-    private PostCarCollectionDao gao;
+    private PostCarCollectionDao dao;
     private ListViewPostAdapter adapter;
 
     public HomeFragment() {
@@ -90,42 +98,56 @@ public class HomeFragment extends Fragment {
     }
 
     public static HomeFragment newInstance() {
-        HomeFragment fragment = new HomeFragment();
-//        Bundle args = new Bundle();
+        //        Bundle args = new Bundle();
 //        fragment.setArguments(args);
-        return fragment;
+        return new HomeFragment();
     }
     @Override
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        init(savedInstanceState);
 
-        hashMapFilter = new HashMap<>();
+        if (savedInstanceState != null)
+            onRestoreInstanceState(savedInstanceState);
     }
+
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         View rootView = inflater.inflate(R.layout.fragment_home, container, false);
-        ButterKnife.bind(this,rootView);
+        initInstances(rootView,savedInstanceState);
         return rootView;
 
     }
 
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        initInstance();
-        if (savedInstanceState == null){
-            loadData();
-        }else { // Restore
-            gao = Parcels.unwrap(savedInstanceState.getParcelable(SAVE_STATE_GAO));
-            adapter.setDao(gao);
-            adapter.notifyDataSetChanged();
-        }
+    @SuppressWarnings("UnusedParameters")
+    private void init(Bundle savedInstanceState) {
+        // Init Fragment level's variable(s) here
+//        hashMapFilter = new HashMap<>();
+        filterCarModel = new FilterCarModel();
+        dao = new PostCarCollectionDao();
+    }
 
-//        animDown = AnimationUtils.loadAnimation(getActivity(), R.anim.animation_slide_down);
-//        animUp = AnimationUtils.loadAnimation(getActivity(), R.anim.animation_slide_up);
+    @SuppressWarnings("UnusedParameters")
+    private void initInstances(View rootView, Bundle savedInstanceState) {
+        // Init 'View' instance(s) with rootView.findViewById here
+        ButterKnife.bind(this,rootView);
+
+        adapter = new ListViewPostAdapter();
+        adapter.setDao(dao);
+        listView.setAdapter(adapter);
+        mSwipeRefresh.setColorSchemeColors(
+                Color.parseColor("#104F94"),
+                Color.parseColor("#104F94"),
+                Color.parseColor("#FFC11E"),
+                Color.parseColor("#FFC11E"));
+
+        mSwipeRefresh.setOnRefreshListener(pullRefresh);
+        listView.setOnItemClickListener(onItemClickListViewListener);
+        listView.setOnScrollListener(onScrollListener);
 
         btFilter.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -140,28 +162,47 @@ public class HomeFragment extends Fragment {
                     ResizeHeight resizeHeight = new ResizeHeight(ctFilter,0,false);
                     resizeHeight.setDuration(500);
                     ctFilter.startAnimation(resizeHeight);
-//                    ctFilter.setVisibility(View.GONE);
-//                    ctFilter.startAnimation(animUp);
                 }
 
             }
         });
+        if (savedInstanceState == null){
+            loadData();
+        }
     }
 
-    private void initInstance() {
-        adapter = new ListViewPostAdapter();
-        listView.setAdapter(adapter);
-        mSwipeRefresh.setColorSchemeColors(
-                Color.parseColor("#104F94"),
-                Color.parseColor("#104F94"),
-                Color.parseColor("#FFC11E"),
-                Color.parseColor("#FFC11E"));
 
-        mSwipeRefresh.setOnRefreshListener(pullRefresh);
-        listView.setOnItemClickListener(onItemClickListViewListener);
-        listView.setOnScrollListener(onScrollListener);
 
-    }
+    /*@Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        initInstance();
+        if (savedInstanceState == null){
+            loadData();
+        }else { // Restore
+            dao = Parcels.unwrap(savedInstanceState.getParcelable(SAVE_STATE_GAO));
+            adapter.setDao(dao);
+            adapter.notifyDataSetChanged();
+        }
+
+        btFilter.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (ctFilter.getVisibility() == View.GONE) {
+                    ResizeHeight resizeHeight = new ResizeHeight(ctFilter,1000,true);
+                    resizeHeight.setInterpolator(new BounceInterpolator());
+                    resizeHeight.setDuration(1000);
+                    ctFilter.startAnimation(resizeHeight);
+                    ctFilter.setVisibility(View.VISIBLE);
+                } else {
+                    ResizeHeight resizeHeight = new ResizeHeight(ctFilter,0,false);
+                    resizeHeight.setDuration(500);
+                    ctFilter.startAnimation(resizeHeight);
+                }
+
+            }
+        });
+    }*/
 
     private void loadData(){
 
@@ -178,49 +219,64 @@ public class HomeFragment extends Fragment {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putParcelable(SAVE_STATE_GAO,Parcels.wrap(gao));
+        outState.putParcelable(SAVE_STATE_GAO,Parcels.wrap(dao));
 
+    }
+
+    @SuppressWarnings("UnusedParameters")
+    private void onRestoreInstanceState(Bundle savedInstanceState) {
+        dao = Parcels.unwrap(savedInstanceState.getParcelable(SAVE_STATE_GAO));
+//        adapter.setDao(dao);
+//        adapter.notifyDataSetChanged();
     }
 
     @OnClick({R.id.filterBrand,R.id.filterSub,R.id.filterSubDetail,R.id.filterYear,R.id.buttonSearch})
     public void OnclickFilter(View v){
-        FragmentTransaction ft = getFragmentManager().beginTransaction();
+        @SuppressLint("CommitTransaction") FragmentTransaction ft = getFragmentManager().beginTransaction();
         switch (v.getId()){
+
             case R.id.filterBrand:
+                //Clear Object
+                clearObject();
                 Fragment fragment = getFragmentManager().findFragmentByTag("FilterBrandDialog");
                 if (fragment != null){
                     ft.remove(fragment);
                 }
                 ft.addToBackStack(null);
+
                 FilterBrandDialog dialog = new FilterBrandDialog();
                 dialog.setTargetFragment(this,REQUEST_CODE_BRAND);
                 dialog.show(getFragmentManager(),"FilterBrandDialog");
                 break;
+
             case R.id.filterSub:
-                if (hashMapFilter.containsKey("BRAND")) {
+                if (isNullFilter(filterCarModel,0)) {
                     Fragment fragmentSub = getFragmentManager().findFragmentByTag("FilterSubDialog");
                     if (fragmentSub != null) {
                         ft.remove(fragmentSub);
                     }
                     ft.addToBackStack(null);
-                    FilterSubDialog dialogSub = FilterSubDialog.newInstance(resourceBrand,hashMapFilter.get("BRAND"));
+                    FilterSubDialog dialogSub = FilterSubDialog
+                            .newInstance(filterCarModel);
                     dialogSub.setTargetFragment(this, REQUEST_CODE_SUB);
                     dialogSub.show(getFragmentManager(), "FilterSubDialog");
                 }
                 break;
+
             case R.id.filterSubDetail:
-                if (hashMapFilter.containsKey("BRAND") &&
-                        hashMapFilter.containsKey("SUB")){
+                if (isNullFilter(filterCarModel,1)){
                     Fragment fragmentSubDetail = getFragmentManager().findFragmentByTag("FilterSubDialog");
                     if (fragmentSubDetail != null) {
                         ft.remove(fragmentSubDetail);
                     }
                     ft.addToBackStack(null);
-                    FilterSubDetailDialog dialogSub = FilterSubDetailDialog.newInstance(resourceBrand,hashMapFilter.get("BRAND"),hashMapFilter.get("SUB"));
+                    FilterSubDetailDialog dialogSub = FilterSubDetailDialog
+                            .newInstance(filterCarModel);
                     dialogSub.setTargetFragment(this, REQUEST_CODE_SUB_DETAIL);
                     dialogSub.show(getFragmentManager(), "FilterSubDialog");
                 }
                 break;
+
             case R.id.filterYear:
                 Fragment fragmentYear = getFragmentManager().findFragmentByTag("YearDialog");
                 if (fragmentYear != null){
@@ -237,36 +293,72 @@ public class HomeFragment extends Fragment {
 
     }
 
+    @OnClick({R.id.radioGearAll,R.id.radioGearAt,R.id.radioGearMt})
+    void radioButtonGear(View view){
+        boolean checked = ((RadioButton) view).isChecked();
+        if (view.getId() == R.id.radioGearMt){
+            filterCarModel.setGear(checked ? "1" : "0");
+        }else if (view.getId() == R.id.radioGearAt){
+            filterCarModel.setGear(checked ? "2" : "0");
+        }else {// all
+            filterCarModel.setGear(checked ? "0" : "0");
+        }
+        Log.i(TAG, "radioButtonGear: "+filterCarModel.getGear());
+    }
+
+    private boolean isNullFilter(FilterCarModel filterCarModel ,int mode){
+        if (mode == 0){
+            if (filterCarModel.getBrandDao() != null && !filterCarModel.getBrandDao().getBrandName().isEmpty())
+            return true;
+        }else {
+            if (filterCarModel.getBrandDao() != null && filterCarModel.getSubDao() != null &&
+                    !filterCarModel.getBrandDao().getBrandName().isEmpty() &&
+                    !filterCarModel.getSubDao().getSubName().isEmpty())
+            return true;
+        }
+        return false;
+    }
+
+    private void clearObject() {
+        if (filterCarModel != null) {
+            filterCarModel.clear();
+            filterCarModel = null;
+            filterCarModel = new FilterCarModel();
+        }
+    }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == Activity.RESULT_OK) {
             switch (requestCode) {
+
                 case REQUEST_CODE_BRAND: // brand
-                    String result = data.getStringExtra("BRAND");
-                    resourceBrand = data.getIntExtra("LOGO",R.drawable.toyota);
-                    tvBrand.setText(result);
-                    filterChecked("BRAND",result);
+                    CarBrandDao model = Parcels.unwrap(data.getParcelableExtra(ARG_BRAND));
+//                    int drawableLogo = data.getIntExtra(ARG_DRAWABLE_LOGO,R.drawable.toyota);
+//                    typedArray.recycle();
+                    filterCarModel.setBrandDao(model);
+                    tvBrand.setText(model.getBrandName());
                     tvSub.setText("All");
                     tvSubDetail.setText("All");
-                    if (hashMapFilter.containsKey("SUB")) hashMapFilter.remove("SUB");
-                    if (hashMapFilter.containsKey("SUB_DETAIL")) hashMapFilter.remove("SUB_DETAIL");
                     break;
+
                 case REQUEST_CODE_SUB: // sub
-                    String resultSub = data.getStringExtra("SUB");
-                    tvSub.setText(resultSub);
-                    filterChecked("SUB",resultSub);
+                    CarSubDao modelSub = Parcels.unwrap(data.getParcelableExtra(ARG_SUB));
+                    filterCarModel.setSubDao(modelSub);
+                    tvSub.setText(modelSub.getSubName());
                     tvSubDetail.setText("All");
-                    if (hashMapFilter.containsKey("SUB_DETAIL")) hashMapFilter.remove("SUB_DETAIL");
                     break;
+
                 case REQUEST_CODE_SUB_DETAIL: // sub detail
-                    String resultSubDetail = data.getStringExtra("SUB_DETAIL");
-                    tvSubDetail.setText(resultSubDetail);
-                    filterChecked("SUB_DETAIL",resultSubDetail);
+                    CarSubDao modelSubDetail = Parcels.unwrap(data.getParcelableExtra(ARG_SUB_DETAIL));
+                    filterCarModel.setSubDetailDao(modelSubDetail);
+                    tvSubDetail.setText(modelSubDetail.getSubName());
                     break;
+
                 case REQUEST_CODE_YEAR: // year
                     int resultYear = data.getIntExtra("TAG_YEAR",2016);
+                    filterCarModel.setYear(resultYear);
                     tvYear.setText(String.valueOf(resultYear));
-                    filterChecked("TAG_YEAR",String.valueOf(resultYear));
                     break;
             }
         }
@@ -274,8 +366,10 @@ public class HomeFragment extends Fragment {
         super.onActivityResult(requestCode, resultCode, data);
     }
 
-    private void filterChecked(String key,String values ){
-            hashMapFilter.put(key,values);
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        ButterKnife.unbind(this);
     }
 
     /**************
@@ -301,7 +395,7 @@ public class HomeFragment extends Fragment {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             if (Registration.getInstance().getUserId() != null) {
-                PostCarDao item = gao.getListCar().get(position);
+                PostCarDao item = dao.getListCar().get(position);
                 Intent intent = new Intent(getActivity(), DetailCarActivity.class);
                 intent.putExtra("PostCarDao", Parcels.wrap(item));
                 intent.putExtra("intentForm", 0);
@@ -327,7 +421,7 @@ public class HomeFragment extends Fragment {
         public void onResponse(Call<PostCarCollectionDao> call, Response<PostCarCollectionDao> response) {
             mSwipeRefresh.setRefreshing(false);
             if (response.isSuccessful()) {
-                gao = response.body();
+                dao = response.body();
                 adapter.setDao(response.body());
                 adapter.notifyDataSetChanged();
 //                adapter.getFilter().filter("toyota");

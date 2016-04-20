@@ -33,11 +33,6 @@ import butterknife.ButterKnife;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import rx.Observable;
-import rx.Subscriber;
-import rx.functions.Func1;
-import rx.functions.Func2;
-import rx.schedulers.Schedulers;
 
 /**
  * Created by humnoy on 26/1/59.
@@ -54,24 +49,55 @@ public class ChatAllFragment extends Fragment{
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        messageManager = new MessageManager();
+        init(savedInstanceState);
+
+        if (savedInstanceState != null)
+            onRestoreInstanceState(savedInstanceState);
+
     }
+
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.list_view_layout,container,false);
-        ButterKnife.bind(this,v);
+        initInstances(v,savedInstanceState);
         return v;
     }
+    private void init(Bundle savedInstanceState) {
+        // Init Fragment level's variable(s) here
+        messageManager = new MessageManager();
+    }
+    private void initInstances(View rootView, Bundle savedInstanceState) {
+        // Init 'View' instance(s) with rootView.findViewById here
+        ButterKnife.bind(this,rootView);
 
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
         initInstance();
         initListener();
         loadCarId();
+
     }
+
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        // Save Instance State here
+    }
+
+
+    @SuppressWarnings("UnusedParameters")
+    private void onRestoreInstanceState(Bundle savedInstanceState) {
+        // Restore Instance State here
+    }
+
+//    @Override
+//    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+//        super.onActivityCreated(savedInstanceState);
+//        initInstance();
+//        initListener();
+//        loadCarId();
+//    }
 
     private void loadCarId() {
         Call<CarIdDao> loadCarId =
@@ -108,7 +134,7 @@ public class ChatAllFragment extends Fragment{
                     Response<MessageAdminCollectionDao> responseAdmin = callAdmin.execute();
                     if (responseAdmin.isSuccessful()){
                         messageManager.appendDataToBottomPosition(
-                                responseAdmin.body().getMessageAdminGao()
+                                responseAdmin.body().getMessageAdminDao()
                                         .convertToMessageCollectionDao());
                     }else {
                         Log.e(TAG, "doInBackground: "+responseAdmin.errorBody().string());
@@ -137,6 +163,12 @@ public class ChatAllFragment extends Fragment{
     private void initListener() {
         listView.setOnItemLongClickListener(onItemLongClickListener);
         listView.setOnItemClickListener(onItemClickListener);
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        ButterKnife.unbind(this);
     }
 
     private void deleteDialog(MessageDao dao) {

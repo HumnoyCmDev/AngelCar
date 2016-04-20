@@ -16,12 +16,15 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.beta.cls.angelcar.R;
-import com.beta.cls.angelcar.dao.CarDataTypeCollectionDao;
-import com.beta.cls.angelcar.dao.CarDataTypeDao;
+import com.beta.cls.angelcar.dao.CarSubCollectionDao;
+import com.beta.cls.angelcar.dao.CarSubDao;
+import com.beta.cls.angelcar.fragment.HomeFragment;
 import com.beta.cls.angelcar.manager.http.ApiCarService;
+import com.beta.cls.angelcar.manager.http.HttpManager;
 import com.beta.cls.angelcar.manager.http.HttpUsedCarManager;
+import com.beta.cls.angelcar.model.FilterCarModel;
 
-import java.io.IOException;
+import org.parceler.Parcels;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -35,19 +38,20 @@ import retrofit2.Response;
 public class FilterSubDialog extends DialogFragment{
     @Bind(R.id.list_view) ListView listView;
     private static final String ARGS_BRAND = "ARGS_BRAND";
-    private static final String ARGS_LOGO = "ARGS_LOGO";
+//    private static final String ARGS_LOGO = "ARGS_LOGO";
     private static final String TAG = "FilterSubDialogFragment";
 
-    private String brand;
-    private int resourceBrand;
-    private CarDataTypeCollectionDao dao;
-    private ListViewAdapter viewAdapter;
+//    private int brandId;
+//    private int drawableLogo;
+    private FilterCarModel filterCarModel;
+    private CarSubCollectionDao dao;
 
-    public static FilterSubDialog newInstance(int resourceBrand, String brand) {
+    private ListViewAdapter adapter;
+
+    public static FilterSubDialog newInstance(FilterCarModel filterCarModel) {
         Bundle args = new Bundle();
         FilterSubDialog fragment = new FilterSubDialog();
-        args.putString(ARGS_BRAND,brand);
-        args.putInt(ARGS_LOGO,resourceBrand);
+        args.putParcelable(ARGS_BRAND,Parcels.wrap(filterCarModel));
         fragment.setArguments(args);
         return fragment;
     }
@@ -55,7 +59,11 @@ public class FilterSubDialog extends DialogFragment{
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        init(savedInstanceState);
+    }
 
+    private void init(Bundle savedInstanceState) {
+        dao = new CarSubCollectionDao();
     }
 
     @Nullable
@@ -68,75 +76,74 @@ public class FilterSubDialog extends DialogFragment{
     }
 
     private void initInstance(Bundle savedInstanceState) {
-        brand = getArguments().getString(ARGS_BRAND);
-        resourceBrand = getArguments().getInt(ARGS_LOGO);
-        ApiCarService server = HttpUsedCarManager.getInstance().getService();
-        Call<CarDataTypeCollectionDao> call = server.loadCarType(brand);
-        call.enqueue(carDataTypeCollectionGaoCallback);
 
-        viewAdapter = new ListViewAdapter();
-        listView.setAdapter(viewAdapter);
-        
+        filterCarModel = Parcels.unwrap(getArguments().getParcelable(ARGS_BRAND));
+
+        adapter = new ListViewAdapter();
+        adapter.setData(dao);
+        listView.setAdapter(adapter);
+
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                CarDataTypeDao result = dao.getRows().get(position);
+                CarSubDao result = dao.getCarSubDao().get(position);
                 Intent intent = getActivity().getIntent();
-                intent.putExtra("SUB",result.getCarTypeSub());
+                intent.putExtra(HomeFragment.ARG_SUB, Parcels.wrap(result));
                 getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK,intent);
                 dismiss();
             }
         });
+
+        if (savedInstanceState == null) {
+            Call<CarSubCollectionDao> call = HttpManager.getInstance()
+                    .getService().loadDataBrandSub(filterCarModel.getBrandDao().getBrandId());
+            call.enqueue(carSubCollectionDaoCallback);
+        }
+
     }
 
 
     /******************
      *Listener zone*
      ******************/
-    Callback<CarDataTypeCollectionDao> carDataTypeCollectionGaoCallback = new Callback<CarDataTypeCollectionDao>() {
+    Callback<CarSubCollectionDao> carSubCollectionDaoCallback = new Callback<CarSubCollectionDao>() {
         @Override
-        public void onResponse(Call<CarDataTypeCollectionDao> call, Response<CarDataTypeCollectionDao> response) {
+        public void onResponse(Call<CarSubCollectionDao> call, Response<CarSubCollectionDao> response) {
             if (response.isSuccessful()) {
-                    dao = response.body();
-                viewAdapter.setData(dao);
-                viewAdapter.notifyDataSetChanged();
-
+                dao = response.body();
+                adapter.setData(dao);
+                adapter.notifyDataSetChanged();
             } else {
-                try {
-                    Log.i(TAG, "onResponse: " + response.errorBody().string());
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                Log.e(TAG, "onResponse: " + response.errorBody().toString());
             }
         }
 
         @Override
-        public void onFailure(Call<CarDataTypeCollectionDao> call, Throwable t) {
+        public void onFailure(Call<CarSubCollectionDao> call, Throwable t) {
             Log.e(TAG, "onFailure: ", t);
         }
     };
-
     /******************
      *Inner class zone*
      ******************/
     public class ListViewAdapter extends BaseAdapter{
 
-        CarDataTypeCollectionDao dao;
+        CarSubCollectionDao dao;
 
-        public void setData(CarDataTypeCollectionDao dao) {
+        public void setData(CarSubCollectionDao dao) {
             this.dao = dao;
         }
 
         @Override
         public int getCount() {
             if (dao == null) return 0;
-            if (dao.getRows() == null) return 0;
-            return dao.getRows().size();
+            if (dao.getCarSubDao() == null) return 0;
+            return dao.getCarSubDao().size();
         }
 
         @Override
-        public CarDataTypeDao getItem(int position) {
-            return dao.getRows().get(position);
+        public CarSubDao getItem(int position) {
+            return dao.getCarSubDao().get(position);
         }
 
         @Override
@@ -155,8 +162,8 @@ public class FilterSubDialog extends DialogFragment{
                holder = new ViewHolder(convertView);
                convertView.setTag(holder);
             }
-            holder.iconFilter.setImageResource(resourceBrand);
-            holder.tvFilter.setText(getItem(position).getCarTypeSub());
+//            holder.iconFilter.setImageDrawable(filterCarModel.getLogoBrand());
+            holder.tvFilter.setText(getItem(position).getSubName());
 
             return convertView;
         }

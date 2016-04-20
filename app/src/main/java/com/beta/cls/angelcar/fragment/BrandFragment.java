@@ -98,6 +98,12 @@ public class BrandFragment extends Fragment {
         return "";
     }
 
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        ButterKnife.unbind(this);
+    }
+
     /***************
      * Listener Zone
      * *************/

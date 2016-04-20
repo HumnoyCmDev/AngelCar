@@ -9,6 +9,7 @@ import org.parceler.Parcel;
  * Created by humnoy on 16/2/59.
  */
 @Parcel
+@Deprecated
 public class CarDataTypeDao {
 
     @SerializedName("cartype_sub")

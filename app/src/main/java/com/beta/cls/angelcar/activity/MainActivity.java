@@ -87,6 +87,7 @@ public class MainActivity extends AppCompatActivity {
         initTabIcons(); //ตั้งค่า tab
 
 
+
     }
 
 //  googlePicker
@@ -136,6 +137,7 @@ public class MainActivity extends AppCompatActivity {
             String cache_User = Registration.getInstance().getUserId();
             if (cache_User != null){
                 Toast.makeText(MainActivity.this,cache_User,Toast.LENGTH_LONG).show();
+                Toast.makeText(MainActivity.this,Registration.getInstance().getShopRef(),Toast.LENGTH_LONG).show();
             }
         }
     }

@@ -21,7 +21,6 @@ import com.beta.cls.angelcar.dao.PostCarDao;
 import com.beta.cls.angelcar.manager.Permission;
 import com.beta.cls.angelcar.manager.http.HttpManager;
 import com.beta.cls.angelcar.utils.ViewFindUtils;
-import com.beta.cls.angelcar.utils.cache.ImageLoader;
 import com.flyco.banner.anim.select.ZoomInEnter;
 import com.flyco.banner.transform.DepthTransformer;
 import com.flyco.banner.widget.Banner.base.BaseBanner;

@@ -3,11 +3,20 @@ package com.beta.cls.angelcar.fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.telephony.PhoneNumberFormattingTextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.ImageView;
 
 import com.beta.cls.angelcar.R;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.CenterCrop;
+
+import butterknife.Bind;
+import butterknife.ButterKnife;
+import jp.wasabeef.glide.transformations.CropCircleTransformation;
 
 
 /***************************************
@@ -17,6 +26,10 @@ import com.beta.cls.angelcar.R;
  ***************************************/
 @SuppressWarnings("unused")
 public class ProfileFragment extends Fragment {
+
+    @Bind(R.id.imageProfile) ImageView imageProfile;
+    @Bind(R.id.profilePhoneNumber) EditText phoneNumber;
+
 
     public ProfileFragment() {
         super();
@@ -53,7 +66,13 @@ public class ProfileFragment extends Fragment {
 
     @SuppressWarnings("UnusedParameters")
     private void initInstances(View rootView, Bundle savedInstanceState) {
+        ButterKnife.bind(this,rootView);
         // Init 'View' instance(s) with rootView.findViewById here
+
+        phoneNumber.addTextChangedListener(new PhoneNumberFormattingTextWatcher());
+        Glide.with(this).load(R.drawable.ic_hndeveloper)
+                .bitmapTransform(new CropCircleTransformation(getContext()))
+                .into(imageProfile);
     }
 
     @Override
@@ -66,9 +85,15 @@ public class ProfileFragment extends Fragment {
         super.onStop();
     }
 
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        ButterKnife.unbind(this);
+    }
+
     /*
-     * Save Instance State Here
-     */
+         * Save Instance State Here
+         */
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);

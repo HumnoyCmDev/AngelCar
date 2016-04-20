@@ -125,7 +125,11 @@ public class CarDetailFragment extends Fragment {
         if (iuser.getTypeSub() == null) return;
         new LoadDetail().execute();
     }
-
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        ButterKnife.unbind(this);
+    }
 
     /***************
     * Listener Zone

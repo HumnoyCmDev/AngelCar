@@ -11,6 +11,7 @@ import java.util.List;
  * Created by humnoy on 16/2/59.
  */
 @Parcel
+@Deprecated
 public class CarDataTypeCollectionDao {
     @SerializedName("rows")
     @Expose

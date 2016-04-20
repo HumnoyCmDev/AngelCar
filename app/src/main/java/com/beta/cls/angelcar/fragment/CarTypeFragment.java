@@ -127,6 +127,12 @@ public class CarTypeFragment extends Fragment {
         BusProvider.getInstance().unregister(this);
     }
 
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        ButterKnife.unbind(this);
+    }
+
     @Subscribe
     public void getProduceData(InformationFromUser user){
         this.user = user;

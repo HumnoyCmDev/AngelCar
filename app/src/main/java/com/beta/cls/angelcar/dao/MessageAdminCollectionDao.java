@@ -21,7 +21,7 @@ public class MessageAdminCollectionDao {
         this.messageAdmin = messageAdmin;
     }
 
-    public MessageAdminDao getMessageAdminGao(){
+    public MessageAdminDao getMessageAdminDao(){
         return messageAdmin.get(0);
     }
 }

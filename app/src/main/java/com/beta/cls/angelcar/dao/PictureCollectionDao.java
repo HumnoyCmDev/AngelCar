@@ -12,7 +12,7 @@ import org.parceler.Parcel;
 public class PictureCollectionDao {
 
     @SerializedName("rows") @Expose
-    private List<PictureDao> listPicture = new ArrayList<PictureDao>();
+    public List<PictureDao> listPicture = new ArrayList<PictureDao>();
 
     public List<PictureDao> getListPicture() {
         return listPicture;

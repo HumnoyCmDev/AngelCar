@@ -14,7 +14,6 @@ import android.view.ViewGroup;
 
 import com.beta.cls.angelcar.R;
 import com.beta.cls.angelcar.dao.PictureDao;
-import com.beta.cls.angelcar.utils.cache.ImageLoader;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.Request;
@@ -98,7 +97,12 @@ public class ViewPictureFragment extends Fragment{
         Glide.clear(target);
     }
 
-//    SimpleTarget<Bitmap> target = new SimpleTarget<Bitmap>() {
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        ButterKnife.unbind(this);
+    }
+    //    SimpleTarget<Bitmap> target = new SimpleTarget<Bitmap>() {
 //        @Override
 //        public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
 //            scaleImageView.setImage(ImageSource.cachedBitmap(resource));

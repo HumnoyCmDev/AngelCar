@@ -47,7 +47,10 @@ public class ChatBuyFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        init(savedInstanceState);
 
+        if (savedInstanceState != null)
+            onRestoreInstanceState(savedInstanceState);
 
     }
 
@@ -55,21 +58,48 @@ public class ChatBuyFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.list_view_layout, container, false);
-        ButterKnife.bind(this, v);
+        initInstances(v,savedInstanceState);
         return v;
     }
 
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
+    private void init(Bundle savedInstanceState) {
+        // Init Fragment level's variable(s) here
+        messageManager = new MessageManager();
+    }
 
+    @SuppressWarnings("UnusedParameters")
+    private void initInstances(View rootView, Bundle savedInstanceState) {
+        // Init 'View' instance(s) with rootView.findViewById here
+        ButterKnife.bind(this, rootView);
         adapter = new MessageAdapter();
         listView.setAdapter(adapter);
-        messageManager = new MessageManager();
-
         loadMessage();
         initListener();
     }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        // Save Instance State here
+    }
+
+
+    @SuppressWarnings("UnusedParameters")
+    private void onRestoreInstanceState(Bundle savedInstanceState) {
+        // Restore Instance State here
+    }
+
+//    @Override
+//    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+//        super.onActivityCreated(savedInstanceState);
+//
+//        adapter = new MessageAdapter();
+//        listView.setAdapter(adapter);
+//        messageManager = new MessageManager();
+//
+//        loadMessage();
+//        initListener();
+//    }
 
     private void loadMessage() {
         Call<CarIdDao> loadCarId =
@@ -106,6 +136,12 @@ public class ChatBuyFragment extends Fragment {
 //        BusProvider.getInstance().unregister(this);
     }
 
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        ButterKnife.unbind(this);
+    }
+
     /**************
     *Listener Zone*
     ***************/
@@ -137,7 +173,7 @@ public class ChatBuyFragment extends Fragment {
         public void onResponse(Call<MessageAdminCollectionDao> call, Response<MessageAdminCollectionDao> response) {
             if (response.isSuccessful()) {
                 messageManager.setMessageDao(response.body()
-                        .getMessageAdminGao()
+                        .getMessageAdminDao()
                         .convertToMessageCollectionDao());
                 adapter.setDao(messageManager.getMessageDao().getListMessage());
                 adapter.notifyDataSetChanged();

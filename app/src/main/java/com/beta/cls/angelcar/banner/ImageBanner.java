@@ -53,7 +53,6 @@ public class ImageBanner extends BaseIndicatorBanner<PictureDao, ImageBanner> {
         iv.setScaleType(ImageView.ScaleType.CENTER_CROP);
         iv.setLayoutParams(new LinearLayout.LayoutParams(itemWidth, itemHeight));
 
-//        String imgUrl = item.getCarImagePath();
         String urlImage ="http://angelcar.com/"+item.getCarImagePath()
                 .replace("chatcarimage","thumbnailcarimages");
 

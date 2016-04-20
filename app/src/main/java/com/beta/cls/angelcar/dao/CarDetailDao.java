@@ -6,6 +6,7 @@ import com.google.gson.annotations.SerializedName;
 import org.parceler.Parcel;
 
 @Parcel
+@Deprecated
 public class CarDetailDao {
 
     @SerializedName("cardetail_sub")

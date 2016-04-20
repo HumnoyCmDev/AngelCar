@@ -24,6 +24,11 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
+        <!--Configuration Glide ARGB8888-->
+        <meta-data
+            android:name="com.beta.cls.angelcar.configuration.GlideConfiguration"
+            android:value="GlideModule" />
+
         <!-- Gcm -->
         <receiver
             android:name="com.google.android.gms.gcm.GcmReceiver"
@@ -91,6 +96,8 @@
         <activity android:name=".activity.GuideLineActivity" />
         <activity android:name=".activity.ViewPictureActivity"/>
         <activity android:name=".activity.SingleViewImageActivity"/>
+
+
     </application>
 
 </manifest>
